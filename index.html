@@ -43,10 +43,13 @@ main{padding:14px}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow)}
 .topGrid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:12px}
 .topCard{padding:16px;min-width:0}
+.topAction{appearance:none;text-align:left;color:var(--text);width:100%;cursor:pointer}
+.topActionRow{display:flex;align-items:center;gap:10px;margin-top:10px;min-width:0}
+.topIcon{flex:0 0 auto;width:30px;height:30px;border-radius:10px;background:var(--blueSoft);color:var(--blue);display:grid;place-items:center;font-size:16px;font-weight:900}
 .topLabel{font-size:11px;font-weight:850;color:var(--muted);text-transform:uppercase;letter-spacing:.07em}
-.topValue{font-size:21px;font-weight:900;letter-spacing:-.03em;margin-top:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.topSub{font-size:12px;color:var(--muted);margin-top:5px}
-.topCard input{width:100%;min-width:0;height:44px;margin-top:8px;border:1px solid var(--line);background:var(--surface2);color:var(--text);border-radius:14px;padding:0 12px;font-weight:800}
+.topValue{font-size:21px;font-weight:900;letter-spacing:-.03em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;flex:1}
+.topChevron,.topEdit{flex:0 0 auto;color:var(--muted);font-size:19px;font-weight:900}
+.topSub{font-size:12px;color:var(--muted);margin-top:7px}
 .summary{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:12px}
 .metric{padding:16px;min-height:108px;display:flex;flex-direction:column;justify-content:space-between;min-width:0}
 .metricName{font-size:11px;font-weight:850;color:var(--muted);text-transform:uppercase;letter-spacing:.07em}
@@ -96,7 +99,7 @@ dialog{border:0;border-radius:25px;padding:0;max-width:440px;width:calc(100% - 2
 dialog::backdrop{background:rgba(5,10,20,.58);backdrop-filter:blur(4px)}
 .modal{padding:20px}.modal h3{margin:0 0 15px;font-size:23px}
 .modal label{display:block;font-size:12px;color:var(--muted);font-weight:850;margin:12px 0 6px}
-.modal input{width:100%;height:49px;border:1px solid var(--line);border-radius:14px;background:var(--surface2);color:var(--text);padding:0 13px}
+.modal input,.modal select{width:100%;height:49px;border:1px solid var(--line);border-radius:14px;background:var(--surface2);color:var(--text);padding:0 13px}
 .modalActions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}
 .modalActions button{height:48px;border:1px solid var(--line);border-radius:14px;background:var(--surface2);color:var(--text);font-weight:800}
 .modalActions .save{background:var(--navy);color:#fff;border-color:var(--navy)}
@@ -104,9 +107,11 @@ dialog::backdrop{background:rgba(5,10,20,.58);backdrop-filter:blur(4px)}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 .toast b{display:block;font-size:20px;margin-top:5px}
 @media(max-width:390px){
- .topGrid{grid-template-columns:minmax(0,1fr) minmax(0,.82fr)}
+ .topGrid{grid-template-columns:minmax(0,1fr) minmax(0,.86fr)}
  .topCard{padding:14px}
- .topValue{font-size:19px}
+ .topValue{font-size:18px}
+ .topActionRow{gap:8px}
+ .topIcon{width:27px;height:27px;font-size:14px}
  .metricValue{font-size:21px}
  .timer{font-size:38px}
 }
@@ -123,15 +128,23 @@ dialog::backdrop{background:rgba(5,10,20,.58);backdrop-filter:blur(4px)}
 <main>
 <section class="view active" id="homeView">
  <div class="topGrid">
-  <div class="card topCard">
+  <button class="card topCard topAction" id="monthCard" type="button">
    <div class="topLabel">Місяць</div>
-   <input id="monthPicker" type="month">
-  </div>
-  <div class="card topCard">
+   <div class="topActionRow">
+    <span class="topIcon">▣</span>
+    <span class="topValue" id="monthLabel">Серпень 2026</span>
+    <span class="topChevron">⌄</span>
+   </div>
+   <div class="topSub">Торкнися, щоб змінити</div>
+  </button>
+  <button class="card topCard topAction" id="rateCard" type="button">
    <div class="topLabel">Базова ставка</div>
-   <input id="baseRateTop" type="number" min="0" step="1">
-   <div class="topSub">Kč за годину</div>
-  </div>
+   <div class="topActionRow">
+    <span class="topValue" id="rateLabel">180 Kč</span>
+    <span class="topEdit">✎</span>
+   </div>
+   <div class="topSub">за годину</div>
+  </button>
  </div>
 
  <div class="summary">
@@ -214,6 +227,23 @@ dialog::backdrop{background:rgba(5,10,20,.58);backdrop-filter:blur(4px)}
  <button class="textBtn" id="cancelShift">Скасувати</button>
 </div></dialog>
 
+
+<dialog id="monthDialog"><div class="modal">
+ <h3>Вибрати місяць</h3>
+ <label>Місяць</label>
+ <select id="monthSelect"></select>
+ <label>Рік</label>
+ <select id="yearSelect"></select>
+ <div class="modalActions"><button id="cancelMonth">Скасувати</button><button class="save" id="saveMonth">Готово</button></div>
+</div></dialog>
+
+<dialog id="rateDialog"><div class="modal">
+ <h3>Базова ставка</h3>
+ <label>Kč за годину</label>
+ <input id="rateInput" type="number" min="0" step="1" inputmode="decimal">
+ <div class="modalActions"><button id="cancelRate">Скасувати</button><button class="save" id="saveRate">Зберегти</button></div>
+</div></dialog>
+
 <div class="toast" id="toast">✓ Зміна завершена<b id="toastSummary"></b></div>
 
 <script>
@@ -222,9 +252,10 @@ let shifts=JSON.parse(localStorage.getItem(K.shifts)||'[]').map(s=>({...s,rate:s
 let active=JSON.parse(localStorage.getItem(K.active)||'null');
 let editingId=null,timerId=null;
 const $=id=>document.getElementById(id);
-$('monthPicker').value=new Date().toISOString().slice(0,7);
+let selectedMonth=new Date().toISOString().slice(0,7);
 const initialRate=localStorage.getItem(K.rate)||'180';
-$('baseRateTop').value=initialRate;$('baseRateSettings').value=initialRate;
+$('baseRateSettings').value=initialRate;
+$('rateLabel').textContent=`${initialRate} Kč`;
 
 function save(){localStorage.setItem(K.shifts,JSON.stringify(shifts));localStorage.setItem(K.active,JSON.stringify(active))}
 function applyTheme(v){document.documentElement.dataset.theme=v;localStorage.setItem(K.theme,v);$('themeSelect').value=v}
@@ -236,8 +267,8 @@ function dur(m){m=Math.round(m);return `${Math.floor(m/60)}:${String(m%60).padSt
 function money(n){return `${Math.round(n).toLocaleString('uk-UA')} Kč`}
 function rateFor(s){return Number(s.rate||localStorage.getItem(K.rate)||180)}
 function payFor(s){return mins(s.start,s.end)/60*rateFor(s)}
-function monthShifts(){return shifts.filter(s=>s.start.slice(0,7)===$('monthPicker').value).sort((a,b)=>new Date(b.start)-new Date(a.start))}
-function setRate(v){localStorage.setItem(K.rate,v||0);$('baseRateTop').value=v;$('baseRateSettings').value=v;render()}
+function monthShifts(){return shifts.filter(s=>s.start.slice(0,7)===selectedMonth).sort((a,b)=>new Date(b.start)-new Date(a.start))}
+function setRate(v){localStorage.setItem(K.rate,v||0);$('baseRateSettings').value=v;$('rateLabel').textContent=`${v||0} Kč`;render()}
 
 function render(){
  const arr=monthShifts();let total=0,first=0,second=0;
@@ -262,7 +293,7 @@ function row(s){const day=new Date(s.start).getDate();return `<div><div class="d
 function drawList(node,arr){node.innerHTML='';if(!arr.length){node.innerHTML='<div class="empty">Ще немає змін</div>';return}arr.forEach(s=>{const el=document.createElement('div');el.className='shift';el.innerHTML=row(s);el.onclick=()=>openShift(s.id);node.appendChild(el)})}
 function renderLists(arr){drawList($('recentShifts'),arr.slice(0,5));drawList($('allShifts'),arr)}
 function renderCalendar(arr){
- const grid=$('calendarGrid');grid.innerHTML='';const [y,m]=$('monthPicker').value.split('-').map(Number),offset=(new Date(y,m-1,1).getDay()+6)%7;
+ const grid=$('calendarGrid');grid.innerHTML='';const [y,m]=selectedMonth.split('-').map(Number),offset=(new Date(y,m-1,1).getDay()+6)%7;
  for(let i=0;i<offset;i++){const x=document.createElement('div');x.className='day blank';grid.appendChild(x)}
  const worked=new Set(arr.map(s=>new Date(s.start).getDate())),days=new Date(y,m,0).getDate();
  for(let i=1;i<=days;i++){const x=document.createElement('div');x.className='day';x.textContent=i;if(worked.has(i))x.classList.add('worked');grid.appendChild(x)}
@@ -285,7 +316,41 @@ $('saveShift').onclick=()=>{const st=new Date(`${$('shiftDate').value}T${$('shif
 $('deleteShift').onclick=()=>{if(editingId&&confirm('Видалити цю зміну?')){shifts=shifts.filter(x=>x.id!==editingId);save();$('shiftDialog').close();render()}};
 function showToast(s){$('toastSummary').textContent=`${dur(mins(s.start,s.end))} год · ${money(payFor(s))}`;$('toast').classList.add('show');setTimeout(()=>$('toast').classList.remove('show'),2800)}
 
-$('monthPicker').onchange=render;$('baseRateTop').oninput=e=>setRate(e.target.value);$('baseRateSettings').oninput=e=>setRate(e.target.value);
+$('baseRateSettings').oninput=e=>setRate(e.target.value);
+
+const monthNames=['Січень','Лютий','Березень','Квітень','Травень','Червень','Липень','Серпень','Вересень','Жовтень','Листопад','Грудень'];
+function updateMonthLabel(){
+ const [y,m]=selectedMonth.split('-').map(Number);
+ $('monthLabel').textContent=`${monthNames[m-1]} ${y}`;
+}
+function openMonthDialog(){
+ const [y,m]=selectedMonth.split('-').map(Number);
+ $('monthSelect').innerHTML=monthNames.map((name,i)=>`<option value="${i+1}">${name}</option>`).join('');
+ const years=[]; for(let yr=y-5;yr<=y+5;yr++) years.push(`<option value="${yr}">${yr}</option>`);
+ $('yearSelect').innerHTML=years.join('');
+ $('monthSelect').value=String(m); $('yearSelect').value=String(y);
+ $('monthDialog').showModal();
+}
+$('monthCard').onclick=openMonthDialog;
+$('cancelMonth').onclick=()=>$('monthDialog').close();
+$('saveMonth').onclick=()=>{
+ const m=String($('monthSelect').value).padStart(2,'0');
+ selectedMonth=`${$('yearSelect').value}-${m}`;
+ updateMonthLabel();
+ $('monthDialog').close();
+ render();
+};
+
+$('rateCard').onclick=()=>{
+ $('rateInput').value=localStorage.getItem(K.rate)||180;
+ $('rateDialog').showModal();
+};
+$('cancelRate').onclick=()=>$('rateDialog').close();
+$('saveRate').onclick=()=>{
+ setRate($('rateInput').value||0);
+ $('rateDialog').close();
+};
+updateMonthLabel();
 $('themeBtn').onclick=()=>applyTheme((localStorage.getItem(K.theme)||'light')==='dark'?'light':'dark');$('themeSelect').onchange=e=>applyTheme(e.target.value);
 document.querySelectorAll('.nav').forEach(b=>b.onclick=()=>{document.querySelectorAll('.nav').forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id===b.dataset.view))});
 if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js');
