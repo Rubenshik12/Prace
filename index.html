@@ -1,226 +1,330 @@
 <!doctype html>
 <html lang="uk">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <meta name="theme-color" content="#17324D" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="Моя робота" />
-  <link rel="manifest" href="manifest.webmanifest" />
-  <link rel="apple-touch-icon" href="icon-192.png" />
-  <title>Моя робота</title>
-  <style>
-    :root{
-      --navy:#17324D;--blue:#2F75B5;--bg:#F5F7FA;--card:#fff;--text:#243447;
-      --muted:#667085;--green:#12B76A;--red:#F04438;--amber:#F79009;--border:#E4E7EC;
-    }
-    *{box-sizing:border-box}
-    body{margin:0;background:var(--bg);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;color:var(--text)}
-    header{background:var(--navy);color:#fff;padding:calc(18px + env(safe-area-inset-top)) 18px 22px}
-    h1{margin:0;font-size:28px}
-    .subtitle{opacity:.78;margin-top:5px;font-size:14px}
-    main{padding:16px;max-width:760px;margin:auto;padding-bottom:calc(32px + env(safe-area-inset-bottom))}
-    .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
-    .card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:16px;box-shadow:0 4px 18px rgba(16,24,40,.05)}
-    .kpi .label{font-size:12px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.04em}
-    .kpi .value{font-size:24px;font-weight:800;margin-top:6px}
-    .full{grid-column:1/-1}
-    .status{font-size:14px;color:var(--muted);margin-bottom:10px}
-    .bigbtn{width:100%;border:0;border-radius:16px;padding:18px;font-size:18px;font-weight:800;color:#fff;margin-top:10px}
-    .start{background:var(--green)}
-    .stop{background:var(--red)}
-    .bigbtn:disabled{opacity:.45}
-    .row{display:flex;gap:10px;align-items:center}
-    input,select,button.small{font:inherit}
-    input,select{width:100%;padding:12px;border:1px solid var(--border);border-radius:12px;background:#fff}
-    button.small{border:1px solid var(--border);background:#fff;border-radius:12px;padding:11px 13px;font-weight:700}
-    .section-title{font-size:18px;font-weight:800;margin:22px 2px 10px}
-    .shift{display:grid;grid-template-columns:1fr auto;gap:10px;padding:14px 0;border-bottom:1px solid var(--border)}
-    .shift:last-child{border-bottom:0}
-    .date{font-weight:800}
-    .meta{font-size:13px;color:var(--muted);margin-top:4px}
-    .money{font-weight:800;text-align:right}
-    .hours{font-size:13px;color:var(--muted);text-align:right;margin-top:4px}
-    .pill{display:inline-block;padding:5px 9px;border-radius:999px;font-size:12px;font-weight:700}
-    .p1{background:#EEF4FF;color:#2F75B5}.p2{background:#FFF4E5;color:#B54708}
-    .empty{text-align:center;color:var(--muted);padding:24px}
-    .toolbar{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-    .danger{color:var(--red)}
-    dialog{border:0;border-radius:18px;padding:0;max-width:420px;width:calc(100% - 28px)}
-    dialog::backdrop{background:rgba(0,0,0,.35)}
-    .modal{padding:18px}
-    .modal h3{margin-top:0}
-    .modal label{display:block;font-size:13px;color:var(--muted);margin:12px 0 6px}
-    @media (min-width:650px){.grid{grid-template-columns:repeat(4,1fr)}}
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0F172A">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Моя робота">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>Моя робота</title>
+<style>
+:root{
+  --bg:#F4F7FB;--surface:#FFFFFF;--surface2:#F8FAFC;--text:#162033;--muted:#748096;
+  --line:#E5EAF0;--navy:#0F172A;--blue:#2563EB;--blueSoft:#EEF4FF;
+  --green:#16A34A;--greenSoft:#ECFDF3;--red:#EF4444;--redSoft:#FEF2F2;
+  --amber:#D97706;--amberSoft:#FFF7ED;--purple:#7C3AED;--purpleSoft:#F5F3FF;
+  --shadow:0 10px 30px rgba(15,23,42,.07);--radius:22px;
+}
+[data-theme="dark"]{
+  --bg:#09111F;--surface:#111B2A;--surface2:#162235;--text:#F4F7FB;--muted:#9AA8BC;
+  --line:#243247;--navy:#06101F;--blue:#60A5FA;--blueSoft:#142B4F;
+  --green:#4ADE80;--greenSoft:#153423;--red:#FB7185;--redSoft:#3A1720;
+  --amber:#FBBF24;--amberSoft:#3A2A10;--purple:#A78BFA;--purpleSoft:#271C47;
+  --shadow:0 12px 34px rgba(0,0,0,.28);
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:var(--bg);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif;color:var(--text)}
+body{padding-bottom:calc(84px + env(safe-area-inset-bottom))}
+button,input,select{font:inherit}
+button{-webkit-tap-highlight-color:transparent}
+.app{max-width:760px;margin:auto}
+.hero{background:linear-gradient(150deg,#0F172A,#172554);color:#fff;padding:calc(18px + env(safe-area-inset-top)) 20px 26px;border-radius:0 0 30px 30px}
+.heroTop{display:flex;align-items:center;justify-content:space-between;gap:14px}
+.hero h1{font-size:31px;line-height:1.05;margin:0;font-weight:850;letter-spacing:-.035em}
+.hero p{margin:8px 0 0;color:#C9D3E4;font-size:14px}
+.heroActions{display:flex;gap:8px}
+.iconBtn{border:0;background:rgba(255,255,255,.1);color:white;width:42px;height:42px;border-radius:14px;font-size:20px}
+main{padding:16px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+.controls{padding:15px;display:grid;grid-template-columns:1.25fr .75fr;gap:12px}
+.field label{display:block;font-size:11px;font-weight:800;letter-spacing:.06em;color:var(--muted);text-transform:uppercase;margin:0 0 7px 2px}
+.field input,.field select{width:100%;height:48px;border:1px solid var(--line);background:var(--surface2);border-radius:15px;padding:0 14px;color:var(--text);font-size:16px;outline:none}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:14px}
+.stat{padding:16px;min-height:108px;display:flex;flex-direction:column;justify-content:space-between}
+.statLabel{font-size:11px;letter-spacing:.06em;text-transform:uppercase;font-weight:800;color:var(--muted)}
+.statValue{font-size:25px;line-height:1;font-weight:850;letter-spacing:-.03em;margin-top:12px}
+.statHint{font-size:12px;color:var(--muted);margin-top:6px}
+.shiftCard{padding:18px;margin-top:14px}
+.shiftHead{display:flex;justify-content:space-between;align-items:center}
+.state{font-size:14px;color:var(--muted);font-weight:650}
+.live{font-size:13px;font-weight:800;color:var(--green)}
+.timer{font-size:34px;font-weight:850;letter-spacing:-.04em;margin:14px 0 2px;display:none}
+.active .timer{display:block}
+.mainBtn{width:100%;height:58px;border:0;border-radius:17px;color:white;font-weight:800;font-size:18px;margin-top:14px}
+.start{background:linear-gradient(135deg,#22C55E,#16A34A)}
+.stop{background:linear-gradient(135deg,#F87171,#EF4444)}
+.secondaryBtn{width:100%;height:49px;border-radius:15px;border:1px solid #BFD1FF;background:var(--blueSoft);color:var(--blue);font-weight:800;font-size:15px;margin-top:10px}
+.linkBtn{width:100%;border:0;background:none;color:var(--red);font-weight:700;padding:10px;margin-top:4px}
+.sectionTitle{display:flex;justify-content:space-between;align-items:center;margin:24px 2px 10px}
+.sectionTitle h2{margin:0;font-size:21px;letter-spacing:-.02em}
+.smallBtn{border:0;background:var(--navy);color:white;border-radius:13px;padding:10px 13px;font-weight:800}
+.tabs{display:flex;gap:8px;overflow:auto;padding-bottom:2px;margin:16px 0 10px}
+.tab{border:1px solid var(--line);background:var(--surface);color:var(--muted);border-radius:999px;padding:9px 13px;font-weight:800;white-space:nowrap}
+.tab.active{background:var(--navy);color:white;border-color:var(--navy)}
+.panel{display:none}.panel.active{display:block}
+.list{padding:4px 16px}
+.shift{display:grid;grid-template-columns:1fr auto;gap:12px;padding:15px 0;border-bottom:1px solid var(--line)}
+.shift:last-child{border-bottom:0}
+.dateLine{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.date{font-size:16px;font-weight:800}
+.meta{font-size:14px;color:var(--muted);margin-top:5px}
+.money{font-size:16px;font-weight:850;text-align:right}
+.hours{font-size:13px;color:var(--muted);text-align:right;margin-top:5px}
+.pill{font-size:11px;font-weight:800;border-radius:999px;padding:5px 8px}
+.p1{background:var(--blueSoft);color:var(--blue)}.p2{background:var(--amberSoft);color:var(--amber)}
+.empty{padding:30px 16px;text-align:center;color:var(--muted);font-size:14px}
+.calendar{padding:14px}
+.calHead{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:6px}
+.calHead div{text-align:center;font-size:11px;color:var(--muted);font-weight:800}
+.calGrid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.day{aspect-ratio:1;border:1px solid var(--line);background:var(--surface2);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:750;position:relative}
+.day.worked{background:var(--greenSoft);color:var(--green);border-color:transparent}
+.day.today:after{content:"";position:absolute;width:5px;height:5px;background:var(--blue);border-radius:50%;bottom:5px}
+.day.blank{visibility:hidden}
+.chartCard{padding:16px}
+canvas{width:100%;height:210px;display:block}
+.insights{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:12px}
+.insight{padding:14px;background:var(--surface2);border-radius:16px;border:1px solid var(--line)}
+.insight b{display:block;font-size:19px;margin-top:6px}
+.insight span{font-size:12px;color:var(--muted);font-weight:800}
+.actions{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.action{min-height:50px;border-radius:15px;border:1px solid var(--line);background:var(--surface);color:var(--blue);font-weight:800;padding:10px}
+.bottomNav{position:fixed;left:50%;transform:translateX(-50%);bottom:0;width:min(760px,100%);display:grid;grid-template-columns:repeat(4,1fr);background:color-mix(in srgb,var(--surface) 92%,transparent);backdrop-filter:blur(18px);border-top:1px solid var(--line);padding:9px 8px calc(9px + env(safe-area-inset-bottom));z-index:20}
+.navBtn{border:0;background:none;color:var(--muted);font-size:11px;font-weight:800;padding:7px 3px}
+.navBtn span{display:block;font-size:21px;margin-bottom:3px}
+.navBtn.active{color:var(--blue)}
+dialog{border:0;border-radius:24px;padding:0;max-width:440px;width:calc(100% - 28px);box-shadow:0 24px 70px rgba(0,0,0,.3);background:var(--surface);color:var(--text)}
+dialog::backdrop{background:rgba(4,10,20,.55);backdrop-filter:blur(3px)}
+.modal{padding:20px}.modal h3{margin:0 0 16px;font-size:22px}
+.modal label{display:block;color:var(--muted);font-size:12px;font-weight:800;margin:12px 0 6px}
+.modal input,.modal select{width:100%;height:48px;border:1px solid var(--line);border-radius:14px;padding:0 13px;background:var(--surface2);color:var(--text)}
+.modalActions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}
+.modalActions button{height:48px;border-radius:14px;border:1px solid var(--line);font-weight:800;background:var(--surface2);color:var(--text)}
+.save{background:var(--navy)!important;color:white!important;border-color:var(--navy)!important}
+.danger{color:var(--red)!important}
+.settingsRow{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}
+.settingsRow:last-child{border-bottom:0}
+@media(max-width:390px){.controls{grid-template-columns:1fr}.statValue{font-size:22px}.hero h1{font-size:28px}}
+@media print{.hero,.bottomNav,.actions,.tabs,.shiftCard,.controls,.smallBtn{display:none!important}body{background:white;color:black}.panel{display:block!important}.card{box-shadow:none;border:1px solid #ddd}}
+</style>
 </head>
 <body>
-<header>
-  <h1>Моя робота</h1>
-  <div class="subtitle">Години та зарплата без ручних підрахунків</div>
+<div class="app">
+<header class="hero">
+  <div class="heroTop">
+    <div><h1>Моя робота</h1><p>Час, зміни та зарплата — автоматично</p></div>
+    <div class="heroActions">
+      <button class="iconBtn" id="themeBtn" aria-label="Тема">◐</button>
+      <button class="iconBtn" id="settingsBtn" aria-label="Налаштування">⚙︎</button>
+    </div>
+  </div>
 </header>
 <main>
-  <div class="card full">
-    <div class="row">
-      <div style="flex:1">
-        <label style="font-size:12px;color:var(--muted);font-weight:700">МІСЯЦЬ</label>
-        <input id="monthPicker" type="month" />
-      </div>
-      <div style="width:150px">
-        <label style="font-size:12px;color:var(--muted);font-weight:700">СТАВКА Kč/ГОД</label>
-        <input id="rate" type="number" min="0" step="1" />
-      </div>
-    </div>
-  </div>
+<section class="card controls">
+  <div class="field"><label>Місяць</label><input id="monthPicker" type="month"></div>
+  <div class="field"><label>Базова ставка Kč/год</label><input id="rate" type="number" min="0" step="1" inputmode="decimal"></div>
+</section>
 
-  <div class="grid" style="margin-top:12px">
-    <div class="card kpi"><div class="label">Змін</div><div class="value" id="kpiShifts">0</div></div>
-    <div class="card kpi"><div class="label">Годин</div><div class="value" id="kpiHours">0:00</div></div>
-    <div class="card kpi"><div class="label">1–15 число</div><div class="value" id="kpiFirst">0 Kč</div></div>
-    <div class="card kpi"><div class="label">16–кінець</div><div class="value" id="kpiSecond">0 Kč</div></div>
-  </div>
+<section class="stats">
+  <div class="card stat"><div class="statLabel">Змін</div><div class="statValue" id="kpiShifts">0</div><div class="statHint">за місяць</div></div>
+  <div class="card stat"><div class="statLabel">Годин</div><div class="statValue" id="kpiHours">0:00</div><div class="statHint">відпрацьовано</div></div>
+  <div class="card stat"><div class="statLabel">1–15 число</div><div class="statValue" id="kpiFirst">0 Kč</div><div class="statHint">перша виплата</div></div>
+  <div class="card stat"><div class="statLabel">16–кінець</div><div class="statValue" id="kpiSecond">0 Kč</div><div class="statHint">друга виплата</div></div>
+</section>
 
-  <div class="card" style="margin-top:12px">
-    <div class="status" id="statusText">Зміна не почата</div>
-    <button id="startBtn" class="bigbtn start">🟢 Почав зміну</button>
-    <button id="stopBtn" class="bigbtn stop">🔴 Закінчив зміну</button>
-  </div>
+<section class="card shiftCard" id="shiftCard">
+  <div class="shiftHead"><div class="state" id="status">Зміна не почата</div><div class="live" id="liveLabel"></div></div>
+  <div class="timer" id="timer">0:00:00</div>
+  <button id="startNowBtn" class="mainBtn start">Я прийшов зараз</button>
+  <button id="setArrivalBtn" class="secondaryBtn">Вказати час приходу</button>
+  <button id="stopBtn" class="mainBtn stop">Закінчити зміну</button>
+  <button id="editArrivalBtn" class="secondaryBtn">Змінити час приходу</button>
+  <button id="cancelActiveBtn" class="linkBtn">Скасувати помилковий старт</button>
+</section>
 
-  <div class="section-title">Зміни за місяць</div>
-  <div class="card" id="shiftList"></div>
+<div class="tabs">
+  <button class="tab active" data-panel="listPanel">Зміни</button>
+  <button class="tab" data-panel="calendarPanel">Календар</button>
+  <button class="tab" data-panel="statsPanel">Статистика</button>
+  <button class="tab" data-panel="dataPanel">Дані</button>
+</div>
 
-  <div class="section-title">Дії</div>
-  <div class="toolbar">
-    <button class="small" id="exportBtn">Експорт CSV</button>
-    <button class="small" id="addManualBtn">Додати вручну</button>
+<section id="listPanel" class="panel active">
+  <div class="sectionTitle"><h2>Зміни за місяць</h2><button class="smallBtn" id="manualBtn">＋ Додати</button></div>
+  <div class="card list" id="shiftList"></div>
+</section>
+
+<section id="calendarPanel" class="panel">
+  <div class="sectionTitle"><h2>Календар</h2></div>
+  <div class="card calendar">
+    <div class="calHead"><div>Пн</div><div>Вт</div><div>Ср</div><div>Чт</div><div>Пт</div><div>Сб</div><div>Нд</div></div>
+    <div class="calGrid" id="calGrid"></div>
   </div>
-  <div class="toolbar" style="margin-top:10px">
-    <button class="small" id="backupBtn">Зберегти копію</button>
-    <button class="small" id="restoreBtn">Відновити копію</button>
+</section>
+
+<section id="statsPanel" class="panel">
+  <div class="sectionTitle"><h2>Статистика</h2></div>
+  <div class="card chartCard"><canvas id="chart"></canvas></div>
+  <div class="insights">
+    <div class="insight"><span>Середня зміна</span><b id="avgShift">0:00</b></div>
+    <div class="insight"><span>Найдовша зміна</span><b id="maxShift">0:00</b></div>
+    <div class="insight"><span>Найкоротша зміна</span><b id="minShift">0:00</b></div>
+    <div class="insight"><span>Середній заробіток</span><b id="avgPay">0 Kč</b></div>
   </div>
-  <input type="file" id="restoreInput" accept="application/json" hidden />
+</section>
+
+<section id="dataPanel" class="panel">
+  <div class="sectionTitle"><h2>Дані та експорт</h2></div>
+  <div class="actions">
+    <button class="action" id="exportBtn">Експорт CSV</button>
+    <button class="action" id="pdfBtn">Експорт PDF</button>
+    <button class="action" id="backupBtn">Зберегти копію</button>
+    <button class="action" id="restoreBtn">Відновити копію</button>
+  </div>
+  <input type="file" id="restoreInput" accept="application/json" hidden>
+</section>
 </main>
+</div>
 
-<dialog id="manualDialog">
-  <div class="modal">
-    <h3>Додати зміну вручну</h3>
-    <label>Дата</label><input id="mDate" type="date">
-    <label>Прийшов</label><input id="mStart" type="time">
-    <label>Пішов</label><input id="mEnd" type="time">
-    <div class="toolbar" style="margin-top:18px">
-      <button class="small" id="cancelManual">Скасувати</button>
-      <button class="small" id="saveManual" style="background:var(--navy);color:white">Зберегти</button>
-    </div>
-  </div>
-</dialog>
+<nav class="bottomNav">
+  <button class="navBtn active" data-panel="listPanel"><span>⌂</span>Головна</button>
+  <button class="navBtn" data-panel="calendarPanel"><span>▦</span>Календар</button>
+  <button class="navBtn" data-panel="statsPanel"><span>⌁</span>Статистика</button>
+  <button class="navBtn" data-panel="dataPanel"><span>•••</span>Більше</button>
+</nav>
+
+<dialog id="shiftDlg"><div class="modal">
+  <h3 id="shiftDlgTitle">Нова зміна</h3>
+  <label>Дата</label><input id="mDate" type="date">
+  <label>Прийшов</label><input id="mStart" type="time">
+  <label>Пішов</label><input id="mEnd" type="time">
+  <label>Ставка для цієї зміни</label><input id="mRate" type="number" min="0" step="1">
+  <div class="modalActions"><button id="deleteShiftBtn" class="danger">Видалити</button><button id="saveShiftBtn" class="save">Зберегти</button></div>
+  <button id="cancelShiftBtn" class="linkBtn">Скасувати</button>
+</div></dialog>
+
+<dialog id="arrivalDlg"><div class="modal">
+  <h3>Час приходу</h3>
+  <label>Дата</label><input id="arrivalDate" type="date">
+  <label>Час</label><input id="arrivalTime" type="time">
+  <div class="modalActions"><button id="cancelArrival">Скасувати</button><button id="saveArrival" class="save">Почати зміну</button></div>
+</div></dialog>
+
+<dialog id="settingsDlg"><div class="modal">
+  <h3>Налаштування</h3>
+  <div class="settingsRow"><span>Тема</span><select id="themeSelect"><option value="system">Як на телефоні</option><option value="light">Світла</option><option value="dark">Темна</option></select></div>
+  <div class="settingsRow"><span>Нагадати завершити через</span><select id="reminderHours"><option value="0">Не нагадувати</option><option value="8">8 годин</option><option value="10">10 годин</option><option value="12">12 годин</option></select></div>
+  <div class="settingsRow"><span>Автозбереження</span><b>Увімкнено</b></div>
+  <button id="requestNotifBtn" class="secondaryBtn">Дозволити сповіщення</button>
+  <button id="closeSettings" class="mainBtn save">Готово</button>
+</div></dialog>
 
 <script>
-const STORAGE_KEY='workTrackerDataV1';
-const RATE_KEY='workTrackerRateV1';
-const ACTIVE_KEY='workTrackerActiveV1';
-let shifts = JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]');
-let active = JSON.parse(localStorage.getItem(ACTIVE_KEY)||'null');
+const KEYS={shifts:'workTrackerDataV1',rate:'workTrackerRateV1',active:'workTrackerActiveV1',theme:'workThemeV1',reminder:'workReminderV1'};
+let shifts=JSON.parse(localStorage.getItem(KEYS.shifts)||'[]').map(s=>({...s,rate:s.rate||null}));
+let active=JSON.parse(localStorage.getItem(KEYS.active)||'null');
+let editingId=null, timerId=null, reminderTimer=null;
+const $=id=>document.getElementById(id);
+const month=$('monthPicker'),rate=$('rate');
+month.value=new Date().toISOString().slice(0,7);
+rate.value=localStorage.getItem(KEYS.rate)||'180';
 
-const $ = id => document.getElementById(id);
-const monthPicker=$('monthPicker'), rateInput=$('rate');
-monthPicker.value = new Date().toISOString().slice(0,7);
-rateInput.value = localStorage.getItem(RATE_KEY)||'180';
+function save(){localStorage.setItem(KEYS.shifts,JSON.stringify(shifts));localStorage.setItem(KEYS.active,JSON.stringify(active))}
+function timeText(x){return new Date(x).toLocaleTimeString('uk-UA',{hour:'2-digit',minute:'2-digit'})}
+function dateText(x){return new Date(x).toLocaleDateString('uk-UA',{day:'2-digit',month:'2-digit',year:'numeric'})}
+function minutes(a,b){return Math.max(0,(new Date(b)-new Date(a))/60000)}
+function duration(m){m=Math.round(m);return `${Math.floor(m/60)}:${String(m%60).padStart(2,'0')}`}
+function money(n){return `${Math.round(n).toLocaleString('uk-UA')} Kč`}
+function shiftRate(s){return Number(s.rate||rate.value||0)}
+function shiftPay(s){return minutes(s.start,s.end)/60*shiftRate(s)}
+function currentMonthShifts(){return shifts.filter(s=>s.start.slice(0,7)===month.value).sort((a,b)=>new Date(b.start)-new Date(a.start))}
+function applyTheme(value){
+  const actual=value==='system'?(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'):value;
+  document.documentElement.dataset.theme=actual;
+  localStorage.setItem(KEYS.theme,value);
+  $('themeSelect').value=value;
+}
+applyTheme(localStorage.getItem(KEYS.theme)||'system');
 
-function save(){
-  localStorage.setItem(STORAGE_KEY,JSON.stringify(shifts));
-  localStorage.setItem(ACTIVE_KEY,JSON.stringify(active));
-}
-function fmtTime(iso){return new Date(iso).toLocaleTimeString('uk-UA',{hour:'2-digit',minute:'2-digit'});}
-function fmtDate(iso){return new Date(iso).toLocaleDateString('uk-UA',{day:'2-digit',month:'2-digit',year:'numeric'});}
-function minutesBetween(a,b){
-  let diff=(new Date(b)-new Date(a))/60000;
-  return diff<0?diff+1440:diff;
-}
-function fmtDuration(mins){
-  const h=Math.floor(mins/60), m=Math.round(mins%60);
-  return `${h}:${String(m).padStart(2,'0')}`;
-}
-function money(n){return `${Math.round(n).toLocaleString('uk-UA')} Kč`;}
 function render(){
-  const rate=parseFloat(rateInput.value)||0;
-  localStorage.setItem(RATE_KEY,rate);
-  const selected=monthPicker.value;
-  const monthShifts=shifts.filter(s=>s.start.slice(0,7)===selected).sort((a,b)=>new Date(b.start)-new Date(a.start));
-  let totalM=0, first=0, second=0;
-  monthShifts.forEach(s=>{
-    const mins=minutesBetween(s.start,s.end), pay=mins/60*rate, day=new Date(s.start).getDate();
-    totalM+=mins; if(day<=15) first+=pay; else second+=pay;
-  });
-  $('kpiShifts').textContent=monthShifts.length;
-  $('kpiHours').textContent=fmtDuration(totalM);
-  $('kpiFirst').textContent=money(first);
-  $('kpiSecond').textContent=money(second);
-
-  $('statusText').textContent=active?`Зміна почата о ${fmtTime(active.start)}`:'Зміна не почата';
-  $('startBtn').disabled=!!active;
-  $('stopBtn').disabled=!active;
-
-  const list=$('shiftList'); list.innerHTML='';
-  if(!monthShifts.length){list.innerHTML='<div class="empty">У цьому місяці ще немає змін</div>';return;}
-  monthShifts.forEach((s,idx)=>{
-    const mins=minutesBetween(s.start,s.end), pay=mins/60*rate, day=new Date(s.start).getDate();
-    const el=document.createElement('div'); el.className='shift';
-    el.innerHTML=`<div><div class="date">${fmtDate(s.start)} <span class="pill ${day<=15?'p1':'p2'}">${day<=15?'1-а виплата':'2-а виплата'}</span></div>
-      <div class="meta">${fmtTime(s.start)} → ${fmtTime(s.end)}</div></div>
-      <div><div class="money">${money(pay)}</div><div class="hours">${fmtDuration(mins)} год</div></div>`;
-    el.addEventListener('dblclick',()=>{ if(confirm('Видалити цю зміну?')){shifts=shifts.filter(x=>x.id!==s.id);save();render();}});
-    list.appendChild(el);
-  });
+  const baseRate=parseFloat(rate.value)||0;localStorage.setItem(KEYS.rate,baseRate);
+  const arr=currentMonthShifts();
+  let total=0,first=0,second=0;
+  arr.forEach(s=>{const m=minutes(s.start,s.end),p=shiftPay(s),day=new Date(s.start).getDate();total+=m;day<=15?first+=p:second+=p});
+  $('kpiShifts').textContent=arr.length;$('kpiHours').textContent=duration(total);$('kpiFirst').textContent=money(first);$('kpiSecond').textContent=money(second);
+  const card=$('shiftCard');card.classList.toggle('active',!!active);
+  $('startNowBtn').hidden=!!active;$('setArrivalBtn').hidden=!!active;$('stopBtn').hidden=!active;$('editArrivalBtn').hidden=!active;$('cancelActiveBtn').hidden=!active;
+  $('status').textContent=active?`Почато о ${timeText(active.start)}`:'Зміна не почата';$('liveLabel').textContent=active?'Триває':'';
+  renderTimer();renderList(arr);renderCalendar(arr);renderStats(arr);scheduleReminder();
 }
-$('startBtn').onclick=()=>{
-  active={start:new Date().toISOString()};
-  save();render();
-};
-$('stopBtn').onclick=()=>{
-  if(!active)return;
-  const end=new Date().toISOString();
-  shifts.push({id:crypto.randomUUID?crypto.randomUUID():String(Date.now()),start:active.start,end});
-  active=null;save();render();
-};
-monthPicker.onchange=render;
-rateInput.oninput=render;
+function renderTimer(){
+  clearInterval(timerId);
+  if(!active){$('timer').textContent='0:00:00';return}
+  const tick=()=>{const sec=Math.max(0,Math.floor((Date.now()-new Date(active.start))/1000));$('timer').textContent=`${Math.floor(sec/3600)}:${String(Math.floor(sec%3600/60)).padStart(2,'0')}:${String(sec%60).padStart(2,'0')}`};
+  tick();timerId=setInterval(tick,1000);
+}
+function renderList(arr){
+  const list=$('shiftList');list.innerHTML='';
+  if(!arr.length){list.innerHTML='<div class="empty">У цьому місяці ще немає змін</div>';return}
+  arr.forEach(s=>{const m=minutes(s.start,s.end),day=new Date(s.start).getDate();const el=document.createElement('div');el.className='shift';el.innerHTML=`<div><div class="dateLine"><span class="date">${dateText(s.start)}</span><span class="pill ${day<=15?'p1':'p2'}">${day<=15?'1-а виплата':'2-а виплата'}</span></div><div class="meta">${timeText(s.start)} → ${timeText(s.end)} · ${shiftRate(s)} Kč/год</div></div><div><div class="money">${money(shiftPay(s))}</div><div class="hours">${duration(m)} год</div></div>`;el.onclick=()=>openEdit(s.id);list.appendChild(el)})
+}
+function renderCalendar(arr){
+  const grid=$('calGrid');grid.innerHTML='';const [y,m]=month.value.split('-').map(Number);const first=new Date(y,m-1,1);let offset=(first.getDay()+6)%7;for(let i=0;i<offset;i++){const x=document.createElement('div');x.className='day blank';grid.appendChild(x)}
+  const days=new Date(y,m,0).getDate(),worked=new Set(arr.map(s=>new Date(s.start).getDate())),today=new Date();
+  for(let d=1;d<=days;d++){const x=document.createElement('div');x.className='day';x.textContent=d;if(worked.has(d))x.classList.add('worked');if(today.getFullYear()===y&&today.getMonth()===m-1&&today.getDate()===d)x.classList.add('today');grid.appendChild(x)}
+}
+function renderStats(arr){
+  const durations=arr.map(s=>minutes(s.start,s.end));$('avgShift').textContent=durations.length?duration(durations.reduce((a,b)=>a+b,0)/durations.length):'0:00';$('maxShift').textContent=durations.length?duration(Math.max(...durations)):'0:00';$('minShift').textContent=durations.length?duration(Math.min(...durations)):'0:00';$('avgPay').textContent=arr.length?money(arr.reduce((a,s)=>a+shiftPay(s),0)/arr.length):'0 Kč';
+  drawChart(arr);
+}
+function drawChart(arr){
+  const c=$('chart'),ctx=c.getContext('2d'),dpr=devicePixelRatio||1,w=c.clientWidth,h=210;c.width=w*dpr;c.height=h*dpr;ctx.scale(dpr,dpr);ctx.clearRect(0,0,w,h);
+  const css=getComputedStyle(document.documentElement),line=css.getPropertyValue('--line').trim(),text=css.getPropertyValue('--muted').trim(),blue=css.getPropertyValue('--blue').trim();
+  const data=[...arr].sort((a,b)=>new Date(a.start)-new Date(b.start)).slice(-12);if(!data.length){ctx.fillStyle=text;ctx.font='14px sans-serif';ctx.fillText('Додай зміни, щоб побачити графік',18,40);return}
+  const vals=data.map(shiftPay),max=Math.max(...vals,1);ctx.strokeStyle=line;ctx.beginPath();ctx.moveTo(32,180);ctx.lineTo(w-8,180);ctx.stroke();
+  const gap=8,bw=Math.max(12,(w-55-gap*(data.length-1))/data.length);data.forEach((s,i)=>{const x=32+i*(bw+gap),bh=140*shiftPay(s)/max,y=180-bh;ctx.fillStyle=blue;ctx.beginPath();ctx.roundRect(x,y,bw,bh,6);ctx.fill();ctx.fillStyle=text;ctx.font='10px sans-serif';ctx.textAlign='center';ctx.fillText(new Date(s.start).getDate(),x+bw/2,198)});ctx.textAlign='start';
+}
+function switchPanel(id){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active',p.id===id));
+  document.querySelectorAll('.tab,.navBtn').forEach(b=>b.classList.toggle('active',b.dataset.panel===id));
+  if(id==='statsPanel')setTimeout(()=>drawChart(currentMonthShifts()),50);
+}
+document.querySelectorAll('[data-panel]').forEach(b=>b.onclick=()=>switchPanel(b.dataset.panel));
 
-$('exportBtn').onclick=()=>{
-  const rate=parseFloat(rateInput.value)||0;
-  const rows=[['Дата','Прийшов','Пішов','Години','Ставка','Зарплата','Виплата']];
-  shifts.sort((a,b)=>new Date(a.start)-new Date(b.start)).forEach(s=>{
-    const mins=minutesBetween(s.start,s.end), day=new Date(s.start).getDate();
-    rows.push([fmtDate(s.start),fmtTime(s.start),fmtTime(s.end),(mins/60).toFixed(2),rate,(mins/60*rate).toFixed(2),day<=15?'1–15':'16–кінець']);
-  });
-  const csv='\ufeff'+rows.map(r=>r.map(v=>`"${String(v).replaceAll('"','""')}"`).join(';')).join('\n');
-  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='robochi_zminy.csv';a.click();
-};
-$('backupBtn').onclick=()=>{
-  const data={shifts,active,rate:rateInput.value};
-  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));a.download='robota_backup.json';a.click();
-};
+$('startNowBtn').onclick=()=>{active={start:new Date().toISOString()};save();render()};
+$('stopBtn').onclick=()=>{if(!active)return;shifts.push({id:crypto.randomUUID?crypto.randomUUID():String(Date.now()),start:active.start,end:new Date().toISOString(),rate:null});active=null;save();render()};
+$('cancelActiveBtn').onclick=()=>{if(confirm('Скасувати початок зміни?')){active=null;save();render()}};
+$('setArrivalBtn').onclick=()=>openArrival(false);$('editArrivalBtn').onclick=()=>openArrival(true);
+function openArrival(edit){const dt=edit&&active?new Date(active.start):new Date();$('arrivalDate').value=dt.toISOString().slice(0,10);$('arrivalTime').value=dt.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});$('arrivalDlg').showModal()}
+$('cancelArrival').onclick=()=>$('arrivalDlg').close();
+$('saveArrival').onclick=()=>{const d=$('arrivalDate').value,t=$('arrivalTime').value;if(!d||!t)return alert('Вкажи дату та час');const chosen=new Date(`${d}T${t}`);if(chosen>new Date())return alert('Час не може бути в майбутньому');active={start:chosen.toISOString()};save();$('arrivalDlg').close();render()};
+
+function openNew(){editingId=null;$('shiftDlgTitle').textContent='Нова зміна';$('deleteShiftBtn').hidden=true;const now=new Date();$('mDate').value=now.toISOString().slice(0,10);$('mStart').value='09:00';$('mEnd').value='18:00';$('mRate').value=rate.value;$('shiftDlg').showModal()}
+function openEdit(id){const s=shifts.find(x=>x.id===id);if(!s)return;editingId=id;$('shiftDlgTitle').textContent='Редагування зміни';$('deleteShiftBtn').hidden=false;const st=new Date(s.start),en=new Date(s.end);$('mDate').value=st.toISOString().slice(0,10);$('mStart').value=st.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});$('mEnd').value=en.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});$('mRate').value=shiftRate(s);$('shiftDlg').showModal()}
+$('manualBtn').onclick=openNew;$('cancelShiftBtn').onclick=()=>$('shiftDlg').close();
+$('saveShiftBtn').onclick=()=>{const d=$('mDate').value,a=$('mStart').value,b=$('mEnd').value,r=Number($('mRate').value||rate.value);if(!d||!a||!b)return alert('Заповни дату та час');const st=new Date(`${d}T${a}`),en=new Date(`${d}T${b}`);if(en<=st)return alert('Час виходу має бути пізніше');if(editingId){const i=shifts.findIndex(x=>x.id===editingId);shifts[i]={...shifts[i],start:st.toISOString(),end:en.toISOString(),rate:r}}else shifts.push({id:crypto.randomUUID?crypto.randomUUID():String(Date.now()),start:st.toISOString(),end:en.toISOString(),rate:r});save();$('shiftDlg').close();render()};
+$('deleteShiftBtn').onclick=()=>{if(editingId&&confirm('Видалити цю зміну?')){shifts=shifts.filter(x=>x.id!==editingId);save();$('shiftDlg').close();render()}};
+
+month.onchange=render;rate.oninput=render;
+$('themeBtn').onclick=()=>{const cur=localStorage.getItem(KEYS.theme)||'system';applyTheme(cur==='dark'?'light':'dark');render()};
+$('settingsBtn').onclick=()=>{$('themeSelect').value=localStorage.getItem(KEYS.theme)||'system';$('reminderHours').value=localStorage.getItem(KEYS.reminder)||'0';$('settingsDlg').showModal()};
+$('themeSelect').onchange=e=>{applyTheme(e.target.value);render()};
+$('reminderHours').onchange=e=>{localStorage.setItem(KEYS.reminder,e.target.value);scheduleReminder()};
+$('closeSettings').onclick=()=>$('settingsDlg').close();
+$('requestNotifBtn').onclick=async()=>{if(!('Notification'in window))return alert('Сповіщення не підтримуються');const p=await Notification.requestPermission();alert(p==='granted'?'Сповіщення дозволені':'Сповіщення не дозволені')};
+function scheduleReminder(){clearTimeout(reminderTimer);if(!active)return;const hrs=Number(localStorage.getItem(KEYS.reminder)||0);if(!hrs)return;const delay=new Date(active.start).getTime()+hrs*3600000-Date.now();if(delay<=0)return;reminderTimer=setTimeout(()=>{if(Notification.permission==='granted')new Notification('Моя робота',{body:'Зміна ще триває. Не забудь натиснути «Закінчити зміну».'});else alert('Зміна ще триває. Не забудь її завершити.')},delay)}
+
+$('exportBtn').onclick=()=>{const rows=[['Дата','Прийшов','Пішов','Години','Ставка','Зарплата','Виплата']];shifts.sort((a,b)=>new Date(a.start)-new Date(b.start)).forEach(s=>{const m=minutes(s.start,s.end),day=new Date(s.start).getDate();rows.push([dateText(s.start),timeText(s.start),timeText(s.end),(m/60).toFixed(2),shiftRate(s),shiftPay(s).toFixed(2),day<=15?'1–15':'16–кінець'])});const csv='\ufeff'+rows.map(r=>r.map(v=>`"${String(v).replaceAll('"','""')}"`).join(';')).join('\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='robochi_zminy.csv';a.click()};
+$('pdfBtn').onclick=()=>window.print();
+$('backupBtn').onclick=()=>{const data={shifts,active,rate:rate.value,theme:localStorage.getItem(KEYS.theme),reminder:localStorage.getItem(KEYS.reminder)};const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));a.download='robota_backup.json';a.click()};
 $('restoreBtn').onclick=()=>$('restoreInput').click();
-$('restoreInput').onchange=async e=>{
-  const file=e.target.files[0]; if(!file)return;
-  try{
-    const data=JSON.parse(await file.text());
-    shifts=data.shifts||[];active=data.active||null;rateInput.value=data.rate||180;save();render();
-  }catch{alert('Не вдалося прочитати файл резервної копії.');}
-};
-const dlg=$('manualDialog');
-$('addManualBtn').onclick=()=>{
-  $('mDate').value=new Date().toISOString().slice(0,10);
-  $('mStart').value='09:00';$('mEnd').value='18:00';dlg.showModal();
-};
-$('cancelManual').onclick=()=>dlg.close();
-$('saveManual').onclick=()=>{
-  const d=$('mDate').value,s=$('mStart').value,e=$('mEnd').value;
-  if(!d||!s||!e){alert('Заповни дату та час.');return;}
-  shifts.push({id:crypto.randomUUID?crypto.randomUUID():String(Date.now()),start:new Date(`${d}T${s}`).toISOString(),end:new Date(`${d}T${e}`).toISOString()});
-  save();dlg.close();render();
-};
-if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
+$('restoreInput').onchange=async e=>{try{const x=JSON.parse(await e.target.files[0].text());shifts=x.shifts||[];active=x.active||null;rate.value=x.rate||180;if(x.theme)applyTheme(x.theme);if(x.reminder)localStorage.setItem(KEYS.reminder,x.reminder);save();render()}catch{alert('Не вдалося прочитати резервну копію')}};
+
+addEventListener('resize',()=>drawChart(currentMonthShifts()));
+if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js');
 render();
 </script>
 </body>
