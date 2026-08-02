@@ -1,1 +1,38 @@
-const CACHE='moya-robota-v9-calendar-complete';const ASSETS=['./','./index.html','./styles.css','./manifest.webmanifest','./icon-192.png','./icon-512.png','./src/app.js','./src/state.js','./src/storage.js','./src/payroll.js','./src/format.js','./src/ui.js'];self.addEventListener('install',e=>{self.skipWaiting();e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)))});self.addEventListener('activate',e=>e.waitUntil(Promise.all([clients.claim(),caches.keys().then(k=>Promise.all(k.filter(x=>x!==CACHE).map(x=>caches.delete(x))))])));self.addEventListener('fetch',e=>e.respondWith(fetch(e.request).catch(()=>caches.match(e.request))));
+const CACHE='moya-robota-v9-1-stable-20260803';
+const ASSETS=[
+ './',
+ './index.html',
+ './styles.css?v=v9-1-stable-20260803',
+ './manifest.webmanifest?v=v9-1-stable-20260803',
+ './icon-192.png',
+ './icon-512.png',
+ './src/app.js?v=v9-1-stable-20260803',
+ './src/state.js?v=v9-1-stable-20260803',
+ './src/storage.js?v=v9-1-stable-20260803',
+ './src/payroll.js?v=v9-1-stable-20260803',
+ './src/format.js?v=v9-1-stable-20260803',
+ './src/ui.js?v=v9-1-stable-20260803'
+];
+self.addEventListener('install',event=>{
+ self.skipWaiting();
+ event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(ASSETS)));
+});
+self.addEventListener('activate',event=>{
+ event.waitUntil(Promise.all([
+  self.clients.claim(),
+  caches.keys().then(keys=>Promise.all(keys.filter(key=>key!==CACHE).map(key=>caches.delete(key))))
+ ]));
+});
+self.addEventListener('fetch',event=>{
+ if(event.request.mode==='navigate'){
+  event.respondWith(fetch(event.request).catch(()=>caches.match('./index.html')));
+  return;
+ }
+ event.respondWith(
+  fetch(event.request).then(response=>{
+   const copy=response.clone();
+   caches.open(CACHE).then(cache=>cache.put(event.request,copy));
+   return response;
+  }).catch(()=>caches.match(event.request))
+ );
+});
