@@ -358,3 +358,69 @@ main{
  .calendarSummary{grid-template-columns:1fr 1fr}
  .calendarStat:last-child{grid-column:span 2}
 }
+
+/* v9.2 — календар завжди вміщується у ширину iPhone */
+.appVersion{
+ margin-top:6px;
+ color:rgba(199,211,229,.72);
+ font-size:10px;
+ font-weight:800;
+ letter-spacing:.06em;
+ text-transform:uppercase;
+}
+html,body,.shell,main,.view{
+ max-width:100%;
+ overflow-x:hidden!important;
+}
+.calendar,
+.calendarMonthBar,
+.calendarSummary,
+.calendarHead,
+.calendarGrid{
+ width:100%;
+ min-width:0!important;
+ max-width:100%;
+}
+.calendar{
+ padding:12px;
+ overflow:hidden;
+}
+.calendarHead,
+.calendarGrid{
+ grid-template-columns:repeat(7,minmax(0,1fr))!important;
+ gap:5px;
+}
+.calendarHead > *,
+.calendarGrid > *{
+ min-width:0!important;
+ max-width:100%;
+}
+.day{
+ width:100%!important;
+ min-width:0!important;
+ min-height:0!important;
+ height:auto!important;
+ aspect-ratio:1 / 1;
+ padding:0;
+ border-radius:12px;
+ overflow:hidden;
+}
+.day.worked{
+ padding-bottom:9px;
+}
+.dayAmount{
+ max-width:calc(100% - 4px);
+ font-size:7.5px;
+}
+@media(max-width:390px){
+ .calendar{padding:10px}
+ .calendarHead,.calendarGrid{gap:4px}
+ .calendarHead div{font-size:10px}
+ .day{font-size:12px;border-radius:11px}
+ .dayAmount{font-size:7px}
+}
+@media(max-width:350px){
+ .calendar{padding:8px}
+ .calendarHead,.calendarGrid{gap:3px}
+ .day{font-size:11px;border-radius:10px}
+}
