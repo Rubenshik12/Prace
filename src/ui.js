@@ -1,7 +1,7 @@
 
 export function template(){
  return `<div class="shell">
- <header class="hero"><div class="heroRow"><div><div class="greeting" id="greeting"></div><h1>Моя робота</h1><p>Час • зарплата • плани</p><div class="appVersion">v9.2 Stable</div></div><div class="heroButtons"><button class="iconButton" id="themeButton">◐</button><button class="iconButton" data-open="settingsView">⚙︎</button></div></div></header>
+ <header class="hero"><div class="heroRow"><div><div class="greeting" id="greeting"></div><h1>Моя робота</h1><p>Час • зарплата • плани</p><div class="appVersion">v10.0 Plans</div></div><div class="heroButtons"><button class="iconButton" id="themeButton">◐</button><button class="iconButton" data-open="settingsView">⚙︎</button></div></div></header>
  <main>
   <section class="view active" id="homeView">
   <section class="card dayHero" id="dayHero">
@@ -113,15 +113,47 @@ export function template(){
  <div class="card calendar"><div class="calendarHead"><div>Пн</div><div>Вт</div><div>Ср</div><div>Чт</div><div>Пт</div><div>Сб</div><div>Нд</div></div><div class="calendarGrid" id="calendarGrid"></div></div></section>
   <section class="view" id="statsView"><div class="sectionTitle"><h2>Статистика</h2></div><div class="metrics"><div class="card metric"><div class="label">Заробіток</div><strong id="totalValue">0 Kč</strong><div class="hint">за місяць</div></div><div class="card metric"><div class="label">Середня зміна</div><strong id="avgValue">0:00</strong><div class="hint">тривалість</div></div></div><div class="sectionTitle"><h2>Усі зміни</h2></div><div class="card list" id="allList"></div></section>
   <section class="view" id="plansView">
- <div class="sectionTitle"><h2>Плани</h2><button class="smallButton" id="addPlanButton">＋ Новий план</button></div>
- <div class="planFilters">
-  <button class="filterChip active" data-plan-filter="all">Усі</button>
-  <button class="filterChip" data-plan-filter="today">Сьогодні</button>
-  <button class="filterChip" data-plan-filter="open">Невиконані</button>
+ <div class="plansHeader">
+  <div>
+   <div class="eyebrow">Організуй свій день</div>
+   <h2>Плани</h2>
+  </div>
+  <button class="smallButton" id="addPlanButton">＋ Додати</button>
  </div>
- <div class="card plans" id="plansList"></div>
+
+ <div class="plansTabs">
+  <button class="planTab active" data-plan-filter="today">Сьогодні</button>
+  <button class="planTab" data-plan-filter="tomorrow">Завтра</button>
+  <button class="planTab" data-plan-filter="all">Усі</button>
+ </div>
+
+ <div class="card plansProgressCard">
+  <div class="progressRing" id="plansProgressRing">
+   <div class="progressRingInner">
+    <strong id="plansProgressCount">0/0</strong>
+    <span>виконано</span>
+   </div>
+  </div>
+  <div class="plansProgressText">
+   <span class="label">На сьогодні</span>
+   <strong id="plansProgressTitle">Планів немає</strong>
+   <p id="plansProgressSubtitle">Додай перший план</p>
+  </div>
+ </div>
+
+ <div class="categoryScroller" id="categoryScroller">
+  <button class="categoryChip active" data-category="all">Усі</button>
+  <button class="categoryChip" data-category="work">💼 Робота</button>
+  <button class="categoryChip" data-category="personal">👤 Особисте</button>
+  <button class="categoryChip" data-category="shopping">🛒 Покупки</button>
+  <button class="categoryChip" data-category="study">📚 Навчання</button>
+  <button class="categoryChip" data-category="other">✨ Інше</button>
+ </div>
+
+ <div class="card plans premiumPlans" id="plansList"></div>
 </section>
-  <section class="view" id="settingsView">
+
+<section class="view" id="settingsView">
  <div class="sectionTitle"><h2>Налаштування</h2></div>
  <div class="card settingsCard">
   <div class="setting"><div><b>Базова ставка</b><div class="hint">Для нових змін</div></div><input id="settingsRate" type="number"></div>
@@ -146,7 +178,30 @@ export function template(){
  <dialog id="rateDialog"><div class="modal"><h3>Базова ставка</h3><label>Kč за годину</label><input id="rateInput" type="number"><div class="modalActions"><button id="cancelRate">Скасувати</button><button class="save" id="saveRate">Зберегти</button></div></div></dialog>
  <dialog id="startDialog"><div class="modal"><h3>Час приходу</h3><label>Дата</label><input id="startDate" type="date"><label>Час</label><input id="startTime" type="time"><div class="modalActions"><button id="cancelStart">Скасувати</button><button class="save" id="saveStart">Почати</button></div></div></dialog>
  <dialog id="shiftDialog"><div class="modal"><h3 id="shiftTitle">Нова зміна</h3><label>Дата</label><input id="shiftDate" type="date"><label>Прийшов</label><input id="shiftStart" type="time"><label>Пішов</label><input id="shiftEnd" type="time"><label>Ставка</label><input id="shiftRate" type="number"><div id="holidayField"><label class="inlineCheck"><input id="shiftHoliday" type="checkbox"> Святковий день</label></div><div id="tipsField"><label>Чайові</label><input id="shiftTips" type="number" value="0"></div><label>Примітка</label><input id="shiftNote" type="text" placeholder="Необов’язково"><div class="modalActions"><button id="deleteShift">Видалити</button><button class="save" id="saveShift">Зберегти</button></div></div></dialog>
- <dialog id="planDialog"><div class="modal"><h3>Новий план</h3><label>Дата</label><input id="planDate" type="date"><label>Завдання</label><input id="planText" type="text" placeholder="Що потрібно зробити?"><label>Пріоритет</label><select id="planPriority"><option value="normal">Звичайний</option><option value="high">Важливий</option><option value="low">Низький</option></select><div class="modalActions"><button id="cancelPlan">Скасувати</button><button class="save" id="savePlan">Додати</button></div></div></dialog>
+ <dialog id="planDialog"><div class="modal"><h3 id="planDialogTitle">Новий план</h3>
+    <label>Дата</label><input id="planDate" type="date">
+    <label>Час</label><input id="planTime" type="time">
+    <label>Завдання</label><input id="planText" type="text" placeholder="Що потрібно зробити?">
+    <label>Категорія</label><select id="planCategory">
+      <option value="work">Робота</option>
+      <option value="personal">Особисте</option>
+      <option value="shopping">Покупки</option>
+      <option value="study">Навчання</option>
+      <option value="other">Інше</option>
+    </select>
+    <label>Пріоритет</label><select id="planPriority">
+      <option value="normal">Звичайний</option>
+      <option value="high">Важливий</option>
+      <option value="low">Низький</option>
+    </select>
+    <label>Повторення</label><select id="planRepeat">
+      <option value="none">Не повторювати</option>
+      <option value="daily">Щодня</option>
+      <option value="weekly">Щотижня</option>
+      <option value="monthly">Щомісяця</option>
+    </select>
+    <div class="modalActions"><button id="deletePlanDialog">Видалити</button><button class="save" id="savePlan">Зберегти</button></div>
+    <button class="dangerLink" id="cancelPlan">Закрити</button></div></dialog>
  <dialog id="dayDialog"><div class="modal"><h3 id="dayDialogTitle">День</h3><div id="dayDialogSummary" class="daySummary"></div><div id="dayPlansSummary" class="dayPlansSummary"></div>
     <div class="dayNoteBox">
       <label>Нотатка дня</label>

@@ -1,8 +1,8 @@
 
-import {state} from './state.js?v=v9-2-stable-20260803-1';
-import {fmt} from './format.js?v=v9-2-stable-20260803-1';
-import {minutes,pay,summary,daySummary} from './payroll.js?v=v9-2-stable-20260803-1';
-import {template} from './ui.js?v=v9-2-stable-20260803-1';
+import {state} from './state.js?v=v10-plans-20260803-1';
+import {fmt} from './format.js?v=v10-plans-20260803-1';
+import {minutes,pay,summary,daySummary} from './payroll.js?v=v10-plans-20260803-1';
+import {template} from './ui.js?v=v10-plans-20260803-1';
 
 state.shifts=Array.isArray(state.shifts)?state.shifts:[];
 state.plans=Array.isArray(state.plans)?state.plans:[];
@@ -10,7 +10,7 @@ state.settings=state.settings&&typeof state.settings==='object'?state.settings:{
 state.dayNotes=state.dayNotes&&typeof state.dayNotes==='object'?state.dayNotes:{};
 document.getElementById('app').innerHTML=template();
 const $=id=>document.getElementById(id);
-let timerId=null,editingId=null,planFilter='all',selectedDay=null;
+let timerId=null,editingId=null,editingPlanId=null,planFilter='today',planCategory='all',selectedDay=null;
 const monthNames=['Січень','Лютий','Березень','Квітень','Травень','Червень','Липень','Серпень','Вересень','Жовтень','Листопад','Грудень'];
 
 function applyTheme(){document.documentElement.dataset.theme=state.theme;$('settingsTheme').value=state.theme}
@@ -53,17 +53,65 @@ function renderShiftList(node,items){
  items.forEach(s=>{const row=document.createElement('div');row.className='shift';row.innerHTML=`<div class="shiftLeft"><div class="shiftDate">${fmt.date(s.start)}</div><div class="meta">${fmt.time(s.start)} → ${fmt.time(s.end)} · ${Number(s.rate||state.rate)} Kč/год</div></div><div><div class="money">${fmt.money(shiftPay(s))}</div><div class="hours">${fmt.duration(minutes(s.start,s.end))} год</div></div>`;row.onclick=()=>openShift(s.id);node.appendChild(row)});
 }
 function renderPlans(){
- const node=$('plansList');node.innerHTML='';
- const today=new Date().toISOString().slice(0,10);
- let sorted=[...state.plans].sort((a,b)=>a.date.localeCompare(b.date));
- if(planFilter==='today')sorted=sorted.filter(p=>p.date===today);
- if(planFilter==='open')sorted=sorted.filter(p=>!p.done);
- if(!sorted.length){node.innerHTML='<div class="empty">У цьому розділі планів немає</div>';return}
- sorted.forEach(p=>{
-  const row=document.createElement('div');row.className='plan';
-  row.innerHTML=`<span class="priorityDot ${p.priority||'normal'}"></span><button class="check ${p.done?'done':''}">${p.done?'✓':''}</button><div class="planText ${p.done?'done':''}">${p.text}<div class="meta">${new Date(p.date+'T12:00').toLocaleDateString('uk-UA',{weekday:'short',day:'numeric',month:'long'})}</div></div><button class="deletePlan">×</button>`;
-  row.querySelector('.check').onclick=()=>{p.done=!p.done;save();render()};
-  row.querySelector('.deletePlan').onclick=()=>{state.plans=state.plans.filter(x=>x.id!==p.id);save();render()};
+ const node=$('plansList');
+ node.innerHTML='';
+ const today=new Date();
+ const todayKey=today.toISOString().slice(0,10);
+ const tomorrow=new Date(today);tomorrow.setDate(today.getDate()+1);
+ const tomorrowKey=tomorrow.toISOString().slice(0,10);
+
+ let items=[...state.plans];
+ if(planFilter==='today')items=items.filter(p=>p.date===todayKey);
+ if(planFilter==='tomorrow')items=items.filter(p=>p.date===tomorrowKey);
+ if(planCategory!=='all')items=items.filter(p=>(p.category||'other')===planCategory);
+
+ items.sort((a,b)=>{
+  if(a.done!==b.done)return a.done?1:-1;
+  return `${a.date||''} ${a.time||''}`.localeCompare(`${b.date||''} ${b.time||''}`);
+ });
+
+ const todayItems=state.plans.filter(p=>p.date===todayKey);
+ const doneToday=todayItems.filter(p=>p.done).length;
+ const totalToday=todayItems.length;
+ const angle=totalToday?Math.round(doneToday/totalToday*360):0;
+ $('plansProgressRing').style.setProperty('--progress',`${angle}deg`);
+ $('plansProgressCount').textContent=`${doneToday}/${totalToday}`;
+ $('plansProgressTitle').textContent=totalToday?`${doneToday} із ${totalToday} виконано`:'Планів немає';
+ $('plansProgressSubtitle').textContent=totalToday?(doneToday===totalToday?'Усе виконано 🎉':'Продовжуй, чудовий темп'):'Додай перший план';
+
+ if(!items.length){
+  node.innerHTML='<div class="planEmpty"><strong>Планів немає</strong>Додай новий план на цей день</div>';
+  return;
+ }
+
+ const icons={work:'💼',personal:'👤',shopping:'🛒',study:'📚',other:'✨'};
+ const labels={work:'Робота',personal:'Особисте',shopping:'Покупки',study:'Навчання',other:'Інше'};
+ const repeatLabels={daily:'Щодня',weekly:'Щотижня',monthly:'Щомісяця'};
+
+ items.forEach(p=>{
+  const category=p.category||'other';
+  const row=document.createElement('div');
+  row.className=`premiumPlan ${p.done?'done':''}`;
+  const dateLabel=new Date(p.date+'T12:00').toLocaleDateString('uk-UA',{day:'numeric',month:'short'});
+  row.innerHTML=`
+   <div class="planIcon ${category}">${icons[category]}</div>
+   <div class="planMain">
+    <div class="planTitleRow"><strong>${p.text}</strong><span class="priorityBadge ${p.priority||'normal'}"></span></div>
+    <div class="planMetaRow">
+     <span class="planMetaTag">${dateLabel}${p.time?` · ${p.time}`:''}</span>
+     <span class="planMetaTag">${labels[category]}</span>
+     ${p.repeat&&p.repeat!=='none'?`<span class="planMetaTag">↻ ${repeatLabels[p.repeat]}</span>`:''}
+    </div>
+   </div>
+   <button class="planCheckButton ${p.done?'done':''}">${p.done?'✓':''}</button>`;
+  row.querySelector('.planCheckButton').onclick=event=>{
+   event.stopPropagation();
+   p.done=!p.done;
+   save();
+   render();
+  };
+  row.querySelector('.planMain').onclick=()=>openPlanDialog(p.date,p.id);
+  row.querySelector('.planIcon').onclick=()=>openPlanDialog(p.date,p.id);
   node.appendChild(row);
  });
 }
@@ -112,10 +160,17 @@ function renderTodayOverview(){
  $('todayPayValue').textContent=fmt.money(info.pay);
  $('todayPlansValue').textContent=openPlans;
 }
-function openPlanDialog(dateValue=new Date().toISOString().slice(0,10)){
- $('planDate').value=dateValue;
- $('planText').value='';
- $('planPriority').value='normal';
+function openPlanDialog(dateValue=new Date().toISOString().slice(0,10),planId=null){
+ editingPlanId=planId;
+ const plan=planId?state.plans.find(p=>p.id===planId):null;
+ $('planDialogTitle').textContent=plan?'Редагувати план':'Новий план';
+ $('planDate').value=plan?plan.date:dateValue;
+ $('planTime').value=plan?.time||'';
+ $('planText').value=plan?.text||'';
+ $('planCategory').value=plan?.category||'personal';
+ $('planPriority').value=plan?.priority||'normal';
+ $('planRepeat').value=plan?.repeat||'none';
+ $('deletePlanDialog').hidden=!plan;
  $('planDialog').showModal();
 }
 
