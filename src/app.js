@@ -1,8 +1,8 @@
 
-import {state} from './state.js?v=v10-plans-20260803-1';
-import {fmt} from './format.js?v=v10-plans-20260803-1';
-import {minutes,pay,summary,daySummary} from './payroll.js?v=v10-plans-20260803-1';
-import {template} from './ui.js?v=v10-plans-20260803-1';
+import {state} from './state.js?v=v11-1-statistics-swipe-20260803-2';
+import {fmt} from './format.js?v=v11-1-statistics-swipe-20260803-2';
+import {minutes,pay,summary,daySummary} from './payroll.js?v=v11-1-statistics-swipe-20260803-2';
+import {template} from './ui.js?v=v11-1-statistics-swipe-20260803-2';
 
 state.shifts=Array.isArray(state.shifts)?state.shifts:[];
 state.plans=Array.isArray(state.plans)?state.plans:[];
@@ -30,9 +30,7 @@ function render(){
  $('todayTitle').textContent=new Date().toLocaleDateString('uk-UA',{weekday:'long',day:'numeric',month:'long'});
  $('countValue').textContent=data.selected.length;
  $('hoursValue').textContent=fmt.duration(data.mins);
- $('totalValue').textContent=fmt.money(data.total);
  $('totalHomeValue').textContent=fmt.money(data.total);
- $('avgValue').textContent=fmt.duration(data.selected.length?data.mins/data.selected.length:0);
  $('calendarShiftCount').textContent=data.selected.length;
  $('calendarHours').textContent=fmt.duration(data.mins);
  $('calendarPay').textContent=fmt.money(data.total);
@@ -40,7 +38,7 @@ function render(){
  const progress=goal>0?Math.min(100,data.total/goal*100):0;
  $('goalFill').style.width=`${progress}%`;
  $('goalText').textContent=goal>0?`${fmt.money(data.total)} із ${fmt.money(goal)} · ${Math.round(progress)}%`:'Фінансова ціль вимкнена';
- renderActive();renderShiftList($('recentList'),data.selected.slice(0,3));renderShiftList($('allList'),data.selected);renderCalendar(data.selected);renderPlans();renderHomePlans();renderTodayOverview();renderSettings();
+ renderActive();renderShiftList($('recentList'),data.selected.slice(0,3));renderShiftList($('allList'),data.selected);renderCalendar(data.selected);renderPlans();renderHomePlans();renderTodayOverview();renderStatistics(data);renderSettings();
 }
 function renderActive(){
  const a=state.active;$('workMode').classList.toggle('inactive',!a);$('dayStatus').classList.toggle('active',!!a);$('startButton').hidden=!!a;$('manualStartButton').hidden=!!a;$('stopButton').hidden=!a;$('editStartButton').hidden=!a;$('cancelButton').hidden=!a;$('workModeLabel').textContent=a?`На роботі з ${fmt.time(a.start)}`:'Зміна не почата';$('dayStatus').textContent=a?'На роботі':'Не на роботі';$('todaySubtitle').textContent=a?'Активна зміна триває':'Все важливе в одному місці';
@@ -52,6 +50,92 @@ function renderShiftList(node,items){
  node.innerHTML='';if(!items.length){node.innerHTML='<div class="empty">Ще немає змін</div>';return}
  items.forEach(s=>{const row=document.createElement('div');row.className='shift';row.innerHTML=`<div class="shiftLeft"><div class="shiftDate">${fmt.date(s.start)}</div><div class="meta">${fmt.time(s.start)} → ${fmt.time(s.end)} · ${Number(s.rate||state.rate)} Kč/год</div></div><div><div class="money">${fmt.money(shiftPay(s))}</div><div class="hours">${fmt.duration(minutes(s.start,s.end))} год</div></div>`;row.onclick=()=>openShift(s.id);node.appendChild(row)});
 }
+
+function closeOpenPlanSwipes(except=null){
+ document.querySelectorAll('.swipePlan.open').forEach(wrapper=>{
+  if(wrapper!==except){
+   wrapper.classList.remove('open');
+   const content=wrapper.querySelector('.premiumPlan');
+   if(content)content.style.transform='translateX(0)';
+  }
+ });
+}
+function bindPlanSwipe(wrapper,content,plan){
+ let startX=0,startY=0,currentX=0,dragging=false,horizontal=false;
+ const maxReveal=88;
+
+ const reset=()=>{
+  wrapper.classList.remove('open');
+  content.style.transition='transform .22s ease';
+  content.style.transform='translateX(0)';
+  setTimeout(()=>content.style.transition='',240);
+ };
+
+ wrapper.addEventListener('touchstart',event=>{
+  if(!event.touches?.length)return;
+  closeOpenPlanSwipes(wrapper);
+  startX=event.touches[0].clientX;
+  startY=event.touches[0].clientY;
+  currentX=wrapper.classList.contains('open')?-maxReveal:0;
+  dragging=true;
+  horizontal=false;
+  content.style.transition='none';
+ },{passive:true});
+
+ wrapper.addEventListener('touchmove',event=>{
+  if(!dragging||!event.touches?.length)return;
+  const dx=event.touches[0].clientX-startX;
+  const dy=event.touches[0].clientY-startY;
+
+  if(!horizontal){
+   if(Math.abs(dx)<7&&Math.abs(dy)<7)return;
+   if(Math.abs(dy)>Math.abs(dx)){
+    dragging=false;
+    return;
+   }
+   horizontal=true;
+  }
+
+  if(horizontal){
+   event.preventDefault();
+   let value=currentX+dx;
+   value=Math.max(-maxReveal,Math.min(0,value));
+   content.style.transform=`translateX(${value}px)`;
+  }
+ },{passive:false});
+
+ wrapper.addEventListener('touchend',event=>{
+  if(!horizontal){
+   dragging=false;
+   return;
+  }
+  const endX=event.changedTouches?.[0]?.clientX??startX;
+  const total=currentX+(endX-startX);
+  content.style.transition='transform .22s ease';
+
+  if(total<-42){
+   wrapper.classList.add('open');
+   content.style.transform=`translateX(-${maxReveal}px)`;
+  }else{
+   reset();
+  }
+  dragging=false;
+  horizontal=false;
+ });
+
+ wrapper.querySelector('.swipeDeleteButton').onclick=event=>{
+  event.stopPropagation();
+  if(confirm(`Видалити план «${plan.text}»?`)){
+   state.plans=state.plans.filter(p=>p.id!==plan.id);
+   save();
+   render();
+   toast('План видалено');
+  }else{
+   reset();
+  }
+ };
+}
+
 function renderPlans(){
  const node=$('plansList');
  node.innerHTML='';
@@ -90,6 +174,14 @@ function renderPlans(){
 
  items.forEach(p=>{
   const category=p.category||'other';
+  const wrapper=document.createElement('div');
+  wrapper.className='swipePlan';
+
+  const deleteButton=document.createElement('button');
+  deleteButton.className='swipeDeleteButton';
+  deleteButton.type='button';
+  deleteButton.innerHTML='<span>🗑</span><b>Видалити</b>';
+
   const row=document.createElement('div');
   row.className=`premiumPlan ${p.done?'done':''}`;
   const dateLabel=new Date(p.date+'T12:00').toLocaleDateString('uk-UA',{day:'numeric',month:'short'});
@@ -104,6 +196,7 @@ function renderPlans(){
     </div>
    </div>
    <button class="planCheckButton ${p.done?'done':''}">${p.done?'✓':''}</button>`;
+
   row.querySelector('.planCheckButton').onclick=event=>{
    event.stopPropagation();
    p.done=!p.done;
@@ -112,7 +205,11 @@ function renderPlans(){
   };
   row.querySelector('.planMain').onclick=()=>openPlanDialog(p.date,p.id);
   row.querySelector('.planIcon').onclick=()=>openPlanDialog(p.date,p.id);
-  node.appendChild(row);
+
+  wrapper.appendChild(deleteButton);
+  wrapper.appendChild(row);
+  bindPlanSwipe(wrapper,row,p);
+  node.appendChild(wrapper);
  });
 }
 function renderCalendar(items){
@@ -172,6 +269,161 @@ function openPlanDialog(dateValue=new Date().toISOString().slice(0,10),planId=nu
  $('planRepeat').value=plan?.repeat||'none';
  $('deletePlanDialog').hidden=!plan;
  $('planDialog').showModal();
+}
+
+
+function previousMonthKey(monthKey){
+ const [y,m]=monthKey.split('-').map(Number);
+ const d=new Date(y,m-2,1);
+ return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+}
+function percentChange(current,previous){
+ if(previous===0)return current===0?0:null;
+ return (current-previous)/previous*100;
+}
+function changeText(value,suffix=''){
+ if(value===null)return 'Немає даних';
+ const sign=value>0?'+':'';
+ return `${sign}${Math.round(value)}${suffix}`;
+}
+function changeClass(value){
+ if(value===null||value===0)return 'neutral';
+ return value>0?'positive':'negative';
+}
+function averageClock(values){
+ if(!values.length)return '—';
+ let total=0;
+ values.forEach(v=>{
+  const d=new Date(v);
+  total+=d.getHours()*60+d.getMinutes();
+ });
+ const avg=Math.round(total/values.length);
+ return `${String(Math.floor(avg/60)%24).padStart(2,'0')}:${String(avg%60).padStart(2,'0')}`;
+}
+function dailyStats(items){
+ const map=new Map();
+ items.forEach(s=>{
+  const key=s.start.slice(0,10);
+  if(!map.has(key))map.set(key,{date:key,pay:0,minutes:0,count:0});
+  const x=map.get(key);
+  x.pay+=shiftPay(s);
+  x.minutes+=minutes(s.start,s.end);
+  x.count++;
+ });
+ return [...map.values()].sort((a,b)=>a.date.localeCompare(b.date));
+}
+function renderStatistics(data){
+ $('statsMonthLabel').textContent=fmt.month(state.month);
+ $('statsTotalPay').textContent=fmt.money(data.total);
+ $('statsHours').textContent=fmt.duration(data.mins);
+ $('statsShiftCount').textContent=data.selected.length;
+ $('statsAverageShift').textContent=fmt.duration(data.selected.length?data.mins/data.selected.length:0);
+
+ const prev=summary(state.shifts,previousMonthKey(state.month),state.rate,state.settings);
+ const payChange=percentChange(data.total,prev.total);
+ const hoursChange=percentChange(data.mins,prev.mins);
+ const shiftsChange=percentChange(data.selected.length,prev.selected.length);
+
+ $('statsPayChange').textContent=payChange===null?'Немає минулих даних':`${changeText(payChange,'%')} до минулого місяця`;
+ $('statsPayChange').className=changeClass(payChange);
+ $('statsHoursChange').textContent=hoursChange===null?'Немає даних':`${changeText(hoursChange,'%')} до минулого`;
+ $('statsHoursChange').className=changeClass(hoursChange);
+ $('statsShiftChange').textContent=shiftsChange===null?'Немає даних':`${changeText(shiftsChange,'%')} до минулого`;
+ $('statsShiftChange').className=changeClass(shiftsChange);
+
+ const durations=data.selected.map(s=>({shift:s,value:minutes(s.start,s.end)}));
+ const longest=durations.length?[...durations].sort((a,b)=>b.value-a.value)[0]:null;
+ const shortest=durations.length?[...durations].sort((a,b)=>a.value-b.value)[0]:null;
+ $('longestShiftValue').textContent=longest?fmt.duration(longest.value):'0:00';
+ $('longestShiftDate').textContent=longest?fmt.date(longest.shift.start):'—';
+ $('shortestShiftValue').textContent=shortest?fmt.duration(shortest.value):'0:00';
+ $('shortestShiftDate').textContent=shortest?fmt.date(shortest.shift.start):'—';
+
+ const days=dailyStats(data.selected);
+ const best=days.length?[...days].sort((a,b)=>b.pay-a.pay)[0]:null;
+ $('bestDayValue').textContent=best?fmt.money(best.pay):'0 Kč';
+ $('bestDayDate').textContent=best?new Date(best.date+'T12:00').toLocaleDateString('uk-UA',{day:'numeric',month:'long'}):'—';
+ $('averageDayValue').textContent=days.length?fmt.money(data.total/days.length):'0 Kč';
+ $('averageStartValue').textContent=averageClock(data.selected.map(s=>s.start));
+ $('averageEndValue').textContent=averageClock(data.selected.map(s=>s.end));
+
+ const goal=Number(state.settings.goalAmount||0);
+ const goalPercent=goal>0?Math.min(100,data.total/goal*100):0;
+ $('statsGoalTitle').textContent=goal>0?`${fmt.money(data.total)} із ${fmt.money(goal)}`:'Ціль не задана';
+ $('statsGoalPercent').textContent=`${Math.round(goalPercent)}%`;
+ $('statsGoalFill').style.width=`${goalPercent}%`;
+ $('statsGoalText').textContent=goal>0?(data.total>=goal?'Ціль виконана 🎉':`Залишилося ${fmt.money(goal-data.total)}`):'Задай ціль у налаштуваннях';
+
+ const comparisons=[
+  ['comparePay',data.total-prev.total,payChange,'%'],
+  ['compareHours',data.mins-prev.mins,hoursChange,'%'],
+  ['compareShifts',data.selected.length-prev.selected.length,shiftsChange,'']
+ ];
+ comparisons.forEach(([id,difference,change,suffix])=>{
+  const node=$(id);
+  if(change===null){node.textContent='Немає даних';node.className='neutral';return}
+  if(id==='comparePay')node.textContent=`${difference>=0?'+':''}${fmt.money(difference)}`;
+  else if(id==='compareHours')node.textContent=`${difference>=0?'+':''}${fmt.duration(Math.abs(difference))}`;
+  else node.textContent=`${difference>=0?'+':''}${difference}`;
+  node.className=changeClass(change);
+ });
+
+ renderCumulativeChart(days);
+ renderDailyBars(days);
+}
+function renderCumulativeChart(days){
+ const svg=$('cumulativeChart');
+ svg.innerHTML='';
+ const width=320,height=150,pad=10;
+ const total=days.reduce((sum,d)=>sum+d.pay,0);
+ $('cumulativeChartTitle').textContent=fmt.money(total);
+ if(!days.length){
+  svg.innerHTML='<text x="160" y="78" text-anchor="middle" fill="currentColor" opacity=".45" font-size="12">Немає даних</text>';
+  $('cumulativeAxis').innerHTML='';
+  return;
+ }
+ let cumulative=0;
+ const values=days.map(d=>{cumulative+=d.pay;return {...d,cumulative}});
+ const max=Math.max(...values.map(v=>v.cumulative),1);
+ const points=values.map((v,i)=>{
+  const x=values.length===1?width/2:pad+i*(width-pad*2)/(values.length-1);
+  const y=height-pad-v.cumulative/max*(height-pad*2);
+  return {x,y,...v};
+ });
+ [0.25,0.5,0.75].forEach(r=>{
+  const line=document.createElementNS('http://www.w3.org/2000/svg','line');
+  line.setAttribute('x1',pad);line.setAttribute('x2',width-pad);
+  line.setAttribute('y1',height*r);line.setAttribute('y2',height*r);
+  line.setAttribute('class','chartGridLine');svg.appendChild(line);
+ });
+ const area=document.createElementNS('http://www.w3.org/2000/svg','path');
+ area.setAttribute('d',`M ${points[0].x} ${height-pad} L ${points.map(p=>`${p.x} ${p.y}`).join(' L ')} L ${points[points.length-1].x} ${height-pad} Z`);
+ area.setAttribute('class','chartArea');svg.appendChild(area);
+ const line=document.createElementNS('http://www.w3.org/2000/svg','polyline');
+ line.setAttribute('points',points.map(p=>`${p.x},${p.y}`).join(' '));
+ line.setAttribute('class','chartLine');svg.appendChild(line);
+ points.forEach(p=>{
+  const c=document.createElementNS('http://www.w3.org/2000/svg','circle');
+  c.setAttribute('cx',p.x);c.setAttribute('cy',p.y);c.setAttribute('r',3.5);c.setAttribute('class','chartPoint');svg.appendChild(c);
+ });
+ const axis=$('cumulativeAxis');
+ const first=values[0],last=values[values.length-1];
+ axis.innerHTML=`<span>${new Date(first.date+'T12:00').getDate()}</span><span>${new Date(last.date+'T12:00').getDate()}</span>`;
+}
+function renderDailyBars(days){
+ const node=$('dailyBarChart');node.innerHTML='';
+ if(!days.length){node.innerHTML='<div class="empty">Немає даних за цей місяць</div>';$('dailyChartTitle').textContent='Найкращий день: —';return}
+ const max=Math.max(...days.map(d=>d.pay),1);
+ const best=[...days].sort((a,b)=>b.pay-a.pay)[0];
+ $('dailyChartTitle').textContent=`Найкращий день: ${fmt.money(best.pay)}`;
+ days.forEach(d=>{
+  const item=document.createElement('button');
+  item.className=`barItem ${d.date===best.date?'best':''}`;
+  const h=Math.max(3,d.pay/max*100);
+  item.innerHTML=`<div class="barValue" style="height:${h}%"></div><span class="barLabel">${new Date(d.date+'T12:00').getDate()}</span>`;
+  item.onclick=()=>openDay(d.date);
+  node.appendChild(item);
+ });
 }
 
 function renderSettings(){

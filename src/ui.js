@@ -1,7 +1,7 @@
 
 export function template(){
  return `<div class="shell">
- <header class="hero"><div class="heroRow"><div><div class="greeting" id="greeting"></div><h1>Моя робота</h1><p>Час • зарплата • плани</p><div class="appVersion">v10.0 Plans</div></div><div class="heroButtons"><button class="iconButton" id="themeButton">◐</button><button class="iconButton" data-open="settingsView">⚙︎</button></div></div></header>
+ <header class="hero"><div class="heroRow"><div><div class="greeting" id="greeting"></div><h1>Моя робота</h1><p>Час • зарплата • плани</p><div class="appVersion">v11.1 Statistics</div></div><div class="heroButtons"><button class="iconButton" id="themeButton">◐</button><button class="iconButton" data-open="settingsView">⚙︎</button></div></div></header>
  <main>
   <section class="view active" id="homeView">
   <section class="card dayHero" id="dayHero">
@@ -111,8 +111,97 @@ export function template(){
   <button class="calendarArrow" id="calendarNextMonth">›</button>
  </div>
  <div class="card calendar"><div class="calendarHead"><div>Пн</div><div>Вт</div><div>Ср</div><div>Чт</div><div>Пт</div><div>Сб</div><div>Нд</div></div><div class="calendarGrid" id="calendarGrid"></div></div></section>
-  <section class="view" id="statsView"><div class="sectionTitle"><h2>Статистика</h2></div><div class="metrics"><div class="card metric"><div class="label">Заробіток</div><strong id="totalValue">0 Kč</strong><div class="hint">за місяць</div></div><div class="card metric"><div class="label">Середня зміна</div><strong id="avgValue">0:00</strong><div class="hint">тривалість</div></div></div><div class="sectionTitle"><h2>Усі зміни</h2></div><div class="card list" id="allList"></div></section>
-  <section class="view" id="plansView">
+  <section class="view" id="statsView">
+ <div class="statsHeader">
+  <div>
+   <div class="eyebrow">Аналітика роботи</div>
+   <h2>Статистика</h2>
+  </div>
+  <button class="smallButton" id="statsMonthButton"><span id="statsMonthLabel"></span> ▾</button>
+ </div>
+
+ <div class="statsGrid">
+  <div class="card statHero">
+   <span>Зароблено</span>
+   <strong id="statsTotalPay">0 Kč</strong>
+   <small id="statsPayChange">Немає даних для порівняння</small>
+  </div>
+  <div class="card statCard">
+   <span>Годин</span>
+   <strong id="statsHours">0:00</strong>
+   <small id="statsHoursChange">—</small>
+  </div>
+  <div class="card statCard">
+   <span>Змін</span>
+   <strong id="statsShiftCount">0</strong>
+   <small id="statsShiftChange">—</small>
+  </div>
+  <div class="card statCard">
+   <span>Середня зміна</span>
+   <strong id="statsAverageShift">0:00</strong>
+   <small>тривалість</small>
+  </div>
+ </div>
+
+ <div class="card chartCard">
+  <div class="chartHeader">
+   <div>
+    <span class="label">Накопичення зарплати</span>
+    <strong id="cumulativeChartTitle">0 Kč</strong>
+   </div>
+  </div>
+  <div class="lineChartWrap">
+   <svg id="cumulativeChart" class="lineChart" viewBox="0 0 320 150" preserveAspectRatio="none"></svg>
+  </div>
+  <div class="chartAxis" id="cumulativeAxis"></div>
+ </div>
+
+ <div class="card chartCard">
+  <div class="chartHeader">
+   <div>
+    <span class="label">Заробіток по днях</span>
+    <strong id="dailyChartTitle">Найкращий день: —</strong>
+   </div>
+  </div>
+  <div class="barChart" id="dailyBarChart"></div>
+ </div>
+
+ <div class="sectionTitle"><h2>Аналітика</h2></div>
+ <div class="analyticsGrid">
+  <div class="card analyticsCard"><span>Найдовша зміна</span><strong id="longestShiftValue">0:00</strong><small id="longestShiftDate">—</small></div>
+  <div class="card analyticsCard"><span>Найкоротша зміна</span><strong id="shortestShiftValue">0:00</strong><small id="shortestShiftDate">—</small></div>
+  <div class="card analyticsCard"><span>Найкращий день</span><strong id="bestDayValue">0 Kč</strong><small id="bestDayDate">—</small></div>
+  <div class="card analyticsCard"><span>Середній дохід</span><strong id="averageDayValue">0 Kč</strong><small>за робочий день</small></div>
+  <div class="card analyticsCard"><span>Середній початок</span><strong id="averageStartValue">—</strong><small>час приходу</small></div>
+  <div class="card analyticsCard"><span>Середній кінець</span><strong id="averageEndValue">—</strong><small>час виходу</small></div>
+ </div>
+
+ <div class="card goalAnalyticsCard">
+  <div class="goalAnalyticsTop">
+   <div>
+    <span class="label">Фінансова ціль</span>
+    <strong id="statsGoalTitle">Ціль не задана</strong>
+   </div>
+   <span id="statsGoalPercent">0%</span>
+  </div>
+  <div class="goalTrack"><div class="goalFill" id="statsGoalFill"></div></div>
+  <p id="statsGoalText">Задай ціль у налаштуваннях</p>
+ </div>
+
+ <div class="card comparisonCard">
+  <div class="label">Порівняння з минулим місяцем</div>
+  <div class="comparisonRows">
+   <div><span>Заробіток</span><strong id="comparePay">—</strong></div>
+   <div><span>Години</span><strong id="compareHours">—</strong></div>
+   <div><span>Зміни</span><strong id="compareShifts">—</strong></div>
+  </div>
+ </div>
+
+ <div class="sectionTitle"><h2>Усі зміни</h2></div>
+ <div class="card list" id="allList"></div>
+</section>
+
+<section class="view" id="plansView">
  <div class="plansHeader">
   <div>
    <div class="eyebrow">Організуй свій день</div>

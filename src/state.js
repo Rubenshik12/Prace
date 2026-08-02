@@ -1,5 +1,5 @@
 
-import {storage} from './storage.js?v=v10-plans-20260803-1';
+import {storage} from './storage.js?v=v11-1-statistics-swipe-20260803-2';
 export const state={
  shifts:storage.shifts(),active:storage.active(),rate:storage.rate(),theme:storage.theme(),
  plans:storage.plans(),settings:storage.settings(),dayNotes:storage.dayNotes(),month:new Date().toISOString().slice(0,7),
