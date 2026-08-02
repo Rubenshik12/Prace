@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#17324D" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Моя робота" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="icon-192.png" />
+  <title>Моя робота</title>
+  <style>
+    :root{
+      --navy:#17324D;--blue:#2F75B5;--bg:#F5F7FA;--card:#fff;--text:#243447;
+      --muted:#667085;--green:#12B76A;--red:#F04438;--amber:#F79009;--border:#E4E7EC;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;color:var(--text)}
+    header{background:var(--navy);color:#fff;padding:calc(18px + env(safe-area-inset-top)) 18px 22px}
+    h1{margin:0;font-size:28px}
+    .subtitle{opacity:.78;margin-top:5px;font-size:14px}
+    main{padding:16px;max-width:760px;margin:auto;padding-bottom:calc(32px + env(safe-area-inset-bottom))}
+    .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:16px;box-shadow:0 4px 18px rgba(16,24,40,.05)}
+    .kpi .label{font-size:12px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+    .kpi .value{font-size:24px;font-weight:800;margin-top:6px}
+    .full{grid-column:1/-1}
+    .status{font-size:14px;color:var(--muted);margin-bottom:10px}
+    .bigbtn{width:100%;border:0;border-radius:16px;padding:18px;font-size:18px;font-weight:800;color:#fff;margin-top:10px}
+    .start{background:var(--green)}
+    .stop{background:var(--red)}
+    .bigbtn:disabled{opacity:.45}
+    .row{display:flex;gap:10px;align-items:center}
+    input,select,button.small{font:inherit}
+    input,select{width:100%;padding:12px;border:1px solid var(--border);border-radius:12px;background:#fff}
+    button.small{border:1px solid var(--border);background:#fff;border-radius:12px;padding:11px 13px;font-weight:700}
+    .section-title{font-size:18px;font-weight:800;margin:22px 2px 10px}
+    .shift{display:grid;grid-template-columns:1fr auto;gap:10px;padding:14px 0;border-bottom:1px solid var(--border)}
+    .shift:last-child{border-bottom:0}
+    .date{font-weight:800}
+    .meta{font-size:13px;color:var(--muted);margin-top:4px}
+    .money{font-weight:800;text-align:right}
+    .hours{font-size:13px;color:var(--muted);text-align:right;margin-top:4px}
+    .pill{display:inline-block;padding:5px 9px;border-radius:999px;font-size:12px;font-weight:700}
+    .p1{background:#EEF4FF;color:#2F75B5}.p2{background:#FFF4E5;color:#B54708}
+    .empty{text-align:center;color:var(--muted);padding:24px}
+    .toolbar{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .danger{color:var(--red)}
+    dialog{border:0;border-radius:18px;padding:0;max-width:420px;width:calc(100% - 28px)}
+    dialog::backdrop{background:rgba(0,0,0,.35)}
+    .modal{padding:18px}
+    .modal h3{margin-top:0}
+    .modal label{display:block;font-size:13px;color:var(--muted);margin:12px 0 6px}
+    @media (min-width:650px){.grid{grid-template-columns:repeat(4,1fr)}}
+  </style>
+</head>
+<body>
+<header>
+  <h1>Моя робота</h1>
+  <div class="subtitle">Години та зарплата без ручних підрахунків</div>
+</header>
+<main>
+  <div class="card full">
+    <div class="row">
+      <div style="flex:1">
+        <label style="font-size:12px;color:var(--muted);font-weight:700">МІСЯЦЬ</label>
+        <input id="monthPicker" type="month" />
+      </div>
+      <div style="width:150px">
+        <label style="font-size:12px;color:var(--muted);font-weight:700">СТАВКА Kč/ГОД</label>
+        <input id="rate" type="number" min="0" step="1" />
+      </div>
+    </div>
+  </div>
+
+  <div class="grid" style="margin-top:12px">
+    <div class="card kpi"><div class="label">Змін</div><div class="value" id="kpiShifts">0</div></div>
+    <div class="card kpi"><div class="label">Годин</div><div class="value" id="kpiHours">0:00</div></div>
+    <div class="card kpi"><div class="label">1–15 число</div><div class="value" id="kpiFirst">0 Kč</div></div>
+    <div class="card kpi"><div class="label">16–кінець</div><div class="value" id="kpiSecond">0 Kč</div></div>
+  </div>
+
+  <div class="card" style="margin-top:12px">
+    <div class="status" id="statusText">Зміна не почата</div>
+    <button id="startBtn" class="bigbtn start">🟢 Почав зміну</button>
+    <button id="stopBtn" class="bigbtn stop">🔴 Закінчив зміну</button>
+  </div>
+
+  <div class="section-title">Зміни за місяць</div>
+  <div class="card" id="shiftList"></div>
+
+  <div class="section-title">Дії</div>
+  <div class="toolbar">
+    <button class="small" id="exportBtn">Експорт CSV</button>
+    <button class="small" id="addManualBtn">Додати вручну</button>
+  </div>
+  <div class="toolbar" style="margin-top:10px">
+    <button class="small" id="backupBtn">Зберегти копію</button>
+    <button class="small" id="restoreBtn">Відновити копію</button>
+  </div>
+  <input type="file" id="restoreInput" accept="application/json" hidden />
+</main>
+
+<dialog id="manualDialog">
+  <div class="modal">
+    <h3>Додати зміну вручну</h3>
+    <label>Дата</label><input id="mDate" type="date">
+    <label>Прийшов</label><input id="mStart" type="time">
+    <label>Пішов</label><input id="mEnd" type="time">
+    <div class="toolbar" style="margin-top:18px">
+      <button class="small" id="cancelManual">Скасувати</button>
+      <button class="small" id="saveManual" style="background:var(--navy);color:white">Зберегти</button>
+    </div>
+  </div>
+</dialog>
+
+<script>
+const STORAGE_KEY='workTrackerDataV1';
+const RATE_KEY='workTrackerRateV1';
+const ACTIVE_KEY='workTrackerActiveV1';
+let shifts = JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]');
+let active = JSON.parse(localStorage.getItem(ACTIVE_KEY)||'null');
+
+const $ = id => document.getElementById(id);
+const monthPicker=$('monthPicker'), rateInput=$('rate');
+monthPicker.value = new Date().toISOString().slice(0,7);
+rateInput.value = localStorage.getItem(RATE_KEY)||'180';
+
+function save(){
+  localStorage.setItem(STORAGE_KEY,JSON.stringify(shifts));
+  localStorage.setItem(ACTIVE_KEY,JSON.stringify(active));
+}
+function fmtTime(iso){return new Date(iso).toLocaleTimeString('uk-UA',{hour:'2-digit',minute:'2-digit'});}
+function fmtDate(iso){return new Date(iso).toLocaleDateString('uk-UA',{day:'2-digit',month:'2-digit',year:'numeric'});}
+function minutesBetween(a,b){
+  let diff=(new Date(b)-new Date(a))/60000;
+  return diff<0?diff+1440:diff;
+}
+function fmtDuration(mins){
+  const h=Math.floor(mins/60), m=Math.round(mins%60);
+  return `${h}:${String(m).padStart(2,'0')}`;
+}
+function money(n){return `${Math.round(n).toLocaleString('uk-UA')} Kč`;}
+function render(){
+  const rate=parseFloat(rateInput.value)||0;
+  localStorage.setItem(RATE_KEY,rate);
+  const selected=monthPicker.value;
+  const monthShifts=shifts.filter(s=>s.start.slice(0,7)===selected).sort((a,b)=>new Date(b.start)-new Date(a.start));
+  let totalM=0, first=0, second=0;
+  monthShifts.forEach(s=>{
+    const mins=minutesBetween(s.start,s.end), pay=mins/60*rate, day=new Date(s.start).getDate();
+    totalM+=mins; if(day<=15) first+=pay; else second+=pay;
+  });
+  $('kpiShifts').textContent=monthShifts.length;
+  $('kpiHours').textContent=fmtDuration(totalM);
+  $('kpiFirst').textContent=money(first);
+  $('kpiSecond').textContent=money(second);
+
+  $('statusText').textContent=active?`Зміна почата о ${fmtTime(active.start)}`:'Зміна не почата';
+  $('startBtn').disabled=!!active;
+  $('stopBtn').disabled=!active;
+
+  const list=$('shiftList'); list.innerHTML='';
+  if(!monthShifts.length){list.innerHTML='<div class="empty">У цьому місяці ще немає змін</div>';return;}
+  monthShifts.forEach((s,idx)=>{
+    const mins=minutesBetween(s.start,s.end), pay=mins/60*rate, day=new Date(s.start).getDate();
+    const el=document.createElement('div'); el.className='shift';
+    el.innerHTML=`<div><div class="date">${fmtDate(s.start)} <span class="pill ${day<=15?'p1':'p2'}">${day<=15?'1-а виплата':'2-а виплата'}</span></div>
+      <div class="meta">${fmtTime(s.start)} → ${fmtTime(s.end)}</div></div>
+      <div><div class="money">${money(pay)}</div><div class="hours">${fmtDuration(mins)} год</div></div>`;
+    el.addEventListener('dblclick',()=>{ if(confirm('Видалити цю зміну?')){shifts=shifts.filter(x=>x.id!==s.id);save();render();}});
+    list.appendChild(el);
+  });
+}
+$('startBtn').onclick=()=>{
+  active={start:new Date().toISOString()};
+  save();render();
+};
+$('stopBtn').onclick=()=>{
+  if(!active)return;
+  const end=new Date().toISOString();
+  shifts.push({id:crypto.randomUUID?crypto.randomUUID():String(Date.now()),start:active.start,end});
+  active=null;save();render();
+};
+monthPicker.onchange=render;
+rateInput.oninput=render;
+
+$('exportBtn').onclick=()=>{
+  const rate=parseFloat(rateInput.value)||0;
+  const rows=[['Дата','Прийшов','Пішов','Години','Ставка','Зарплата','Виплата']];
+  shifts.sort((a,b)=>new Date(a.start)-new Date(b.start)).forEach(s=>{
+    const mins=minutesBetween(s.start,s.end), day=new Date(s.start).getDate();
+    rows.push([fmtDate(s.start),fmtTime(s.start),fmtTime(s.end),(mins/60).toFixed(2),rate,(mins/60*rate).toFixed(2),day<=15?'1–15':'16–кінець']);
+  });
+  const csv='\ufeff'+rows.map(r=>r.map(v=>`"${String(v).replaceAll('"','""')}"`).join(';')).join('\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='robochi_zminy.csv';a.click();
+};
+$('backupBtn').onclick=()=>{
+  const data={shifts,active,rate:rateInput.value};
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));a.download='robota_backup.json';a.click();
+};
+$('restoreBtn').onclick=()=>$('restoreInput').click();
+$('restoreInput').onchange=async e=>{
+  const file=e.target.files[0]; if(!file)return;
+  try{
+    const data=JSON.parse(await file.text());
+    shifts=data.shifts||[];active=data.active||null;rateInput.value=data.rate||180;save();render();
+  }catch{alert('Не вдалося прочитати файл резервної копії.');}
+};
+const dlg=$('manualDialog');
+$('addManualBtn').onclick=()=>{
+  $('mDate').value=new Date().toISOString().slice(0,10);
+  $('mStart').value='09:00';$('mEnd').value='18:00';dlg.showModal();
+};
+$('cancelManual').onclick=()=>dlg.close();
+$('saveManual').onclick=()=>{
+  const d=$('mDate').value,s=$('mStart').value,e=$('mEnd').value;
+  if(!d||!s||!e){alert('Заповни дату та час.');return;}
+  shifts.push({id:crypto.randomUUID?crypto.randomUUID():String(Date.now()),start:new Date(`${d}T${s}`).toISOString(),end:new Date(`${d}T${e}`).toISOString()});
+  save();dlg.close();render();
+};
+if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
+render();
+</script>
+</body>
+</html>
