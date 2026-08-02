@@ -1,7 +1,7 @@
 
 const KEYS={
  shifts:'workTrackerDataV1',active:'workTrackerActiveV1',rate:'workTrackerRateV1',
- theme:'workThemeV1',plans:'workPlansV1',settings:'workSettingsV7'
+ theme:'workThemeV1',plans:'workPlansV1',settings:'workSettingsV7',dayNotes:'workDayNotesV1'
 };
 export const storage={
  shifts:()=>JSON.parse(localStorage.getItem(KEYS.shifts)||'[]').map(s=>({...s,rate:s.rate||null,note:s.note||''})),
@@ -20,5 +20,7 @@ export const storage={
   holiday:false,holidayPercent:100,
   tips:false,paySplit:true,goalAmount:0
  },JSON.parse(localStorage.getItem(KEYS.settings)||'{}')),
- saveSettings:v=>localStorage.setItem(KEYS.settings,JSON.stringify(v))
+ saveSettings:v=>localStorage.setItem(KEYS.settings,JSON.stringify(v)),
+ dayNotes:()=>JSON.parse(localStorage.getItem(KEYS.dayNotes)||'{}'),
+ saveDayNotes:v=>localStorage.setItem(KEYS.dayNotes,JSON.stringify(v))
 };

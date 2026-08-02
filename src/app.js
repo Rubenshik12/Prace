@@ -29,6 +29,9 @@ function render(){
  $('totalValue').textContent=fmt.money(data.total);
  $('totalHomeValue').textContent=fmt.money(data.total);
  $('avgValue').textContent=fmt.duration(data.selected.length?data.mins/data.selected.length:0);
+ $('calendarShiftCount').textContent=data.selected.length;
+ $('calendarHours').textContent=fmt.duration(data.mins);
+ $('calendarPay').textContent=fmt.money(data.total);
  const goal=Number(state.settings.goalAmount||0);
  const progress=goal>0?Math.min(100,data.total/goal*100):0;
  $('goalFill').style.width=`${progress}%`;
@@ -71,7 +74,7 @@ function renderCalendar(items){
   const planned=state.plans.some(p=>p.date===dateKey&&!p.done);
   const day=document.createElement('button');day.className='day';day.textContent=i;
   if(info.items.length){day.classList.add('worked');const amount=document.createElement('span');amount.className='dayAmount';amount.textContent=Math.round(info.pay);day.appendChild(amount)}
-  if(planned)day.classList.add('planned');
+  if(planned)day.classList.add('planned');if(state.dayNotes[dateKey])day.classList.add('hasNote');
   if(today.getFullYear()===y&&today.getMonth()===m-1&&today.getDate()===i)day.classList.add('today');
   day.onclick=()=>openDay(dateKey);
   node.appendChild(day);
@@ -129,6 +132,7 @@ function openDay(dateKey){
  const plans=state.plans.filter(p=>p.date===dateKey);
  $('dayDialogTitle').textContent=new Date(dateKey+'T12:00').toLocaleDateString('uk-UA',{weekday:'long',day:'numeric',month:'long'});
  $('dayDialogSummary').innerHTML=`<div class="label">Підсумок дня</div><strong>${fmt.duration(info.minutes)} год · ${fmt.money(info.pay)}</strong>`;
+ $('dayNote').value=state.dayNotes[dateKey]||'';
  const planNode=$('dayPlansSummary');planNode.innerHTML='';
  if(plans.length){
   planNode.innerHTML='<div class="label">Плани</div>';

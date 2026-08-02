@@ -100,7 +100,12 @@ export function template(){
 
 <section class="view" id="calendarView">
  <div class="sectionTitle"><h2>Календар</h2><button class="smallButton" id="calendarTodayButton">Сьогодні</button></div>
- <div class="card calendarMonthBar">
+ <div class="calendarSummary">
+      <div class="card calendarStat"><span>Змін</span><strong id="calendarShiftCount">0</strong></div>
+      <div class="card calendarStat"><span>Годин</span><strong id="calendarHours">0:00</strong></div>
+      <div class="card calendarStat"><span>Зароблено</span><strong id="calendarPay">0 Kč</strong></div>
+    </div>
+    <div class="card calendarMonthBar">
   <button class="calendarArrow" id="calendarPrevMonth">‹</button>
   <button class="calendarMonthTitle" id="calendarMonthButton"><span class="label">Місяць</span><strong id="calendarMonthLabel"></strong></button>
   <button class="calendarArrow" id="calendarNextMonth">›</button>
@@ -142,5 +147,11 @@ export function template(){
  <dialog id="startDialog"><div class="modal"><h3>Час приходу</h3><label>Дата</label><input id="startDate" type="date"><label>Час</label><input id="startTime" type="time"><div class="modalActions"><button id="cancelStart">Скасувати</button><button class="save" id="saveStart">Почати</button></div></div></dialog>
  <dialog id="shiftDialog"><div class="modal"><h3 id="shiftTitle">Нова зміна</h3><label>Дата</label><input id="shiftDate" type="date"><label>Прийшов</label><input id="shiftStart" type="time"><label>Пішов</label><input id="shiftEnd" type="time"><label>Ставка</label><input id="shiftRate" type="number"><div id="holidayField"><label class="inlineCheck"><input id="shiftHoliday" type="checkbox"> Святковий день</label></div><div id="tipsField"><label>Чайові</label><input id="shiftTips" type="number" value="0"></div><label>Примітка</label><input id="shiftNote" type="text" placeholder="Необов’язково"><div class="modalActions"><button id="deleteShift">Видалити</button><button class="save" id="saveShift">Зберегти</button></div></div></dialog>
  <dialog id="planDialog"><div class="modal"><h3>Новий план</h3><label>Дата</label><input id="planDate" type="date"><label>Завдання</label><input id="planText" type="text" placeholder="Що потрібно зробити?"><label>Пріоритет</label><select id="planPriority"><option value="normal">Звичайний</option><option value="high">Важливий</option><option value="low">Низький</option></select><div class="modalActions"><button id="cancelPlan">Скасувати</button><button class="save" id="savePlan">Додати</button></div></div></dialog>
- <dialog id="dayDialog"><div class="modal"><h3 id="dayDialogTitle">День</h3><div id="dayDialogSummary" class="daySummary"></div><div id="dayPlansSummary" class="dayPlansSummary"></div><div id="dayDialogList" class="dayShiftList"></div><button class="secondary" id="addPlanForDay">＋ Додати план цього дня</button><button class="secondary" id="addShiftForDay">＋ Додати зміну цього дня</button><button class="dangerLink" id="closeDayDialog">Закрити</button></div></dialog>`;
+ <dialog id="dayDialog"><div class="modal"><h3 id="dayDialogTitle">День</h3><div id="dayDialogSummary" class="daySummary"></div><div id="dayPlansSummary" class="dayPlansSummary"></div>
+    <div class="dayNoteBox">
+      <label>Нотатка дня</label>
+      <textarea id="dayNote" rows="3" placeholder="Наприклад: важкий день, заміна колеги…"></textarea>
+      <button class="editChip" id="saveDayNote">Зберегти нотатку</button>
+    </div>
+    <div id="dayDialogList" class="dayShiftList"></div><button class="secondary" id="addPlanForDay">＋ Додати план цього дня</button><button class="secondary" id="addShiftForDay">＋ Додати зміну цього дня</button><button class="dangerLink" id="closeDayDialog">Закрити</button></div></dialog>`;
 }
