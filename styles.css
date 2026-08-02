@@ -98,3 +98,26 @@ dialog::backdrop{background:rgba(5,10,20,.58);backdrop-filter:blur(4px)}
 .toast{position:fixed;left:50%;bottom:108px;transform:translateX(-50%) translateY(18px);background:var(--navy);color:#fff;border-radius:18px;padding:15px 18px;opacity:0;transition:.25s;z-index:90}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 @media(max-width:380px){.timer{font-size:38px}.metric strong{font-size:21px}.nav{font-size:8.8px}}
+
+.planFilters{display:flex;gap:8px;overflow:auto;padding:0 2px 10px}
+.filterChip{border:1px solid var(--line);background:var(--surface);color:var(--muted);padding:9px 13px;border-radius:999px;font-weight:800;white-space:nowrap}
+.filterChip.active{background:var(--blueSoft);color:var(--blue);border-color:transparent}
+.priorityDot{width:9px;height:9px;border-radius:50%;flex:0 0 auto;background:var(--muted)}
+.priorityDot.high{background:var(--red)}
+.priorityDot.low{background:var(--blue)}
+.dayAmount{position:absolute;bottom:4px;font-size:8px;line-height:1;color:inherit;max-width:90%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.day.worked{padding-bottom:10px}
+.switch{width:50px;height:30px;border:0;border-radius:999px;background:#CBD4E0;position:relative;flex:0 0 auto}
+.switch:after{content:"";position:absolute;width:24px;height:24px;left:3px;top:3px;background:#fff;border-radius:50%;box-shadow:0 2px 7px rgba(0,0,0,.22);transition:.2s}
+.switch.on{background:var(--green)}
+.switch.on:after{left:23px}
+.compactSetting[hidden]{display:none}
+.doubleInputs{display:flex;gap:7px}
+.doubleInputs input{width:72px}
+.inlineCheck{display:flex!important;align-items:center;gap:9px;color:var(--text)!important;font-size:14px!important}
+.inlineCheck input{width:20px!important;height:20px!important;margin:0}
+.daySummary{background:var(--surface2);border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:12px}
+.daySummary strong{display:block;font-size:22px;margin-top:5px}
+.dayShiftList{border-top:1px solid var(--line)}
+.dayShiftItem{padding:13px 0;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:12px}
+.dayShiftItem:last-child{border-bottom:0}
