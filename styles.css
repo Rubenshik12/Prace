@@ -424,3 +424,214 @@ html,body,.shell,main,.view{
  .calendarHead,.calendarGrid{gap:3px}
  .day{font-size:11px;border-radius:10px}
 }
+
+/* v10 — повноцінний модуль планів */
+.plansHeader{
+ display:flex;
+ align-items:flex-end;
+ justify-content:space-between;
+ gap:12px;
+ margin:6px 2px 14px;
+}
+.plansHeader h2{
+ margin:4px 0 0;
+ font-size:29px;
+ letter-spacing:-.04em;
+}
+.plansTabs{
+ display:grid;
+ grid-template-columns:repeat(3,1fr);
+ gap:6px;
+ padding:6px;
+ border:1px solid var(--line);
+ border-radius:18px;
+ background:var(--surface);
+ margin-bottom:12px;
+}
+.planTab{
+ height:44px;
+ border:0;
+ border-radius:13px;
+ background:transparent;
+ color:var(--muted);
+ font-weight:850;
+}
+.planTab.active{
+ background:var(--blue);
+ color:#fff;
+ box-shadow:0 7px 18px color-mix(in srgb,var(--blue) 26%,transparent);
+}
+.plansProgressCard{
+ display:flex;
+ align-items:center;
+ gap:18px;
+ padding:17px;
+ margin-bottom:12px;
+}
+.progressRing{
+ --progress:0deg;
+ width:106px;
+ height:106px;
+ flex:0 0 auto;
+ border-radius:50%;
+ display:grid;
+ place-items:center;
+ background:conic-gradient(var(--green) var(--progress),var(--line) 0);
+}
+.progressRingInner{
+ width:78px;
+ height:78px;
+ border-radius:50%;
+ background:var(--surface);
+ display:grid;
+ place-content:center;
+ text-align:center;
+}
+.progressRingInner strong{
+ font-size:20px;
+}
+.progressRingInner span{
+ margin-top:3px;
+ color:var(--muted);
+ font-size:10px;
+ font-weight:800;
+}
+.plansProgressText{
+ min-width:0;
+}
+.plansProgressText strong{
+ display:block;
+ margin-top:7px;
+ font-size:20px;
+ letter-spacing:-.025em;
+}
+.plansProgressText p{
+ margin:5px 0 0;
+ color:var(--muted);
+ font-size:13px;
+}
+.categoryScroller{
+ display:flex;
+ gap:8px;
+ overflow-x:auto;
+ padding:0 1px 11px;
+ scrollbar-width:none;
+}
+.categoryScroller::-webkit-scrollbar{display:none}
+.categoryChip{
+ flex:0 0 auto;
+ height:39px;
+ border:1px solid var(--line);
+ border-radius:999px;
+ background:var(--surface);
+ color:var(--muted);
+ padding:0 13px;
+ font-weight:800;
+}
+.categoryChip.active{
+ background:var(--blueSoft);
+ color:var(--blue);
+ border-color:transparent;
+}
+.premiumPlans{
+ padding:0 15px;
+}
+.premiumPlan{
+ display:grid;
+ grid-template-columns:48px minmax(0,1fr) 36px;
+ align-items:center;
+ gap:12px;
+ padding:15px 0;
+ border-bottom:1px solid var(--line);
+}
+.premiumPlan:last-child{border-bottom:0}
+.planIcon{
+ width:48px;
+ height:48px;
+ border-radius:15px;
+ display:grid;
+ place-items:center;
+ font-size:21px;
+ background:var(--surface2);
+}
+.planIcon.work{background:#F2E8D8}
+.planIcon.personal{background:#E8F0FF}
+.planIcon.shopping{background:#E8F8EE}
+.planIcon.study{background:#F1E8FF}
+.planIcon.other{background:#FFF2DE}
+[data-theme="dark"] .planIcon.work{background:#3B2C20}
+[data-theme="dark"] .planIcon.personal{background:#172A4A}
+[data-theme="dark"] .planIcon.shopping{background:#173522}
+[data-theme="dark"] .planIcon.study{background:#2A1D46}
+[data-theme="dark"] .planIcon.other{background:#3A2A16}
+.planMain{min-width:0}
+.planTitleRow{
+ display:flex;
+ align-items:center;
+ gap:7px;
+ min-width:0;
+}
+.planTitleRow strong{
+ overflow:hidden;
+ text-overflow:ellipsis;
+ white-space:nowrap;
+}
+.priorityBadge{
+ flex:0 0 auto;
+ width:7px;
+ height:7px;
+ border-radius:50%;
+ background:var(--muted);
+}
+.priorityBadge.high{background:var(--red)}
+.priorityBadge.low{background:var(--blue)}
+.planMetaRow{
+ display:flex;
+ flex-wrap:wrap;
+ gap:7px;
+ margin-top:6px;
+ color:var(--muted);
+ font-size:11px;
+}
+.planMetaTag{
+ padding:3px 7px;
+ border-radius:999px;
+ background:var(--surface2);
+}
+.planCheckButton{
+ width:34px;
+ height:34px;
+ border:2px solid var(--line);
+ border-radius:50%;
+ background:transparent;
+ color:#fff;
+ font-weight:900;
+}
+.planCheckButton.done{
+ border-color:var(--green);
+ background:var(--green);
+}
+.premiumPlan.done .planMain{
+ opacity:.55;
+}
+.premiumPlan.done .planTitleRow strong{
+ text-decoration:line-through;
+}
+.planEmpty{
+ padding:34px 16px;
+ text-align:center;
+ color:var(--muted);
+}
+.planEmpty strong{
+ display:block;
+ color:var(--text);
+ font-size:17px;
+ margin-bottom:6px;
+}
+@media(max-width:390px){
+ .plansProgressCard{gap:13px}
+ .progressRing{width:92px;height:92px}
+ .progressRingInner{width:68px;height:68px}
+ .premiumPlan{grid-template-columns:44px minmax(0,1fr) 32px}
+ .planIcon{width:44px;height:44px}
+}

@@ -1,17 +1,17 @@
-const CACHE='moya-robota-v9-2-stable-20260803-1';
+const CACHE='moya-robota-v10-plans-20260803-1';
 const ASSETS=[
  './',
  './index.html',
- './styles.css?v=v9-2-stable-20260803-1',
- './manifest.webmanifest?v=v9-2-stable-20260803-1',
+ './styles.css?v=v10-plans-20260803-1',
+ './manifest.webmanifest?v=v10-plans-20260803-1',
  './icon-192.png',
  './icon-512.png',
- './src/app.js?v=v9-2-stable-20260803-1',
- './src/state.js?v=v9-2-stable-20260803-1',
- './src/storage.js?v=v9-2-stable-20260803-1',
- './src/payroll.js?v=v9-2-stable-20260803-1',
- './src/format.js?v=v9-2-stable-20260803-1',
- './src/ui.js?v=v9-2-stable-20260803-1'
+ './src/app.js?v=v10-plans-20260803-1',
+ './src/state.js?v=v10-plans-20260803-1',
+ './src/storage.js?v=v10-plans-20260803-1',
+ './src/payroll.js?v=v10-plans-20260803-1',
+ './src/format.js?v=v10-plans-20260803-1',
+ './src/ui.js?v=v10-plans-20260803-1'
 ];
 self.addEventListener('install',event=>{
  self.skipWaiting();
