@@ -1,8 +1,8 @@
 
-import {state} from './state.js?v=v9-1-stable-20260803';
-import {fmt} from './format.js?v=v9-1-stable-20260803';
-import {minutes,pay,summary,daySummary} from './payroll.js?v=v9-1-stable-20260803';
-import {template} from './ui.js?v=v9-1-stable-20260803';
+import {state} from './state.js?v=v9-2-stable-20260803-1';
+import {fmt} from './format.js?v=v9-2-stable-20260803-1';
+import {minutes,pay,summary,daySummary} from './payroll.js?v=v9-2-stable-20260803-1';
+import {template} from './ui.js?v=v9-2-stable-20260803-1';
 
 state.shifts=Array.isArray(state.shifts)?state.shifts:[];
 state.plans=Array.isArray(state.plans)?state.plans:[];

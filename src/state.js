@@ -1,5 +1,5 @@
 
-import {storage} from './storage.js?v=v9-1-stable-20260803';
+import {storage} from './storage.js?v=v9-2-stable-20260803-1';
 export const state={
  shifts:storage.shifts(),active:storage.active(),rate:storage.rate(),theme:storage.theme(),
  plans:storage.plans(),settings:storage.settings(),dayNotes:storage.dayNotes(),month:new Date().toISOString().slice(0,7),
