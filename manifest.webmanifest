@@ -1,10 +1,10 @@
 {
-  "name": "Моя робота — трекер годин",
+  "name": "Моя робота v5.1",
   "short_name": "Моя робота",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#F4F7FB",
-  "theme_color": "#0F172A",
+  "theme_color": "#0B1220",
   "icons": [
     {
       "src": "icon-192.png",
