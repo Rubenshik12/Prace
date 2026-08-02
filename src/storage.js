@@ -18,7 +18,7 @@ export const storage={
   overtime:false,overtimeAfter:8,overtimePercent:25,
   weekend:false,weekendPercent:25,
   holiday:false,holidayPercent:100,
-  tips:false,paySplit:true
+  tips:false,paySplit:true,goalAmount:0
  },JSON.parse(localStorage.getItem(KEYS.settings)||'{}')),
  saveSettings:v=>localStorage.setItem(KEYS.settings,JSON.stringify(v))
 };

@@ -17,12 +17,30 @@ function greeting(){const h=new Date().getHours();return h<12?'Доброго р
 
 function render(){
  const data=monthData();
- $('greeting').textContent=greeting();$('monthLabel').textContent=fmt.month(state.month);$('rateLabel').textContent=`${state.rate} Kč`;$('settingsRate').value=state.rate;
- $('countValue').textContent=data.selected.length;$('hoursValue').textContent=fmt.duration(data.mins);$('firstValue').textContent=state.settings.paySplit?fmt.money(data.first):fmt.money(data.total);$('secondValue').textContent=state.settings.paySplit?fmt.money(data.second):'—';$('totalValue').textContent=fmt.money(data.total);$('avgValue').textContent=fmt.duration(data.selected.length?data.mins/data.selected.length:0);
- renderActive();renderShiftList($('recentList'),data.selected.slice(0,5));renderShiftList($('allList'),data.selected);renderCalendar(data.selected);renderPlans();renderSettings();
+ $('greeting').textContent=greeting();
+ $('monthLabel').textContent=fmt.month(state.month);
+ $('calendarMonthLabel').textContent=fmt.month(state.month);
+ $('homeMonthLabel').textContent=fmt.month(state.month);
+ $('rateLabel').textContent=`${state.rate} Kč`;
+ $('homeRateValue').textContent=`${state.rate} Kč`;
+ $('settingsRate').value=state.rate;
+ $('goalAmount').value=Number(state.settings.goalAmount||0);
+ $('todayTitle').textContent=new Date().toLocaleDateString('uk-UA',{weekday:'long',day:'numeric',month:'long'});
+ $('countValue').textContent=data.selected.length;
+ $('hoursValue').textContent=fmt.duration(data.mins);
+ $('firstValue').textContent=state.settings.paySplit?fmt.money(data.first):fmt.money(data.total);
+ $('secondValue').textContent=state.settings.paySplit?fmt.money(data.second):'—';
+ $('totalValue').textContent=fmt.money(data.total);
+ $('totalHomeValue').textContent=fmt.money(data.total);
+ $('avgValue').textContent=fmt.duration(data.selected.length?data.mins/data.selected.length:0);
+ const goal=Number(state.settings.goalAmount||0);
+ const progress=goal>0?Math.min(100,data.total/goal*100):0;
+ $('goalFill').style.width=`${progress}%`;
+ $('goalText').textContent=goal>0?`${fmt.money(data.total)} із ${fmt.money(goal)} · ${Math.round(progress)}%`:'Фінансова ціль вимкнена';
+ renderActive();renderShiftList($('recentList'),data.selected.slice(0,3));renderShiftList($('allList'),data.selected);renderCalendar(data.selected);renderPlans();renderHomePlans();renderTodayOverview();renderSettings();
 }
 function renderActive(){
- const a=state.active;$('activeCard').classList.toggle('inactive',!a);$('startButton').hidden=!!a;$('manualStartButton').hidden=!!a;$('stopButton').hidden=!a;$('cancelButton').hidden=!a;$('statusText').textContent=a?`На роботі з ${fmt.time(a.start)}`:'Зміна не почата';$('statusBadge').textContent=a?'Триває':'';
+ const a=state.active;$('workMode').classList.toggle('inactive',!a);$('dayStatus').classList.toggle('active',!!a);$('startButton').hidden=!!a;$('manualStartButton').hidden=!!a;$('stopButton').hidden=!a;$('editStartButton').hidden=!a;$('cancelButton').hidden=!a;$('workModeLabel').textContent=a?`На роботі з ${fmt.time(a.start)}`:'Зміна не почата';$('dayStatus').textContent=a?'На роботі':'Не на роботі';$('todaySubtitle').textContent=a?'Активна зміна триває':'Все важливе в одному місці';
  clearInterval(timerId);
  const tick=()=>{if(!state.active){$('timer').textContent='0:00:00';$('livePay').textContent='0 Kč';return}const sec=Math.max(0,Math.floor((Date.now()-new Date(state.active.start))/1000));$('timer').textContent=`${Math.floor(sec/3600)}:${String(Math.floor(sec%3600/60)).padStart(2,'0')}:${String(sec%60).padStart(2,'0')}`;$('livePay').textContent=fmt.money(shiftPay({start:state.active.start,end:new Date().toISOString(),rate:state.rate,holiday:false,tips:0}))};
  tick();if(a)timerId=setInterval(tick,1000);
@@ -69,6 +87,35 @@ function openShift(id=null){editingId=id;const s=id?state.shifts.find(x=>x.id===
 function toast(text){const t=document.getElementById('toast');t.textContent=text;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500)}
 
 
+
+function renderHomePlans(){
+ const node=$('homePlansList');
+ const today=new Date().toISOString().slice(0,10);
+ const items=state.plans.filter(p=>p.date===today).slice(0,4);
+ node.innerHTML='';
+ if(!items.length){node.innerHTML='<div class="empty">На сьогодні планів немає</div>';return}
+ items.forEach(p=>{
+  const row=document.createElement('div');
+  row.className='plan';
+  row.innerHTML=`<button class="check ${p.done?'done':''}">${p.done?'✓':''}</button><div class="planText ${p.done?'done':''}">${p.text}</div>`;
+  row.querySelector('.check').onclick=()=>{p.done=!p.done;save();render()};
+  node.appendChild(row);
+ });
+}
+function renderTodayOverview(){
+ const today=new Date().toISOString().slice(0,10);
+ const info=daySummary(state.shifts,today,state.rate,state.settings);
+ const openPlans=state.plans.filter(p=>p.date===today&&!p.done).length;
+ $('todayPayValue').textContent=fmt.money(info.pay);
+ $('todayPlansValue').textContent=openPlans;
+}
+function openPlanDialog(dateValue=new Date().toISOString().slice(0,10)){
+ $('planDate').value=dateValue;
+ $('planText').value='';
+ $('planPriority').value='normal';
+ $('planDialog').showModal();
+}
+
 function renderSettings(){
  const pairs=[['overtimeSwitch','overtime'],['weekendSwitch','weekend'],['holidaySwitch','holiday'],['tipsSwitch','tips'],['paySplitSwitch','paySplit']];
  pairs.forEach(([id,key])=>$(id).classList.toggle('on',!!state.settings[key]));
@@ -83,11 +130,28 @@ function renderSettings(){
 function openDay(dateKey){
  selectedDay=dateKey;
  const info=daySummary(state.shifts,dateKey,state.rate,state.settings);
+ const plans=state.plans.filter(p=>p.date===dateKey);
  $('dayDialogTitle').textContent=new Date(dateKey+'T12:00').toLocaleDateString('uk-UA',{weekday:'long',day:'numeric',month:'long'});
  $('dayDialogSummary').innerHTML=`<div class="label">Підсумок дня</div><strong>${fmt.duration(info.minutes)} год · ${fmt.money(info.pay)}</strong>`;
+ const planNode=$('dayPlansSummary');planNode.innerHTML='';
+ if(plans.length){
+  planNode.innerHTML='<div class="label">Плани</div>';
+  plans.forEach(p=>{
+   const row=document.createElement('div');
+   row.className='dayPlanItem';
+   row.innerHTML=`<span class="dayPlanDot"></span><span class="${p.done?'planText done':'planText'}">${p.text}</span>`;
+   planNode.appendChild(row);
+  });
+ }
  const list=$('dayDialogList');list.innerHTML='';
  if(!info.items.length)list.innerHTML='<div class="empty">У цей день змін немає</div>';
- info.items.forEach(s=>{const item=document.createElement('div');item.className='dayShiftItem';item.innerHTML=`<div><b>${fmt.time(s.start)} → ${fmt.time(s.end)}</b><div class="meta">${fmt.duration(minutes(s.start,s.end))} год${s.note?` · ${s.note}`:''}</div></div><div class="money">${fmt.money(shiftPay(s))}</div>`;item.onclick=()=>{$('dayDialog').close();openShift(s.id)};list.appendChild(item)});
+ info.items.forEach(s=>{
+  const item=document.createElement('div');
+  item.className='dayShiftItem';
+  item.innerHTML=`<div><b>${fmt.time(s.start)} → ${fmt.time(s.end)}</b><div class="meta">${fmt.duration(minutes(s.start,s.end))} год${s.note?` · ${s.note}`:''}</div></div><div class="money">${fmt.money(shiftPay(s))}</div>`;
+  item.onclick=()=>{$('dayDialog').close();openShift(s.id)};
+  list.appendChild(item);
+ });
  $('dayDialog').showModal();
 }
 
@@ -96,18 +160,64 @@ $('rateButton').onclick=()=>{$('rateInput').value=state.rate;$('rateDialog').sho
 $('startButton').onclick=()=>{state.active={start:new Date().toISOString()};save();render()};$('manualStartButton').onclick=()=>{const n=new Date();$('startDate').value=n.toISOString().slice(0,10);$('startTime').value=n.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});$('startDialog').showModal()};$('cancelStart').onclick=()=>$('startDialog').close();$('saveStart').onclick=()=>{const d=new Date(`${$('startDate').value}T${$('startTime').value}`);if(d>new Date())return alert('Час не може бути в майбутньому');state.active={start:d.toISOString()};save();$('startDialog').close();render()};
 $('stopButton').onclick=()=>{if(!state.active)return;const s={id:crypto.randomUUID(),start:state.active.start,end:new Date().toISOString(),rate:state.rate};state.shifts.push(s);state.active=null;save();render();toast(`Зміна збережена · ${fmt.money(shiftPay(s))}`)};$('cancelButton').onclick=()=>{if(confirm('Скасувати початок зміни?')){state.active=null;save();render()}};
 $('addShiftButton').onclick=()=>openShift();$('saveShift').onclick=()=>{const st=new Date(`${$('shiftDate').value}T${$('shiftStart').value}`),en=new Date(`${$('shiftDate').value}T${$('shiftEnd').value}`);if(en<=st)return alert('Час виходу має бути пізніше');const s={id:editingId||crypto.randomUUID(),start:st.toISOString(),end:en.toISOString(),rate:Number($('shiftRate').value||state.rate),holiday:$('shiftHoliday').checked,tips:Number($('shiftTips').value||0),note:$('shiftNote').value.trim()};if(editingId)state.shifts[state.shifts.findIndex(x=>x.id===editingId)]=s;else state.shifts.push(s);save();$('shiftDialog').close();render()};$('deleteShift').onclick=()=>{if(editingId&&confirm('Видалити цю зміну?')){state.shifts=state.shifts.filter(x=>x.id!==editingId);save();$('shiftDialog').close();render()}};
-$('addPlanButton').onclick=()=>{$('planDate').value=new Date().toISOString().slice(0,10);$('planText').value='';$('planDialog').showModal()};$('cancelPlan').onclick=()=>$('planDialog').close();$('savePlan').onclick=()=>{const text=$('planText').value.trim();if(!text)return alert('Напиши план');state.plans.push({id:crypto.randomUUID(),date:$('planDate').value,text,priority:$('planPriority').value,done:false});save();$('planDialog').close();render()};
+$('addPlanButton').onclick=()=>openPlanDialog();$('cancelPlan').onclick=()=>$('planDialog').close();$('savePlan').onclick=()=>{const text=$('planText').value.trim();if(!text)return alert('Напиши план');state.plans.push({id:crypto.randomUUID(),date:$('planDate').value,text,priority:$('planPriority').value,done:false});save();$('planDialog').close();render()};
 $('settingsRate').oninput=e=>{state.rate=Number(e.target.value||0);save();render()};$('settingsTheme').onchange=e=>{state.theme=e.target.value;save();applyTheme()};$('themeButton').onclick=()=>{state.theme=state.theme==='dark'?'light':'dark';save();applyTheme()};
 document.querySelectorAll('[data-view], [data-open]').forEach(b=>b.onclick=()=>{const id=b.dataset.view||b.dataset.open;document.querySelectorAll('.nav').forEach(n=>n.classList.toggle('active',n.dataset.view===id));document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id===id))});
 
+
+$('quickShift').onclick=()=>openShift();
+$('quickPlan').onclick=()=>openPlanDialog();
+$('homeMonthButton').onclick=openMonth;
+$('editStartButton').onclick=()=>{
+ if(!state.active)return;
+ const d=new Date(state.active.start);
+ $('startDate').value=d.toISOString().slice(0,10);
+ $('startTime').value=d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+ $('startDialog').showModal();
+};
+$('goalAmount').oninput=e=>{state.settings.goalAmount=Number(e.target.value||0);save();render()};
+document.querySelectorAll('[data-open-view]').forEach(button=>button.onclick=()=>{
+ const id=button.dataset.openView;
+ document.querySelectorAll('.nav').forEach(n=>n.classList.toggle('active',n.dataset.view===id));
+ document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id===id));
+});
+
 document.querySelectorAll('[data-plan-filter]').forEach(button=>button.onclick=()=>{
  planFilter=button.dataset.planFilter;
- document.querySelectorAll('[data-plan-filter]').forEach(x=>x.classList.toggle('active',x===button));
+ 
+$('quickShift').onclick=()=>openShift();
+$('quickPlan').onclick=()=>openPlanDialog();
+$('homeMonthButton').onclick=openMonth;
+$('editStartButton').onclick=()=>{
+ if(!state.active)return;
+ const d=new Date(state.active.start);
+ $('startDate').value=d.toISOString().slice(0,10);
+ $('startTime').value=d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+ $('startDialog').showModal();
+};
+$('goalAmount').oninput=e=>{state.settings.goalAmount=Number(e.target.value||0);save();render()};
+document.querySelectorAll('[data-open-view]').forEach(button=>button.onclick=()=>{
+ const id=button.dataset.openView;
+ document.querySelectorAll('.nav').forEach(n=>n.classList.toggle('active',n.dataset.view===id));
+ document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id===id));
+});
+
+document.querySelectorAll('[data-plan-filter]').forEach(x=>x.classList.toggle('active',x===button));
  renderPlans();
 });
 $('calendarTodayButton').onclick=()=>{state.month=new Date().toISOString().slice(0,7);render()};
+$('calendarPrevMonth').onclick=()=>changeMonth(-1);
+$('calendarNextMonth').onclick=()=>changeMonth(1);
+$('calendarMonthButton').onclick=openMonth;
 $('closeDayDialog').onclick=()=>$('dayDialog').close();
 $('addShiftForDay').onclick=()=>{$('dayDialog').close();openShift();if(selectedDay)$('shiftDate').value=selectedDay};
+$('addPlanForDay').onclick=()=>{
+ $('dayDialog').close();
+ $('planDate').value=selectedDay||new Date().toISOString().slice(0,10);
+ $('planText').value='';
+ $('planPriority').value='normal';
+ $('planDialog').showModal();
+};
 
 [['overtimeSwitch','overtime'],['weekendSwitch','weekend'],['holidaySwitch','holiday'],['tipsSwitch','tips'],['paySplitSwitch','paySplit']].forEach(([id,key])=>{
  $(id).onclick=()=>{state.settings[key]=!state.settings[key];save();render()};
