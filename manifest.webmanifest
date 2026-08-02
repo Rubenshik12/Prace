@@ -1,10 +1,10 @@
 {
-  "name": "Моя робота v6",
+  "name": "Моя робота v6.1",
   "short_name": "Моя робота",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#F4F7FB",
-  "theme_color": "#0B1220",
+  "background_color": "#F3F6FA",
+  "theme_color": "#08111F",
   "icons": [
     {
       "src": "icon-192.png",
