@@ -635,3 +635,271 @@ html,body,.shell,main,.view{
  .premiumPlan{grid-template-columns:44px minmax(0,1fr) 32px}
  .planIcon{width:44px;height:44px}
 }
+
+/* v11 — завершений модуль статистики */
+.statsHeader{
+ display:flex;
+ justify-content:space-between;
+ align-items:flex-end;
+ gap:12px;
+ margin:6px 2px 14px;
+}
+.statsHeader h2{
+ margin:4px 0 0;
+ font-size:29px;
+ letter-spacing:-.04em;
+}
+.statsGrid{
+ display:grid;
+ grid-template-columns:repeat(2,minmax(0,1fr));
+ gap:11px;
+}
+.statHero{
+ grid-column:span 2;
+ padding:18px;
+ min-height:126px;
+ background:
+  radial-gradient(circle at 88% 8%,color-mix(in srgb,var(--blue) 22%,transparent),transparent 34%),
+  var(--surface);
+}
+.statCard{
+ padding:16px;
+ min-height:108px;
+}
+.statHero span,.statCard span,.analyticsCard span{
+ display:block;
+ color:var(--muted);
+ font-size:11px;
+ font-weight:850;
+ text-transform:uppercase;
+ letter-spacing:.06em;
+}
+.statHero strong{
+ display:block;
+ font-size:38px;
+ letter-spacing:-.055em;
+ margin-top:14px;
+}
+.statCard strong{
+ display:block;
+ font-size:24px;
+ letter-spacing:-.04em;
+ margin-top:13px;
+}
+.statHero small,.statCard small,.analyticsCard small{
+ display:block;
+ color:var(--muted);
+ font-size:11px;
+ margin-top:7px;
+}
+.chartCard{
+ padding:16px;
+ margin-top:12px;
+ overflow:hidden;
+}
+.chartHeader{
+ display:flex;
+ justify-content:space-between;
+ align-items:flex-start;
+ gap:12px;
+}
+.chartHeader strong{
+ display:block;
+ font-size:20px;
+ margin-top:5px;
+}
+.lineChartWrap{
+ height:170px;
+ margin-top:15px;
+ overflow:hidden;
+}
+.lineChart{
+ width:100%;
+ height:100%;
+ overflow:visible;
+}
+.chartGridLine{
+ stroke:var(--line);
+ stroke-width:1;
+}
+.chartArea{
+ fill:color-mix(in srgb,var(--blue) 14%,transparent);
+}
+.chartLine{
+ fill:none;
+ stroke:var(--blue);
+ stroke-width:3;
+ stroke-linecap:round;
+ stroke-linejoin:round;
+}
+.chartPoint{
+ fill:var(--surface);
+ stroke:var(--blue);
+ stroke-width:2;
+}
+.chartAxis{
+ display:flex;
+ justify-content:space-between;
+ color:var(--muted);
+ font-size:10px;
+ margin-top:7px;
+}
+.barChart{
+ display:flex;
+ align-items:flex-end;
+ gap:7px;
+ height:165px;
+ margin-top:18px;
+ padding-bottom:24px;
+ overflow-x:auto;
+ overflow-y:hidden;
+ scrollbar-width:none;
+}
+.barChart::-webkit-scrollbar{display:none}
+.barItem{
+ min-width:28px;
+ flex:1 0 28px;
+ height:100%;
+ display:flex;
+ flex-direction:column;
+ justify-content:flex-end;
+ align-items:center;
+ gap:6px;
+ position:relative;
+}
+.barValue{
+ width:100%;
+ max-width:32px;
+ min-height:3px;
+ border-radius:7px 7px 3px 3px;
+ background:linear-gradient(180deg,var(--blue),color-mix(in srgb,var(--blue) 55%,var(--green)));
+}
+.barItem.best .barValue{
+ background:linear-gradient(180deg,var(--green),color-mix(in srgb,var(--green) 65%,var(--blue)));
+}
+.barLabel{
+ position:absolute;
+ bottom:-20px;
+ color:var(--muted);
+ font-size:9px;
+}
+.analyticsGrid{
+ display:grid;
+ grid-template-columns:repeat(2,minmax(0,1fr));
+ gap:11px;
+}
+.analyticsCard{
+ padding:15px;
+ min-height:111px;
+}
+.analyticsCard strong{
+ display:block;
+ font-size:22px;
+ letter-spacing:-.035em;
+ margin-top:13px;
+}
+.goalAnalyticsCard,.comparisonCard{
+ padding:17px;
+ margin-top:12px;
+}
+.goalAnalyticsTop{
+ display:flex;
+ align-items:flex-start;
+ justify-content:space-between;
+ gap:12px;
+}
+.goalAnalyticsTop strong{
+ display:block;
+ font-size:21px;
+ margin-top:6px;
+}
+.goalAnalyticsTop>span{
+ color:var(--blue);
+ font-size:21px;
+ font-weight:900;
+}
+.goalAnalyticsCard p{
+ margin:8px 0 0;
+ color:var(--muted);
+ font-size:12px;
+}
+.comparisonRows{
+ display:grid;
+ grid-template-columns:repeat(3,minmax(0,1fr));
+ gap:8px;
+ margin-top:14px;
+}
+.comparisonRows div{
+ padding:12px 9px;
+ border-radius:15px;
+ background:var(--surface2);
+ text-align:center;
+}
+.comparisonRows span{
+ display:block;
+ color:var(--muted);
+ font-size:10px;
+}
+.comparisonRows strong{
+ display:block;
+ font-size:16px;
+ margin-top:7px;
+}
+.positive{color:var(--green)!important}
+.negative{color:var(--red)!important}
+.neutral{color:var(--muted)!important}
+@media(max-width:390px){
+ .statHero strong{font-size:34px}
+ .comparisonRows{grid-template-columns:1fr}
+ .comparisonRows div{display:flex;justify-content:space-between;align-items:center;text-align:left}
+ .comparisonRows strong{margin-top:0}
+}
+
+/* v11.1 — свайп плану справа наліво */
+.premiumPlans{
+ overflow:hidden;
+}
+.swipePlan{
+ position:relative;
+ overflow:hidden;
+ border-bottom:1px solid var(--line);
+ touch-action:pan-y;
+}
+.swipePlan:last-child{
+ border-bottom:0;
+}
+.swipePlan .premiumPlan{
+ position:relative;
+ z-index:2;
+ width:100%;
+ background:var(--surface);
+ border-bottom:0;
+ will-change:transform;
+}
+.swipeDeleteButton{
+ position:absolute;
+ z-index:1;
+ top:0;
+ right:0;
+ bottom:0;
+ width:88px;
+ border:0;
+ background:linear-gradient(135deg,#FF6574,var(--red));
+ color:#fff;
+ display:flex;
+ flex-direction:column;
+ align-items:center;
+ justify-content:center;
+ gap:5px;
+ font-weight:850;
+}
+.swipeDeleteButton span{
+ font-size:20px;
+ line-height:1;
+}
+.swipeDeleteButton b{
+ font-size:10px;
+}
+.swipePlan.open .premiumPlan{
+ transform:translateX(-88px);
+}
