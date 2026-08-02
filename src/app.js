@@ -18,10 +18,8 @@ function greeting(){const h=new Date().getHours();return h<12?'Доброго р
 function render(){
  const data=monthData();
  $('greeting').textContent=greeting();
- $('monthLabel').textContent=fmt.month(state.month);
  $('calendarMonthLabel').textContent=fmt.month(state.month);
  $('homeMonthLabel').textContent=fmt.month(state.month);
- $('rateLabel').textContent=`${state.rate} Kč`;
  $('homeRateValue').textContent=`${state.rate} Kč`;
  $('settingsRate').value=state.rate;
  $('goalAmount').value=Number(state.settings.goalAmount||0);
