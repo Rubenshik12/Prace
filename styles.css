@@ -240,3 +240,5 @@ dialog::backdrop{background:rgba(5,10,20,.58);backdrop-filter:blur(4px)}
  .quickAction b{font-size:9.5px}
  .workTimer{font-size:42px}
 }
+
+[hidden]{display:none!important}
