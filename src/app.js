@@ -1,9 +1,13 @@
 
-import {state} from './state.js';
-import {fmt} from './format.js';
-import {minutes,pay,summary,daySummary} from './payroll.js';
-import {template} from './ui.js';
+import {state} from './state.js?v=v9-1-stable-20260803';
+import {fmt} from './format.js?v=v9-1-stable-20260803';
+import {minutes,pay,summary,daySummary} from './payroll.js?v=v9-1-stable-20260803';
+import {template} from './ui.js?v=v9-1-stable-20260803';
 
+state.shifts=Array.isArray(state.shifts)?state.shifts:[];
+state.plans=Array.isArray(state.plans)?state.plans:[];
+state.settings=state.settings&&typeof state.settings==='object'?state.settings:{};
+state.dayNotes=state.dayNotes&&typeof state.dayNotes==='object'?state.dayNotes:{};
 document.getElementById('app').innerHTML=template();
 const $=id=>document.getElementById(id);
 let timerId=null,editingId=null,planFilter='all',selectedDay=null;
@@ -74,7 +78,7 @@ function renderCalendar(items){
   const planned=state.plans.some(p=>p.date===dateKey&&!p.done);
   const day=document.createElement('button');day.className='day';day.textContent=i;
   if(info.items.length){day.classList.add('worked');const amount=document.createElement('span');amount.className='dayAmount';amount.textContent=Math.round(info.pay);day.appendChild(amount)}
-  if(planned)day.classList.add('planned');if(state.dayNotes[dateKey])day.classList.add('hasNote');
+  if(planned)day.classList.add('planned');if(state.dayNotes?.[dateKey])day.classList.add('hasNote');
   if(today.getFullYear()===y&&today.getMonth()===m-1&&today.getDate()===i)day.classList.add('today');
   day.onclick=()=>openDay(dateKey);
   node.appendChild(day);
