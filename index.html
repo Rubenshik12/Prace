@@ -92,7 +92,7 @@ canvas{width:100%;height:210px;display:block}
 .insight span{font-size:12px;color:var(--muted);font-weight:800}
 .actions{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
 .action{min-height:50px;border-radius:15px;border:1px solid var(--line);background:var(--surface);color:var(--blue);font-weight:800;padding:10px}
-.bottomNav{position:fixed;left:50%;transform:translateX(-50%);bottom:0;width:min(760px,100%);display:grid;grid-template-columns:repeat(4,1fr);background:color-mix(in srgb,var(--surface) 92%,transparent);backdrop-filter:blur(18px);border-top:1px solid var(--line);padding:9px 8px calc(9px + env(safe-area-inset-bottom));z-index:20}
+.bottomNav{position:fixed;left:50%;transform:translateX(-50%);bottom:0;width:min(760px,100%);display:grid;grid-template-columns:repeat(5,1fr);background:color-mix(in srgb,var(--surface) 92%,transparent);backdrop-filter:blur(18px);border-top:1px solid var(--line);padding:9px 8px calc(9px + env(safe-area-inset-bottom));z-index:20}
 .navBtn{border:0;background:none;color:var(--muted);font-size:11px;font-weight:800;padding:7px 3px}
 .navBtn span{display:block;font-size:21px;margin-bottom:3px}
 .navBtn.active{color:var(--blue)}
@@ -149,7 +149,7 @@ dialog::backdrop{background:rgba(4,10,20,.55);backdrop-filter:blur(3px)}
   <button class="tab active" data-panel="listPanel">Зміни</button>
   <button class="tab" data-panel="calendarPanel">Календар</button>
   <button class="tab" data-panel="statsPanel">Статистика</button>
-  <button class="tab" data-panel="dataPanel">Дані</button>
+  <button class="tab" data-panel="plansPanel">Плани</button><button class="tab" data-panel="dataPanel">Дані</button>
 </div>
 
 <section id="listPanel" class="panel active">
@@ -176,8 +176,23 @@ dialog::backdrop{background:rgba(4,10,20,.55);backdrop-filter:blur(3px)}
   </div>
 </section>
 
+
+<section id="plansPanel" class="panel">
+  <div class="sectionTitle"><h2>Плани на день</h2><button class="smallBtn" id="addPlanBtn">＋ Додати</button></div>
+  <div class="card list" id="planList"></div>
+</section>
+
 <section id="dataPanel" class="panel">
   <div class="sectionTitle"><h2>Дані та експорт</h2></div>
+
+  <div class="card" style="padding:16px;margin-bottom:12px">
+    <div style="font-weight:800;margin-bottom:12px">Необов’язкові функції</div>
+    <label style="display:flex;justify-content:space-between;padding:10px 0"><span>Понаднормові</span><input id="optOvertime" type="checkbox"></label>
+    <label style="display:flex;justify-content:space-between;padding:10px 0"><span>Доплата за вихідні</span><input id="optWeekend" type="checkbox"></label>
+    <label style="display:flex;justify-content:space-between;padding:10px 0"><span>Святкові дні</span><input id="optHoliday" type="checkbox"></label>
+    <label style="display:flex;justify-content:space-between;padding:10px 0"><span>Чайові</span><input id="optTips" type="checkbox"></label>
+    <label style="display:flex;justify-content:space-between;padding:10px 0"><span>Дні виплат</span><input id="optPayday" type="checkbox"></label>
+  </div>
   <div class="actions">
     <button class="action" id="exportBtn">Експорт CSV</button>
     <button class="action" id="pdfBtn">Експорт PDF</button>
@@ -193,7 +208,7 @@ dialog::backdrop{background:rgba(4,10,20,.55);backdrop-filter:blur(3px)}
   <button class="navBtn active" data-panel="listPanel"><span>⌂</span>Головна</button>
   <button class="navBtn" data-panel="calendarPanel"><span>▦</span>Календар</button>
   <button class="navBtn" data-panel="statsPanel"><span>⌁</span>Статистика</button>
-  <button class="navBtn" data-panel="dataPanel"><span>•••</span>Більше</button>
+  <button class="navBtn" data-panel="plansPanel"><span>✓</span>Плани</button><button class="navBtn" data-panel="dataPanel"><span>•••</span>Більше</button>
 </nav>
 
 <dialog id="shiftDlg"><div class="modal">
@@ -220,6 +235,14 @@ dialog::backdrop{background:rgba(4,10,20,.55);backdrop-filter:blur(3px)}
   <div class="settingsRow"><span>Автозбереження</span><b>Увімкнено</b></div>
   <button id="requestNotifBtn" class="secondaryBtn">Дозволити сповіщення</button>
   <button id="closeSettings" class="mainBtn save">Готово</button>
+</div></dialog>
+
+
+<dialog id="planDlg"><div class="modal">
+<h3>Новий план</h3>
+<label>Дата</label><input id="planDate" type="date">
+<label>Що потрібно зробити?</label><input id="planText" type="text" placeholder="Наприклад: замовити продукти">
+<div class="modalActions"><button id="cancelPlan">Скасувати</button><button id="savePlan" class="save">Додати</button></div>
 </div></dialog>
 
 <script>
@@ -317,6 +340,7 @@ $('closeSettings').onclick=()=>$('settingsDlg').close();
 $('requestNotifBtn').onclick=async()=>{if(!('Notification'in window))return alert('Сповіщення не підтримуються');const p=await Notification.requestPermission();alert(p==='granted'?'Сповіщення дозволені':'Сповіщення не дозволені')};
 function scheduleReminder(){clearTimeout(reminderTimer);if(!active)return;const hrs=Number(localStorage.getItem(KEYS.reminder)||0);if(!hrs)return;const delay=new Date(active.start).getTime()+hrs*3600000-Date.now();if(delay<=0)return;reminderTimer=setTimeout(()=>{if(Notification.permission==='granted')new Notification('Моя робота',{body:'Зміна ще триває. Не забудь натиснути «Закінчити зміну».'});else alert('Зміна ще триває. Не забудь її завершити.')},delay)}
 
+\nfunction renderPlans(){\n  const list=$('planList'); if(!list) return; list.innerHTML='';\n  const sorted=[...plans].sort((a,b)=>a.date.localeCompare(b.date));\n  if(!sorted.length){list.innerHTML='<div class="empty">Поки нічого не заплановано</div>';return;}\n  sorted.forEach(p=>{\n    const el=document.createElement('div'); el.className='shift';\n    el.innerHTML=`<div><div class="date">${new Date(p.date+'T12:00').toLocaleDateString('uk-UA',{day:'2-digit',month:'long'})}</div><div class="meta" style="${p.done?'text-decoration:line-through;opacity:.55':''}">${p.text}</div></div><div><button class="small" data-done>${p.done?'↶':'✓'}</button><button class="small danger" data-del>×</button></div>`;\n    el.querySelector('[data-done]').onclick=()=>{p.done=!p.done;save();renderPlans();};\n    el.querySelector('[data-del]').onclick=()=>{plans=plans.filter(x=>x.id!==p.id);save();renderPlans();};\n    list.appendChild(el);\n  });\n}\nconst planDlg=$('planDlg');\n$('addPlanBtn').onclick=()=>{ $('planDate').value=new Date().toISOString().slice(0,10); $('planText').value=''; planDlg.showModal(); };\n$('cancelPlan').onclick=()=>planDlg.close();\n$('savePlan').onclick=()=>{ const text=$('planText').value.trim(); if(!text){alert('Напиши план');return;} plans.push({id:crypto.randomUUID?crypto.randomUUID():String(Date.now()),date:$('planDate').value,text,done:false}); save(); planDlg.close(); renderPlans(); };\n
 $('exportBtn').onclick=()=>{const rows=[['Дата','Прийшов','Пішов','Години','Ставка','Зарплата','Виплата']];shifts.sort((a,b)=>new Date(a.start)-new Date(b.start)).forEach(s=>{const m=minutes(s.start,s.end),day=new Date(s.start).getDate();rows.push([dateText(s.start),timeText(s.start),timeText(s.end),(m/60).toFixed(2),shiftRate(s),shiftPay(s).toFixed(2),day<=15?'1–15':'16–кінець'])});const csv='\ufeff'+rows.map(r=>r.map(v=>`"${String(v).replaceAll('"','""')}"`).join(';')).join('\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='robochi_zminy.csv';a.click()};
 $('pdfBtn').onclick=()=>window.print();
 $('backupBtn').onclick=()=>{const data={shifts,active,rate:rate.value,theme:localStorage.getItem(KEYS.theme),reminder:localStorage.getItem(KEYS.reminder)};const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));a.download='robota_backup.json';a.click()};
