@@ -242,3 +242,119 @@ dialog::backdrop{background:rgba(5,10,20,.58);backdrop-filter:blur(4px)}
 }
 
 [hidden]{display:none!important}
+
+/* v9: єдина модель прокрутки для всіх вкладок */
+html,body{
+ width:100%;
+ height:auto!important;
+ min-height:100%;
+ overflow-x:hidden;
+ overflow-y:auto!important;
+ -webkit-overflow-scrolling:touch;
+}
+body{
+ min-height:100vh;
+ min-height:100dvh;
+ padding-bottom:0!important;
+}
+.shell{
+ min-height:100vh;
+ min-height:100dvh;
+ padding-bottom:calc(118px + env(safe-area-inset-bottom));
+}
+main{
+ min-height:0;
+ overflow:visible!important;
+ padding-bottom:22px;
+}
+.view{
+ min-height:0!important;
+ height:auto!important;
+ overflow:visible!important;
+ padding-bottom:24px;
+}
+.bottomNav{
+ position:fixed!important;
+ left:0!important;
+ right:0!important;
+ bottom:0!important;
+ width:100%!important;
+ max-width:760px;
+ margin:0 auto;
+ z-index:10000;
+}
+.calendarSummary{
+ display:grid;
+ grid-template-columns:repeat(3,minmax(0,1fr));
+ gap:9px;
+ margin-bottom:12px;
+}
+.calendarStat{
+ padding:13px 10px;
+ min-height:82px;
+}
+.calendarStat span{
+ display:block;
+ color:var(--muted);
+ font-size:10px;
+ font-weight:850;
+ text-transform:uppercase;
+ letter-spacing:.05em;
+}
+.calendarStat strong{
+ display:block;
+ margin-top:9px;
+ font-size:17px;
+ letter-spacing:-.035em;
+ overflow:hidden;
+ text-overflow:ellipsis;
+ white-space:nowrap;
+}
+.day{
+ min-height:48px;
+ cursor:pointer;
+}
+.day.hasNote:before{
+ content:"";
+ position:absolute;
+ width:5px;
+ height:5px;
+ top:5px;
+ right:5px;
+ border-radius:50%;
+ background:var(--orange,#F59E0B);
+}
+.dayNoteBox{
+ margin:12px 0;
+ padding:14px;
+ border-radius:17px;
+ background:var(--surface2);
+ border:1px solid var(--line);
+}
+.dayNoteBox label{
+ display:block;
+ margin:0 0 8px;
+ color:var(--muted);
+ font-size:11px;
+ font-weight:850;
+ text-transform:uppercase;
+ letter-spacing:.05em;
+}
+.dayNoteBox textarea{
+ width:100%;
+ resize:vertical;
+ border:1px solid var(--line);
+ border-radius:13px;
+ padding:11px;
+ background:var(--surface);
+ color:var(--text);
+ font:inherit;
+}
+.dayNoteBox .editChip{
+ margin-top:9px;
+ width:100%;
+}
+@media(max-width:390px){
+ .calendarSummary{grid-template-columns:1fr 1fr}
+ .calendarStat:last-child{grid-column:span 2}
+}
