@@ -28,8 +28,6 @@ function render(){
  $('todayTitle').textContent=new Date().toLocaleDateString('uk-UA',{weekday:'long',day:'numeric',month:'long'});
  $('countValue').textContent=data.selected.length;
  $('hoursValue').textContent=fmt.duration(data.mins);
- $('firstValue').textContent=state.settings.paySplit?fmt.money(data.first):fmt.money(data.total);
- $('secondValue').textContent=state.settings.paySplit?fmt.money(data.second):'—';
  $('totalValue').textContent=fmt.money(data.total);
  $('totalHomeValue').textContent=fmt.money(data.total);
  $('avgValue').textContent=fmt.duration(data.selected.length?data.mins/data.selected.length:0);
@@ -155,75 +153,99 @@ function openDay(dateKey){
  $('dayDialog').showModal();
 }
 
-$('prevMonth').onclick=()=>changeMonth(-1);$('nextMonth').onclick=()=>changeMonth(1);$('monthButton').onclick=openMonth;$('cancelMonth').onclick=()=>$('monthDialog').close();$('saveMonth').onclick=()=>{state.month=`${$('yearSelect').value}-${String($('monthSelect').value).padStart(2,'0')}`;$('monthDialog').close();render()};
-$('rateButton').onclick=()=>{$('rateInput').value=state.rate;$('rateDialog').showModal()};$('cancelRate').onclick=()=>$('rateDialog').close();$('saveRate').onclick=()=>{state.rate=Number($('rateInput').value||0);save();$('rateDialog').close();render()};
-$('startButton').onclick=()=>{state.active={start:new Date().toISOString()};save();render()};$('manualStartButton').onclick=()=>{const n=new Date();$('startDate').value=n.toISOString().slice(0,10);$('startTime').value=n.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});$('startDialog').showModal()};$('cancelStart').onclick=()=>$('startDialog').close();$('saveStart').onclick=()=>{const d=new Date(`${$('startDate').value}T${$('startTime').value}`);if(d>new Date())return alert('Час не може бути в майбутньому');state.active={start:d.toISOString()};save();$('startDialog').close();render()};
-$('stopButton').onclick=()=>{if(!state.active)return;const s={id:crypto.randomUUID(),start:state.active.start,end:new Date().toISOString(),rate:state.rate};state.shifts.push(s);state.active=null;save();render();toast(`Зміна збережена · ${fmt.money(shiftPay(s))}`)};$('cancelButton').onclick=()=>{if(confirm('Скасувати початок зміни?')){state.active=null;save();render()}};
-$('addShiftButton').onclick=()=>openShift();$('saveShift').onclick=()=>{const st=new Date(`${$('shiftDate').value}T${$('shiftStart').value}`),en=new Date(`${$('shiftDate').value}T${$('shiftEnd').value}`);if(en<=st)return alert('Час виходу має бути пізніше');const s={id:editingId||crypto.randomUUID(),start:st.toISOString(),end:en.toISOString(),rate:Number($('shiftRate').value||state.rate),holiday:$('shiftHoliday').checked,tips:Number($('shiftTips').value||0),note:$('shiftNote').value.trim()};if(editingId)state.shifts[state.shifts.findIndex(x=>x.id===editingId)]=s;else state.shifts.push(s);save();$('shiftDialog').close();render()};$('deleteShift').onclick=()=>{if(editingId&&confirm('Видалити цю зміну?')){state.shifts=state.shifts.filter(x=>x.id!==editingId);save();$('shiftDialog').close();render()}};
-$('addPlanButton').onclick=()=>openPlanDialog();$('cancelPlan').onclick=()=>$('planDialog').close();$('savePlan').onclick=()=>{const text=$('planText').value.trim();if(!text)return alert('Напиши план');state.plans.push({id:crypto.randomUUID(),date:$('planDate').value,text,priority:$('planPriority').value,done:false});save();$('planDialog').close();render()};
-$('settingsRate').oninput=e=>{state.rate=Number(e.target.value||0);save();render()};$('settingsTheme').onchange=e=>{state.theme=e.target.value;save();applyTheme()};$('themeButton').onclick=()=>{state.theme=state.theme==='dark'?'light':'dark';save();applyTheme()};
-document.querySelectorAll('[data-view], [data-open]').forEach(b=>b.onclick=()=>{const id=b.dataset.view||b.dataset.open;document.querySelectorAll('.nav').forEach(n=>n.classList.toggle('active',n.dataset.view===id));document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id===id))});
+const bind=(id,event,handler)=>{const node=$(id);if(node)node.addEventListener(event,handler)};
 
-
-$('quickShift').onclick=()=>openShift();
-$('quickPlan').onclick=()=>openPlanDialog();
-$('homeMonthButton').onclick=openMonth;
-$('editStartButton').onclick=()=>{
- if(!state.active)return;
- const d=new Date(state.active.start);
- $('startDate').value=d.toISOString().slice(0,10);
- $('startTime').value=d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
- $('startDialog').showModal();
-};
-$('goalAmount').oninput=e=>{state.settings.goalAmount=Number(e.target.value||0);save();render()};
-document.querySelectorAll('[data-open-view]').forEach(button=>button.onclick=()=>{
- const id=button.dataset.openView;
- document.querySelectorAll('.nav').forEach(n=>n.classList.toggle('active',n.dataset.view===id));
- document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id===id));
+bind('prevMonth','click',()=>changeMonth(-1));
+bind('nextMonth','click',()=>changeMonth(1));
+bind('monthButton','click',openMonth);
+bind('cancelMonth','click',()=>$('monthDialog').close());
+bind('saveMonth','click',()=>{
+ state.month=`${$('yearSelect').value}-${String($('monthSelect').value).padStart(2,'0')}`;
+ $('monthDialog').close();render();
 });
 
-document.querySelectorAll('[data-plan-filter]').forEach(button=>button.onclick=()=>{
+bind('rateButton','click',()=>{$('rateInput').value=state.rate;$('rateDialog').showModal()});
+bind('cancelRate','click',()=>$('rateDialog').close());
+bind('saveRate','click',()=>{state.rate=Number($('rateInput').value||0);save();$('rateDialog').close();render()});
+
+bind('startButton','click',()=>{state.active={start:new Date().toISOString()};save();render()});
+bind('manualStartButton','click',()=>{
+ const now=new Date();
+ $('startDate').value=now.toISOString().slice(0,10);
+ $('startTime').value=now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+ $('startDialog').showModal();
+});
+bind('editStartButton','click',()=>{
+ if(!state.active)return;
+ const date=new Date(state.active.start);
+ $('startDate').value=date.toISOString().slice(0,10);
+ $('startTime').value=date.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+ $('startDialog').showModal();
+});
+bind('cancelStart','click',()=>$('startDialog').close());
+bind('saveStart','click',()=>{
+ const date=new Date(`${$('startDate').value}T${$('startTime').value}`);
+ if(Number.isNaN(date.getTime()))return alert('Вкажи правильну дату і час');
+ if(date>new Date())return alert('Час не може бути в майбутньому');
+ state.active={start:date.toISOString()};save();$('startDialog').close();render();
+});
+bind('stopButton','click',()=>{
+ if(!state.active)return;
+ const shift={id:crypto.randomUUID(),start:state.active.start,end:new Date().toISOString(),rate:state.rate,holiday:false,tips:0,note:''};
+ state.shifts.push(shift);state.active=null;save();render();toast(`Зміна збережена · ${fmt.money(shiftPay(shift))}`);
+});
+bind('cancelButton','click',()=>{if(confirm('Скасувати початок зміни?')){state.active=null;save();render()}});
+
+bind('addShiftButton','click',()=>openShift());
+bind('quickShift','click',()=>openShift());
+bind('saveShift','click',()=>{
+ const startDate=new Date(`${$('shiftDate').value}T${$('shiftStart').value}`);
+ const endDate=new Date(`${$('shiftDate').value}T${$('shiftEnd').value}`);
+ if(Number.isNaN(startDate.getTime())||Number.isNaN(endDate.getTime()))return alert('Вкажи правильний час');
+ if(endDate<=startDate)return alert('Час виходу має бути пізніше');
+ const shift={id:editingId||crypto.randomUUID(),start:startDate.toISOString(),end:endDate.toISOString(),rate:Number($('shiftRate').value||state.rate),holiday:$('shiftHoliday').checked,tips:Number($('shiftTips').value||0),note:$('shiftNote').value.trim()};
+ if(editingId){const index=state.shifts.findIndex(item=>item.id===editingId);if(index>=0)state.shifts[index]=shift}else state.shifts.push(shift);
+ save();$('shiftDialog').close();render();
+});
+bind('deleteShift','click',()=>{if(editingId&&confirm('Видалити цю зміну?')){state.shifts=state.shifts.filter(item=>item.id!==editingId);save();$('shiftDialog').close();render()}});
+
+bind('addPlanButton','click',()=>openPlanDialog());
+bind('quickPlan','click',()=>openPlanDialog());
+bind('cancelPlan','click',()=>$('planDialog').close());
+bind('savePlan','click',()=>{
+ const text=$('planText').value.trim();if(!text)return alert('Напиши план');
+ state.plans.push({id:crypto.randomUUID(),date:$('planDate').value,text,priority:$('planPriority').value,done:false});
+ save();$('planDialog').close();render();
+});
+
+bind('settingsRate','input',event=>{state.rate=Number(event.target.value||0);save();render()});
+bind('settingsTheme','change',event=>{state.theme=event.target.value;save();applyTheme()});
+bind('themeButton','click',()=>{state.theme=state.theme==='dark'?'light':'dark';save();applyTheme()});
+bind('goalAmount','input',event=>{state.settings.goalAmount=Number(event.target.value||0);save();render()});
+bind('homeMonthButton','click',openMonth);
+
+function openView(id){
+ document.querySelectorAll('.nav').forEach(node=>node.classList.toggle('active',node.dataset.view===id));
+ document.querySelectorAll('.view').forEach(node=>node.classList.toggle('active',node.id===id));
+}
+document.querySelectorAll('[data-view]').forEach(button=>button.addEventListener('click',()=>openView(button.dataset.view)));
+document.querySelectorAll('[data-open],[data-open-view]').forEach(button=>button.addEventListener('click',()=>openView(button.dataset.open||button.dataset.openView)));
+
+document.querySelectorAll('[data-plan-filter]').forEach(button=>button.addEventListener('click',()=>{
  planFilter=button.dataset.planFilter;
- 
-$('quickShift').onclick=()=>openShift();
-$('quickPlan').onclick=()=>openPlanDialog();
-$('homeMonthButton').onclick=openMonth;
-$('editStartButton').onclick=()=>{
- if(!state.active)return;
- const d=new Date(state.active.start);
- $('startDate').value=d.toISOString().slice(0,10);
- $('startTime').value=d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
- $('startDialog').showModal();
-};
-$('goalAmount').oninput=e=>{state.settings.goalAmount=Number(e.target.value||0);save();render()};
-document.querySelectorAll('[data-open-view]').forEach(button=>button.onclick=()=>{
- const id=button.dataset.openView;
- document.querySelectorAll('.nav').forEach(n=>n.classList.toggle('active',n.dataset.view===id));
- document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id===id));
-});
-
-document.querySelectorAll('[data-plan-filter]').forEach(x=>x.classList.toggle('active',x===button));
+ document.querySelectorAll('[data-plan-filter]').forEach(item=>item.classList.toggle('active',item===button));
  renderPlans();
-});
-$('calendarTodayButton').onclick=()=>{state.month=new Date().toISOString().slice(0,7);render()};
-$('calendarPrevMonth').onclick=()=>changeMonth(-1);
-$('calendarNextMonth').onclick=()=>changeMonth(1);
-$('calendarMonthButton').onclick=openMonth;
-$('closeDayDialog').onclick=()=>$('dayDialog').close();
-$('addShiftForDay').onclick=()=>{$('dayDialog').close();openShift();if(selectedDay)$('shiftDate').value=selectedDay};
-$('addPlanForDay').onclick=()=>{
- $('dayDialog').close();
- $('planDate').value=selectedDay||new Date().toISOString().slice(0,10);
- $('planText').value='';
- $('planPriority').value='normal';
- $('planDialog').showModal();
-};
+}));
 
-[['overtimeSwitch','overtime'],['weekendSwitch','weekend'],['holidaySwitch','holiday'],['tipsSwitch','tips'],['paySplitSwitch','paySplit']].forEach(([id,key])=>{
- $(id).onclick=()=>{state.settings[key]=!state.settings[key];save();render()};
-});
-['overtimeAfter','overtimePercent','weekendPercent','holidayPercent'].forEach(id=>{
- $(id).oninput=e=>{state.settings[id]=Number(e.target.value||0);save();render()};
-});
+bind('calendarTodayButton','click',()=>{state.month=new Date().toISOString().slice(0,7);render()});
+bind('calendarPrevMonth','click',()=>changeMonth(-1));
+bind('calendarNextMonth','click',()=>changeMonth(1));
+bind('calendarMonthButton','click',openMonth);
+bind('closeDayDialog','click',()=>$('dayDialog').close());
+bind('addShiftForDay','click',()=>{$('dayDialog').close();openShift();if(selectedDay)$('shiftDate').value=selectedDay});
+bind('addPlanForDay','click',()=>{$('dayDialog').close();openPlanDialog(selectedDay||new Date().toISOString().slice(0,10))});
+
+[['overtimeSwitch','overtime'],['weekendSwitch','weekend'],['holidaySwitch','holiday'],['tipsSwitch','tips'],['paySplitSwitch','paySplit']].forEach(([id,key])=>bind(id,'click',()=>{state.settings[key]=!state.settings[key];save();render()}));
+['overtimeAfter','overtimePercent','weekendPercent','holidayPercent'].forEach(id=>bind(id,'input',event=>{state.settings[id]=Number(event.target.value||0);save();render()}));
 
 applyTheme();render();if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js');
