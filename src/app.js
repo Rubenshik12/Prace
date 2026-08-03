@@ -1,9 +1,9 @@
 
-import {storage} from './storage.js?v=v15-2-fixed-navigation-20260803-21';
-import {state} from './state.js?v=v15-2-fixed-navigation-20260803-21';
-import {fmt} from './format.js?v=v15-2-fixed-navigation-20260803-21';
-import {minutes,pay,summary,daySummary} from './payroll.js?v=v15-2-fixed-navigation-20260803-21';
-import {template} from './ui.js?v=v15-2-fixed-navigation-20260803-21';
+import {storage} from './storage.js?v=v15-3-job-filters-20260803-22';
+import {state} from './state.js?v=v15-3-job-filters-20260803-22';
+import {fmt} from './format.js?v=v15-3-job-filters-20260803-22';
+import {minutes,pay,summary,daySummary} from './payroll.js?v=v15-3-job-filters-20260803-22';
+import {template} from './ui.js?v=v15-3-job-filters-20260803-22';
 
 state.shifts=Array.isArray(state.shifts)?state.shifts:[];
 state.plans=Array.isArray(state.plans)?state.plans:[];
@@ -31,8 +31,18 @@ function activeJob(){return storage.activeJob()}
 function activeJobId(){return storage.activeJobId()}
 function jobShifts(){const id=activeJobId();return state.shifts.filter(item=>(item.jobId||id)===id)}
 function jobPlans(){const id=activeJobId();return state.plans.filter(item=>(item.jobId||id)===id)}
+function allJobs(){return storage.jobs().filter(job=>!job.archived)}
+function jobById(id){return storage.jobs().find(job=>job.id===id)||storage.activeJob()}
+function filterByJob(items,filterId){return filterId==='all'?items:items.filter(item=>(item.jobId||activeJobId())===filterId)}
+function calendarShifts(){return filterByJob(state.shifts,state.calendarJobFilter)}
+function statsShifts(){return filterByJob(state.shifts,state.statsJobFilter)}
+function filteredPlans(){return filterByJob(state.plans,state.plansJobFilter)}
+function fillJobFilter(id,value){const select=$(id);if(!select)return;select.innerHTML='<option value="all">Усі роботи</option>'+allJobs().map(job=>`<option value="${job.id}">${job.name}</option>`).join('');select.value=value||'all'}
+function renderJobFilters(){fillJobFilter('calendarJobFilter',state.calendarJobFilter);fillJobFilter('statsJobFilter',state.statsJobFilter);fillJobFilter('plansJobFilter',state.plansJobFilter)}
+
 
 function render(){
+ renderJobFilters();
  const data=monthData();
  const profile=storage.activeProfile();
  const job=activeJob();
@@ -137,7 +147,7 @@ function renderArchivedTasks(shift){
 
 function renderShiftList(node,items){
  node.innerHTML='';if(!items.length){node.innerHTML='<div class="empty">Ще немає змін</div>';return}
- items.forEach(s=>{const row=document.createElement('div');row.className='shift';row.innerHTML=`<div class="shiftLeft"><div class="shiftDate">${fmt.date(s.start)}</div><div class="meta">${fmt.time(s.start)} → ${fmt.time(s.end)} · ${Number(s.rate||state.rate)} Kč/год</div></div><div><div class="money">${fmt.money(shiftPay(s))}</div><div class="hours">${fmt.duration(minutes(s.start,s.end))} год</div></div>`;row.onclick=()=>openShiftDetails(s.id);node.appendChild(row)});
+ items.forEach(s=>{const row=document.createElement('div');row.className='shift';const shiftJob=jobById(s.jobId||activeJobId());row.innerHTML=`<div class="shiftLeft"><div class="shiftDate">${fmt.date(s.start)}</div><div class="shiftJobMini"><i style="background:${shiftJob.color||'#4A67E8'}"></i>${shiftJob.name}</div><div class="meta">${fmt.time(s.start)} → ${fmt.time(s.end)} · ${Number(s.rate||state.rate)} ${shiftJob.currency||'Kč'}/год</div></div><div><div class="money">${fmt.money(shiftPay(s))}</div><div class="hours">${fmt.duration(minutes(s.start,s.end))} год</div></div>`;row.onclick=()=>openShiftDetails(s.id);node.appendChild(row)});
 }
 
 function closeOpenPlanSwipes(except=null){
@@ -233,7 +243,7 @@ function renderPlans(){
  const tomorrow=new Date(today);tomorrow.setDate(today.getDate()+1);
  const tomorrowKey=tomorrow.toISOString().slice(0,10);
 
- let items=[...jobPlans()];
+ let items=[...filteredPlans()];
  if(planFilter==='today')items=items.filter(p=>p.date===todayKey);
  if(planFilter==='tomorrow')items=items.filter(p=>p.date===tomorrowKey);
  if(planCategory!=='all')items=items.filter(p=>(p.category||'other')===planCategory);
@@ -243,7 +253,7 @@ function renderPlans(){
   return `${a.date||''} ${a.time||''}`.localeCompare(`${b.date||''} ${b.time||''}`);
  });
 
- const todayItems=jobPlans().filter(p=>p.date===todayKey);
+ const todayItems=filteredPlans().filter(p=>p.date===todayKey);
  const doneToday=todayItems.filter(p=>p.done).length;
  const totalToday=todayItems.length;
  const angle=totalToday?Math.round(doneToday/totalToday*360):0;
@@ -309,13 +319,13 @@ function renderCalendar(items){
  const days=new Date(y,m,0).getDate(),today=new Date();
  const daily=Array.from({length:days},(_,idx)=>{
   const dateKey=`${y}-${String(m).padStart(2,'0')}-${String(idx+1).padStart(2,'0')}`;
-  return {dateKey,info:daySummary(jobShifts(),dateKey,state.rate,state.settings)};
+  return {dateKey,info:daySummary(calendarShifts(),dateKey,state.rate,state.settings)};
  });
  const bestPay=Math.max(0,...daily.map(d=>d.info.pay));
  for(let i=1;i<=days;i++){
   const dateKey=`${y}-${String(m).padStart(2,'0')}-${String(i).padStart(2,'0')}`;
   const info=daily[i-1].info;
-  const plans=jobPlans().filter(p=>p.date===dateKey);
+  const plans=filterByJob(state.plans,state.calendarJobFilter).filter(p=>p.date===dateKey);
   const workTasks=info.items.flatMap(s=>Array.isArray(s.workTasks)?s.workTasks:[]);
   const hasAllTasks=workTasks.length>0&&workTasks.every(t=>t.done);
   const isBest=bestPay>0&&info.pay===bestPay;
@@ -384,6 +394,9 @@ function openShiftDetails(id){
  const overtime=state.settings.overtime?Math.max(0,duration-overtimeThreshold):0;
  const tasks=Array.isArray(shift.workTasks)?shift.workTasks:[];
  const doneTasks=tasks.filter(task=>task.done).length;
+ const detailsJob=jobById(shift.jobId||activeJobId());
+ $('shiftDetailsJob').textContent=detailsJob.name;
+ $('shiftDetailsJob').style.setProperty('--job-color',detailsJob.color||'#4A67E8');
 
  $('shiftDetailsDate').textContent=new Date(shift.start).toLocaleDateString('uk-UA',{
   weekday:'long',day:'numeric',month:'long',year:'numeric'
@@ -538,13 +551,14 @@ function dailyStats(items){
  return [...map.values()].sort((a,b)=>a.date.localeCompare(b.date));
 }
 function renderStatistics(data){
+ data=summary(statsShifts(),state.month,state.rate,state.settings);
  $('statsMonthLabel').textContent=fmt.month(state.month);
  $('statsTotalPay').textContent=fmt.money(data.total);
  $('statsHours').textContent=fmt.duration(data.mins);
  $('statsShiftCount').textContent=data.selected.length;
  $('statsAverageShift').textContent=fmt.duration(data.selected.length?data.mins/data.selected.length:0);
 
- const prev=summary(state.shifts,previousMonthKey(state.month),state.rate,state.settings);
+ const prev=summary(statsShifts(),previousMonthKey(state.month),state.rate,state.settings);
  const payChange=percentChange(data.total,prev.total);
  const hoursChange=percentChange(data.mins,prev.mins);
  const shiftsChange=percentChange(data.selected.length,prev.selected.length);
@@ -737,7 +751,7 @@ function deleteEditingProfile(){
  }catch(error){alert(error.message)}
 }
 
-function backupPayload(){return {backupSchema:2,appVersion:'v15.2 Fixed Navigation',exportedAt:new Date().toISOString(),profiles:storage.exportStore()}}
+function backupPayload(){return {backupSchema:2,appVersion:'v15.3 Job Filters',exportedAt:new Date().toISOString(),profiles:storage.exportStore()}}
 function renderBackupStatus(){const raw=storage.lastBackup();$('lastBackupText').textContent=raw?`Остання копія: ${new Date(raw).toLocaleString('uk-UA')}`:'Копію ще не створювали'}
 function downloadBackup(){const blob=new Blob([JSON.stringify(backupPayload(),null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`moya-robota-profiles-${new Date().toISOString().slice(0,10)}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);storage.saveLastBackup(new Date().toISOString());renderBackupStatus();toast('Резервну копію всіх профілів створено')}
 function validateBackup(p){
@@ -806,8 +820,8 @@ function renderDayTaskRows(node,tasks,emptyText){
 }
 function openDayDetails(dateKey){
  selectedDay=dateKey;
- const info=daySummary(jobShifts(),dateKey,state.rate,state.settings);
- const plans=jobPlans().filter(p=>p.date===dateKey);
+ const info=daySummary(calendarShifts(),dateKey,state.rate,state.settings);
+ const plans=filterByJob(state.plans,state.calendarJobFilter).filter(p=>p.date===dateKey);
  const workTasks=info.items.flatMap(s=>Array.isArray(s.workTasks)?s.workTasks:[]);
  const doneTasks=workTasks.filter(t=>t.done).length;
  $('dayDetailsDate').textContent=new Date(dateKey+'T12:00').toLocaleDateString('uk-UA',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
@@ -825,8 +839,8 @@ function openDayDetails(dateKey){
 
 function openDay(dateKey){
  selectedDay=dateKey;
- const info=daySummary(jobShifts(),dateKey,state.rate,state.settings);
- const plans=jobPlans().filter(p=>p.date===dateKey);
+ const info=daySummary(calendarShifts(),dateKey,state.rate,state.settings);
+ const plans=filterByJob(state.plans,state.calendarJobFilter).filter(p=>p.date===dateKey);
  $('dayDialogTitle').textContent=new Date(dateKey+'T12:00').toLocaleDateString('uk-UA',{weekday:'long',day:'numeric',month:'long'});
  $('dayDialogSummary').innerHTML=`<div class="label">Підсумок дня</div><strong>${fmt.duration(info.minutes)} год · ${fmt.money(info.pay)}</strong>`;
  $('dayNote').value=state.dayNotes[dateKey]||'';
@@ -861,9 +875,12 @@ bind('addJobButton','click',()=>openJobEditor());
 bind('cancelJobEdit','click',()=>{$('jobEditDialog').close();editingJobId=null});
 bind('saveJobEdit','click',saveJobEditor);
 bind('archiveJobButton','click',archiveEditingJob);
+bind('calendarJobFilter','change',e=>{state.calendarJobFilter=e.target.value;render()});
+bind('statsJobFilter','change',e=>{state.statsJobFilter=e.target.value;render()});
+bind('plansJobFilter','change',e=>{state.plansJobFilter=e.target.value;render()});
 bind('profilePageEdit','click',()=>openProfileEditor(storage.activeProfileId()));
 bind('languageRow','click',()=>toast('Додаткові мови з’являться в одному з наступних оновлень'));
-bind('aboutAppRow','click',()=>alert('Моя робота\nВерсія: v15.2 Fixed Navigation'));
+bind('aboutAppRow','click',()=>alert('Моя робота\nВерсія: v15.3 Job Filters'));
 bind('profileHeaderButton','click',openProfiles);
 bind('openProfilesButton','click',openProfiles);
 bind('closeProfilesButton','click',()=>$('profilesDialog').close());

@@ -16,7 +16,7 @@ export function template(){
        </div>
       </div>
       <button class="activeJobChip" id="activeJobChip"><span class="activeJobDot" id="activeJobDot"></span><span><small>Активна робота</small><b id="activeJobChipName">Основна робота</b></span><span class="activeJobChevron">›</span></button>
-      <div class="appVersion finalVersion">v15.2 Fixed Navigation</div>
+      <div class="appVersion finalVersion">v15.3 Job Filters</div>
      </header>
  <main>
   <section class="view active finalHome" id="homeView">
@@ -109,7 +109,7 @@ export function template(){
   </div>
  </section>
 
-<section class="view" id="calendarView">
+<section class="view" id="calendarView"><div class="jobFilterBar"><label for="calendarJobFilter">Робота</label><select id="calendarJobFilter"></select></div>
  <div class="sectionTitle"><h2>Календар</h2><button class="smallButton" id="calendarTodayButton">Сьогодні</button></div>
  <div class="calendarSummary">
       <div class="card calendarStat"><span>Змін</span><strong id="calendarShiftCount">0</strong></div>
@@ -122,7 +122,7 @@ export function template(){
   <button class="calendarArrow" id="calendarNextMonth">›</button>
  </div>
  <div class="card calendar"><div class="calendarHead"><div>Пн</div><div>Вт</div><div>Ср</div><div>Чт</div><div>Пт</div><div>Сб</div><div>Нд</div></div><div class="calendarGrid" id="calendarGrid"></div></div></section>
-  <section class="view" id="statsView">
+  <section class="view" id="statsView"><div class="jobFilterBar"><label for="statsJobFilter">Робота</label><select id="statsJobFilter"></select></div>
  <div class="statsHeader">
   <div>
    <div class="eyebrow">Аналітика роботи</div>
@@ -212,7 +212,7 @@ export function template(){
  <div class="card list" id="allList"></div>
 </section>
 
-<section class="view" id="plansView">
+<section class="view" id="plansView"><div class="jobFilterBar"><label for="plansJobFilter">Робота</label><select id="plansJobFilter"></select></div>
  <div class="plansHeader">
   <div>
    <div class="eyebrow">Організуй свій день</div>
@@ -298,7 +298,7 @@ export function template(){
        <button class="detailsMoreButton" id="shiftDetailsEdit">Редагувати</button>
       </div>
 
-      <div class="card shiftSummaryHero">
+      <div class="shiftJobBadge" id="shiftDetailsJob"></div><div class="card shiftSummaryHero">
        <div class="shiftSummaryTimes">
         <div><span>Початок</span><strong id="shiftDetailsStart">—</strong></div>
         <div class="shiftArrow">→</div>

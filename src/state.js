@@ -1,4 +1,4 @@
-import {storage} from './storage.js?v=v15-2-fixed-navigation-20260803-21';
+import {storage} from './storage.js?v=v15-3-job-filters-20260803-22';
 
 export const state={
  month:new Date().toISOString().slice(0,7),
@@ -6,6 +6,9 @@ export const state={
   this.jobs=storage.jobs();
   this.activeJobId=storage.activeJobId();
   this.activeJob=storage.activeJob();
+  this.calendarJobFilter='all';
+  this.statsJobFilter='all';
+  this.plansJobFilter='all';
   this.shifts=storage.shifts();
   this.active=storage.active();
   this.rate=storage.rate();
