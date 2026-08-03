@@ -1,17 +1,17 @@
-const CACHE='moya-robota-v11-6-calendar-polish-20260803-7';
+const CACHE='moya-robota-v11-7-calendar-stable-20260803-8';
 const ASSETS=[
  './',
  './index.html',
- './styles.css?v=v11-6-calendar-polish-20260803-7',
- './manifest.webmanifest?v=v11-6-calendar-polish-20260803-7',
+ './styles.css?v=v11-7-calendar-stable-20260803-8',
+ './manifest.webmanifest?v=v11-7-calendar-stable-20260803-8',
  './icon-192.png',
  './icon-512.png',
- './src/app.js?v=v11-6-calendar-polish-20260803-7',
- './src/state.js?v=v11-6-calendar-polish-20260803-7',
- './src/storage.js?v=v11-6-calendar-polish-20260803-7',
- './src/payroll.js?v=v11-6-calendar-polish-20260803-7',
- './src/format.js?v=v11-6-calendar-polish-20260803-7',
- './src/ui.js?v=v11-6-calendar-polish-20260803-7'
+ './src/app.js?v=v11-7-calendar-stable-20260803-8',
+ './src/state.js?v=v11-7-calendar-stable-20260803-8',
+ './src/storage.js?v=v11-7-calendar-stable-20260803-8',
+ './src/payroll.js?v=v11-7-calendar-stable-20260803-8',
+ './src/format.js?v=v11-7-calendar-stable-20260803-8',
+ './src/ui.js?v=v11-7-calendar-stable-20260803-8'
 ];
 self.addEventListener('install',event=>{
  self.skipWaiting();
