@@ -1,17 +1,17 @@
-const CACHE='moya-robota-v12-4-bottom-nav-stable-20260803-13';
+const CACHE='moya-robota-v13-core-profiles-20260803-14';
 const ASSETS=[
  './',
  './index.html',
- './styles.css?v=v12-4-bottom-nav-stable-20260803-13',
- './manifest.webmanifest?v=v12-4-bottom-nav-stable-20260803-13',
+ './styles.css?v=v13-core-profiles-20260803-14',
+ './manifest.webmanifest?v=v13-core-profiles-20260803-14',
  './icon-192.png',
  './icon-512.png',
- './src/app.js?v=v12-4-bottom-nav-stable-20260803-13',
- './src/state.js?v=v12-4-bottom-nav-stable-20260803-13',
- './src/storage.js?v=v12-4-bottom-nav-stable-20260803-13',
- './src/payroll.js?v=v12-4-bottom-nav-stable-20260803-13',
- './src/format.js?v=v12-4-bottom-nav-stable-20260803-13',
- './src/ui.js?v=v12-4-bottom-nav-stable-20260803-13'
+ './src/app.js?v=v13-core-profiles-20260803-14',
+ './src/state.js?v=v13-core-profiles-20260803-14',
+ './src/storage.js?v=v13-core-profiles-20260803-14',
+ './src/payroll.js?v=v13-core-profiles-20260803-14',
+ './src/format.js?v=v13-core-profiles-20260803-14',
+ './src/ui.js?v=v13-core-profiles-20260803-14'
 ];
 self.addEventListener('install',event=>{
  self.skipWaiting();
