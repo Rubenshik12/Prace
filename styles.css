@@ -949,3 +949,102 @@ html,body,.shell,main,.view{
 .archivedTaskRow:last-child{border-bottom:0}
 .archivedTaskIcon{width:20px;flex:0 0 20px;color:var(--green);font-weight:900}
 .archivedTaskRow.open .archivedTaskIcon{color:var(--muted)}
+
+/* v11.3 — повноекранні деталі зміни */
+.detailsTopBar{
+ display:grid;
+ grid-template-columns:42px minmax(0,1fr) auto;
+ gap:10px;
+ align-items:center;
+ margin:4px 0 14px;
+}
+.detailsTopBar h2{
+ margin:3px 0 0;
+ font-size:25px;
+ letter-spacing:-.035em;
+}
+.detailsBackButton,.detailsMoreButton{
+ border:0;
+ background:var(--surface);
+ color:var(--text);
+ box-shadow:var(--shadow);
+}
+.detailsBackButton{
+ width:42px;height:42px;border-radius:14px;font-size:28px;line-height:1
+}
+.detailsMoreButton{
+ height:42px;border-radius:14px;padding:0 13px;font-weight:850;color:var(--blue)
+}
+.shiftSummaryHero{
+ padding:18px;
+ background:
+  radial-gradient(circle at 88% 8%,color-mix(in srgb,var(--green) 18%,transparent),transparent 34%),
+  var(--surface);
+}
+.shiftSummaryTimes{
+ display:grid;
+ grid-template-columns:1fr auto 1fr;
+ gap:12px;
+ align-items:center;
+}
+.shiftSummaryTimes div:first-child{text-align:left}
+.shiftSummaryTimes div:last-child{text-align:right}
+.shiftSummaryTimes span,.shiftSummaryMain span,.detailsMetric span{
+ display:block;color:var(--muted);font-size:11px;font-weight:850;text-transform:uppercase;letter-spacing:.06em
+}
+.shiftSummaryTimes strong{
+ display:block;font-size:25px;margin-top:7px;letter-spacing:-.04em
+}
+.shiftArrow{color:var(--muted);font-size:20px}
+.shiftSummaryMain{
+ display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:18px
+}
+.shiftSummaryMain>div{
+ padding:14px;border-radius:17px;background:var(--surface2);border:1px solid var(--line)
+}
+.shiftSummaryMain strong{
+ display:block;font-size:24px;margin-top:7px;letter-spacing:-.04em
+}
+.detailsMetrics{
+ display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px;margin-top:12px
+}
+.detailsMetric{
+ padding:15px;min-height:108px
+}
+.detailsMetric strong{
+ display:block;font-size:22px;margin-top:13px;letter-spacing:-.035em
+}
+.detailsMetric small{
+ display:block;color:var(--muted);font-size:11px;margin-top:6px
+}
+.detailsTasksList{padding:4px 15px}
+.detailsTaskRow{
+ display:flex;align-items:flex-start;gap:10px;padding:13px 0;border-bottom:1px solid var(--line)
+}
+.detailsTaskRow:last-child{border-bottom:0}
+.detailsTaskIcon{
+ width:25px;height:25px;flex:0 0 25px;border-radius:9px;display:grid;place-items:center;
+ background:var(--surface2);color:var(--muted);font-weight:900
+}
+.detailsTaskRow.done .detailsTaskIcon{background:var(--green);color:#fff}
+.detailsTaskText{font-weight:750;line-height:1.35}
+.detailsTaskRow.done .detailsTaskText{text-decoration:line-through;color:var(--muted)}
+.detailsNote{
+ padding:17px;color:var(--text);line-height:1.5;min-height:76px;white-space:pre-wrap
+}
+.detailsActions{
+ display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px
+}
+.detailsAction{
+ min-height:50px;border-radius:16px;font-weight:850
+}
+.primaryAction{border:0;background:var(--blue);color:#fff}
+.secondaryAction{border:1px solid var(--line);background:var(--surface);color:var(--text)}
+.dangerAction{
+ grid-column:span 2;border:1px solid color-mix(in srgb,var(--red) 28%,var(--line));
+ background:var(--redSoft);color:var(--red)
+}
+@media(max-width:380px){
+ .shiftSummaryTimes strong{font-size:22px}
+ .shiftSummaryMain strong{font-size:21px}
+}
