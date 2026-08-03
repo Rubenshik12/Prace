@@ -1,17 +1,17 @@
-const CACHE='moya-robota-v16-2-bottom-strip-fix-20260803-31';
+const CACHE='moya-robota-v16-3-compact-bottom-navigation-20260803-32';
 const ASSETS=[
  './',
  './index.html',
- './styles.css?v=v16-2-bottom-strip-fix-20260803-31',
- './manifest.webmanifest?v=v16-2-bottom-strip-fix-20260803-31',
+ './styles.css?v=v16-3-compact-bottom-navigation-20260803-32',
+ './manifest.webmanifest?v=v16-3-compact-bottom-navigation-20260803-32',
  './icon-192.png',
  './icon-512.png',
- './src/app.js?v=v16-2-bottom-strip-fix-20260803-31',
- './src/state.js?v=v16-2-bottom-strip-fix-20260803-31',
- './src/storage.js?v=v16-2-bottom-strip-fix-20260803-31',
- './src/payroll.js?v=v16-2-bottom-strip-fix-20260803-31',
- './src/format.js?v=v16-2-bottom-strip-fix-20260803-31',
- './src/ui.js?v=v16-2-bottom-strip-fix-20260803-31'
+ './src/app.js?v=v16-3-compact-bottom-navigation-20260803-32',
+ './src/state.js?v=v16-3-compact-bottom-navigation-20260803-32',
+ './src/storage.js?v=v16-3-compact-bottom-navigation-20260803-32',
+ './src/payroll.js?v=v16-3-compact-bottom-navigation-20260803-32',
+ './src/format.js?v=v16-3-compact-bottom-navigation-20260803-32',
+ './src/ui.js?v=v16-3-compact-bottom-navigation-20260803-32'
 ];
 self.addEventListener('install',event=>{
  self.skipWaiting();

@@ -2083,14 +2083,14 @@ main,
  }
 }
 
-/* v16.2 — remove artificial bottom strip */
+/* v16.3 — compact bottom navigation */
 .shell>main{
- padding-bottom:8px!important;
- scroll-padding-bottom:12px!important;
+ padding-bottom:0!important;
+ scroll-padding-bottom:0!important;
 }
 
 .shell>main>.view{
- padding-bottom:8px!important;
+ padding-bottom:0!important;
 }
 
 .shell>main>.view::after,
@@ -2102,4 +2102,28 @@ main,
 
 .shell>main>.view>*:last-child{
  margin-bottom:0!important;
+}
+
+.bottomNav{
+ min-height:calc(64px + env(safe-area-inset-bottom,0px))!important;
+ height:auto!important;
+ padding:3px 8px calc(3px + env(safe-area-inset-bottom,0px))!important;
+ align-items:flex-start!important;
+}
+
+.bottomNav .nav{
+ height:56px!important;
+ min-height:56px!important;
+ max-height:56px!important;
+ padding:5px 4px 3px!important;
+ margin:0!important;
+}
+
+.bottomNav .navIcon{
+ margin:0!important;
+}
+
+.bottomNav .navLabel{
+ margin-top:2px!important;
+ line-height:1!important;
 }
