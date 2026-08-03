@@ -1,4 +1,4 @@
-import {storage} from './storage.js?v=v14-smart-dashboard-20260803-17';
+import {storage} from './storage.js?v=v14-1-dashboard-polish-20260803-18';
 
 export const state={
  month:new Date().toISOString().slice(0,7),

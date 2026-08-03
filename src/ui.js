@@ -1,34 +1,40 @@
 
 export function template(){
  return `<div class="shell">
- <header class="hero"><div class="heroRow"><div><div class="greeting" id="greeting"></div><h1>Моя робота</h1><p>Час • зарплата • плани</p><div class="appVersion">v14.0 Smart Dashboard</div></div><div class="heroButtons">
+ <header class="hero"><div class="heroRow"><div><div class="greeting" id="greeting"></div><h1>Моя робота</h1><p>Час • зарплата • плани</p><div class="appVersion">v14.1 Dashboard Polish</div></div><div class="heroButtons">
       <button class="profileHeaderButton" id="profileHeaderButton" aria-label="Профілі"><span id="profileHeaderInitial">М</span></button>
       <button class="iconButton" id="themeButton">◐</button>
       <button class="iconButton" data-open="settingsView">⚙︎</button>
      </div></div></header>
  <main>
   <section class="view active smartDashboard" id="homeView">
- <div class="dashboardGreeting">
-  <div><div class="eyebrow">Мій день</div><h2 id="dashboardGreetingTitle">Привіт 👋</h2><p id="dashboardDate">Сьогодні</p></div>
-  <button class="profileHeaderButton" id="profileHeaderButton" aria-label="Профілі"><span id="profileHeaderInitial">М</span></button>
- </div>
-
  <div class="card dashboardShiftCard">
-  <div class="dashboardShiftTop"><span class="dashboardStatus" id="dashboardStatus">Не на роботі</span><button class="dashboardMore" data-open="settingsView">•••</button></div>
+  <div class="dashboardShiftTop">
+   <span class="dashboardStatus" id="dashboardStatus">Не на роботі</span>
+   <button class="dashboardMore" data-open="settingsView">•••</button>
+  </div>
+
   <div class="dashboardShiftMain">
    <div class="dashboardSideMetric"><span>Початок</span><strong id="dashboardStartTime">—</strong></div>
    <div class="dashboardRingWrap">
-    <svg class="dashboardRing" viewBox="0 0 120 120"><circle class="dashboardRingTrack" cx="60" cy="60" r="50"/><circle class="dashboardRingProgress" id="dashboardRingProgress" cx="60" cy="60" r="50"/></svg>
-    <div class="dashboardRingContent"><strong id="timer">0:00:00</strong><span id="dashboardRingLabel">зміна не почата</span></div>
+    <svg class="dashboardRing" viewBox="0 0 120 120" aria-hidden="true">
+     <circle class="dashboardRingTrack" cx="60" cy="60" r="50"/>
+     <circle class="dashboardRingProgress" id="dashboardRingProgress" cx="60" cy="60" r="50"/>
+    </svg>
+    <div class="dashboardRingContent">
+     <strong id="timer">0:00:00</strong>
+     <span id="dashboardRingLabel">зміна не почата</span>
+    </div>
    </div>
-   <div class="dashboardSideMetric dashboardPayMetric"><span>Зароблено</span><strong id="currentEarnings">0 Kč</strong></div>
+   <div class="dashboardSideMetric dashboardPayMetric"><span>Зароблено</span><strong id="livePay">0 Kč</strong></div>
   </div>
+
   <div class="dashboardActions">
-   <button class="start primary dashboardPrimaryAction" id="startNow">Почати зміну</button>
-   <button class="dashboardSecondaryAction" id="manualStart">Вказати час приходу</button>
-   <button class="stop dashboardPrimaryAction" id="stopNow">Завершити зміну</button>
-   <button class="dashboardSecondaryAction" id="editStart">Змінити час приходу</button>
-   <button class="dashboardCancelAction" id="cancelStart">Скасувати помилковий старт</button>
+   <button class="start primary dashboardPrimaryAction" id="startButton">Почати зміну</button>
+   <button class="dashboardSecondaryAction" id="manualStartButton">Вказати час приходу</button>
+   <button class="stop dashboardPrimaryAction" id="stopButton">Завершити зміну</button>
+   <button class="dashboardSecondaryAction" id="editStartButton">Змінити час приходу</button>
+   <button class="dashboardCancelAction" id="cancelButton">Скасувати помилковий старт</button>
   </div>
  </div>
 
@@ -48,19 +54,29 @@ export function template(){
   <div class="card dashboardTodayCard"><span>Зароблено</span><strong id="todayPay">0 Kč</strong><small>за сьогодні</small></div>
  </div>
 
- <div class="card dashboardMonthCard"><div><span class="eyebrow">Поточний місяць</span><strong id="dashboardMonthSummary">0 змін · 0:00 · 0 Kč</strong></div><button data-open-view="calendarView">Календар ›</button></div>
+ <div class="card dashboardMonthCard">
+  <div><span class="eyebrow">Поточний місяць</span><strong id="dashboardMonthSummary">0 змін · 0:00 · 0 Kč</strong></div>
+  <button data-open-view="calendarView">Календар ›</button>
+ </div>
 
  <div class="quickWorkTasks" id="quickWorkTasksBlock" hidden>
   <div class="sectionTitle"><h2>Швидкі завдання</h2></div>
-  <form id="quickWorkTaskForm" class="quickWorkTaskForm"><input id="quickWorkTaskInput" type="text" placeholder="Що потрібно зробити?" autocomplete="off"><button type="submit">＋</button></form>
+  <form id="quickWorkTaskForm" class="quickWorkTaskForm">
+   <input id="quickWorkTaskInput" type="text" placeholder="Що потрібно зробити?" autocomplete="off">
+   <button type="submit">＋</button>
+  </form>
   <div id="quickWorkTaskList" class="quickWorkTaskList"></div>
  </div>
 
  <div hidden>
-  <span id="homeShiftCount">0</span><span id="homeHours">0:00</span><span id="homeMonthPay">0 Kč</span><span id="homeRateValue">0 Kč</span>
-  <div id="todayPlans"></div><div id="recentShifts"></div>
+  <span id="homeShiftCount">0</span>
+  <span id="homeHours">0:00</span>
+  <span id="homeMonthPay">0 Kč</span>
+  <span id="homeRateValue">0 Kč</span>
+  <div id="todayPlans"></div>
+  <div id="recentShifts"></div>
  </div>
-<div id="legacyHomeCompatibility" hidden aria-hidden="true"><button id="cancelButton" type="button"></button><span id="countValue"></span><span id="dayStatus"></span><button id="editStartButton" type="button"></button><span id="goalFill"></span><span id="goalText"></span><span id="homeMonthLabel"></span><div id="homePlansList"></div><span id="hoursValue"></span><span id="livePay"></span><button id="manualStartButton" type="button"></button><div id="recentList"></div><button id="startButton" type="button"></button><button id="stopButton" type="button"></button><span id="todayPayValue"></span><span id="todayPlansValue"></span><span id="todaySubtitle"></span><span id="todayTitle"></span><span id="totalHomeValue"></span><div id="workMode"></div><span id="workModeLabel"></span><div id="workTasksBlock"></div><span id="workTasksCounter"></span><div id="workTasksList"></div></div>
+<div id="legacyHomeCompatibility" hidden aria-hidden="true"><span id="countValue"></span><span id="currentProfileAvatar"></span><span id="currentProfileMeta"></span><span id="currentProfileName"></span><span id="dashboardDate"></span><span id="dashboardGreetingTitle"></span><span id="dayStatus"></span><span id="goalFill"></span><span id="goalText"></span><span id="homeMonthLabel"></span><div id="homePlansList"></div><span id="hoursValue"></span><div id="recentList"></div><span id="todayPayValue"></span><span id="todayPlansValue"></span><span id="todaySubtitle"></span><span id="todayTitle"></span><span id="totalHomeValue"></span><div id="workMode"></div><span id="workModeLabel"></span><div id="workTasksBlock"></div><span id="workTasksCounter"></span><div id="workTasksList"></div></div>
 </section>
 
 <section class="view" id="calendarView">
@@ -290,15 +306,6 @@ export function template(){
   <div class="profilePageIdentity"><div class="eyebrow">Особистий простір</div><h2 id="profilePageName">Мій профіль</h2><p id="profilePageMeta">180 Kč/год</p></div>
   <button class="profilePageEdit" id="profilePageEdit">Редагувати</button>
  </div>
- <div class="sectionTitle"><h2>Профіль</h2></div>
- <div class="card currentProfileCard">
-  <button class="currentProfileMain" id="openProfilesButton">
-   <span class="profileAvatar" id="currentProfileAvatar">М</span>
-   <span class="profileIdentity"><b id="currentProfileName">Мій профіль</b><small id="currentProfileMeta">180 Kč/год</small></span>
-   <span class="profileChevron">›</span>
-  </button>
-  <button class="profileEditButton" id="editCurrentProfileButton">Редагувати профіль</button>
- </div>
  <div class="sectionTitle"><h2>Налаштування</h2></div>
  <div class="card settingsCard">
   <div class="setting"><div><b>Базова ставка</b><div class="hint">Для нових змін</div></div><input id="settingsRate" type="number"></div>
@@ -320,7 +327,7 @@ export function template(){
  <div class="sectionTitle"><h2>Застосунок</h2></div>
  <div class="card profileMenuCard">
   <button class="profileMenuRow" id="languageRow"><span class="profileMenuIcon">🌐</span><span><b>Мова</b><small>Українська</small></span><span class="profileMenuChevron">›</span></button>
-  <button class="profileMenuRow" id="aboutAppRow"><span class="profileMenuIcon">ℹ</span><span><b>Про застосунок</b><small>Моя робота · v13.1</small></span><span class="profileMenuChevron">›</span></button>
+  <button class="profileMenuRow" id="aboutAppRow"><span class="profileMenuIcon">ℹ</span><span><b>Про застосунок</b><small>Моя робота · v14.1 Dashboard Polish</small></span><span class="profileMenuChevron">›</span></button>
  </div>
  <div class="sectionTitle"><h2>Безпека даних</h2></div>
  <div class="card backupCard">
