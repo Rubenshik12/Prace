@@ -2166,3 +2166,154 @@ main,
  pointer-events:none;
  visibility:hidden;
 }
+
+/* v16.9 — statistics daily chart */
+.barChart{
+ position:relative;
+ display:flex!important;
+ align-items:stretch!important;
+ justify-content:flex-start;
+ gap:8px!important;
+ height:176px!important;
+ margin-top:14px!important;
+ padding:14px 10px 8px!important;
+ overflow-x:auto!important;
+ overflow-y:hidden!important;
+ border:1px solid var(--line);
+ border-radius:18px;
+ background:color-mix(in srgb,var(--surface2) 72%,transparent);
+ box-sizing:border-box;
+}
+
+.barChart::before{
+ content:"";
+ position:absolute;
+ left:10px;
+ right:10px;
+ bottom:31px;
+ height:1px;
+ background:var(--line);
+ pointer-events:none;
+}
+
+.barItem{
+ -webkit-appearance:none!important;
+ appearance:none!important;
+ border:0!important;
+ outline:0!important;
+ background:transparent!important;
+ color:var(--text)!important;
+ padding:0!important;
+ margin:0!important;
+ min-width:42px!important;
+ width:42px;
+ flex:0 0 42px!important;
+ height:100%!important;
+ display:grid!important;
+ grid-template-rows:22px minmax(0,1fr) 22px;
+ align-items:end;
+ justify-items:center;
+ gap:3px!important;
+ border-radius:10px;
+ font:inherit;
+ cursor:pointer;
+}
+
+.barItem:active{
+ background:color-mix(in srgb,var(--blue) 10%,transparent)!important;
+}
+
+.barAmount{
+ width:max-content;
+ max-width:68px;
+ overflow:hidden;
+ text-overflow:ellipsis;
+ white-space:nowrap;
+ color:var(--muted);
+ font-size:8px;
+ font-weight:800;
+ opacity:0;
+ transform:translateY(2px);
+ transition:.18s ease;
+}
+
+.barItem.best .barAmount,
+.barItem:focus-visible .barAmount{
+ opacity:1;
+ transform:none;
+ color:var(--green);
+}
+
+.barTrack{
+ position:relative;
+ width:28px;
+ height:100%;
+ min-height:86px;
+ display:flex;
+ align-items:flex-end;
+ justify-content:center;
+ border-radius:8px 8px 3px 3px;
+ background:color-mix(in srgb,var(--line) 35%,transparent);
+ overflow:hidden;
+}
+
+.barValue{
+ width:100%!important;
+ max-width:none!important;
+ min-height:5px!important;
+ border-radius:8px 8px 3px 3px!important;
+ background:linear-gradient(180deg,var(--blue),color-mix(in srgb,var(--blue) 58%,var(--green)))!important;
+ box-shadow:0 -4px 12px color-mix(in srgb,var(--blue) 22%,transparent);
+}
+
+.barItem.best .barValue{
+ background:linear-gradient(180deg,var(--green),color-mix(in srgb,var(--green) 62%,var(--blue)))!important;
+ box-shadow:0 -4px 14px color-mix(in srgb,var(--green) 24%,transparent);
+}
+
+.barLabel{
+ position:relative;
+ z-index:1;
+ color:var(--muted);
+ font-size:10px!important;
+ line-height:22px;
+ font-weight:800;
+}
+
+.barChart.singleDay{
+ justify-content:center;
+}
+
+.barChart.singleDay .barItem{
+ width:76px;
+ flex-basis:76px!important;
+}
+
+.barChart.singleDay .barTrack{
+ width:38px;
+}
+
+.barChart.singleDay .barAmount{
+ opacity:1;
+ font-size:9px;
+ color:var(--green);
+}
+
+.chartEmptyState{
+ width:100%;
+ min-height:120px;
+ display:grid;
+ place-content:center;
+ text-align:center;
+ gap:5px;
+ color:var(--muted);
+}
+
+.chartEmptyState b{
+ color:var(--text);
+ font-size:13px;
+}
+
+.chartEmptyState span{
+ font-size:9px;
+}
