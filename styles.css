@@ -1931,3 +1931,73 @@ dialog[open]{
  margin-bottom:10px!important;
 }
 .jobFilterBar{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:10px;margin:4px 0 12px;padding:10px 12px;border-radius:16px;background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow)}.jobFilterBar label{color:var(--muted);font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:.06em}.jobFilterBar select{width:100%;min-height:40px;border-radius:12px;padding:0 12px;background:var(--surface2);border:1px solid var(--line);color:var(--text);font-weight:850}.shiftJobMini{display:flex;align-items:center;gap:6px;margin-top:4px;font-size:9px;color:var(--muted);font-weight:800}.shiftJobMini i{width:7px;height:7px;border-radius:50%;flex:0 0 7px}.shiftJobBadge{--job-color:#4A67E8;display:inline-flex;align-items:center;gap:7px;margin:0 0 10px;padding:7px 10px;border-radius:999px;background:color-mix(in srgb,var(--job-color) 16%,var(--surface));border:1px solid color-mix(in srgb,var(--job-color) 34%,transparent);color:var(--text);font-size:10px;font-weight:900}.shiftJobBadge::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--job-color)}
+/* v15.4 — reminders */
+.reminderSettingsCard{padding:4px 14px}
+.reminderSettingsCard .settingRow{
+ display:grid;
+ grid-template-columns:minmax(0,1fr) auto;
+ align-items:center;
+ gap:12px;
+ padding:13px 0;
+ border-bottom:1px solid var(--line);
+}
+.reminderSettingsCard .settingRow:last-child{border-bottom:0}
+.reminderSettingsCard .settingRow b,
+.reminderSettingsCard .settingRow small{display:block}
+.reminderSettingsCard .settingRow b{font-size:13px}
+.reminderSettingsCard .settingRow small{font-size:9px;color:var(--muted);margin-top:4px;line-height:1.35}
+.settingInline{
+ display:grid;
+ grid-template-columns:auto minmax(0,1fr);
+ align-items:center;
+ gap:12px;
+ padding:9px 0 12px;
+ border-bottom:1px solid var(--line);
+}
+.settingInline label{font-size:10px;color:var(--muted);font-weight:850}
+.settingInline input,.settingInline select{min-height:40px}
+.unfinished-shift-warning .finalShiftCard{
+ border-color:color-mix(in srgb,var(--red) 55%,var(--line))!important;
+}
+
+/* v15.4 — robust iPhone keyboard/select navigation fix */
+html{
+ --visual-bottom:0px;
+}
+.bottomNav{
+ bottom:0!important;
+ transform:translate3d(0,0,0)!important;
+ -webkit-transform:translate3d(0,0,0)!important;
+ will-change:transform;
+}
+
+/* Hide the bar only while the keyboard/native picker is active.
+   It returns to bottom:0 after focus closes. */
+html.keyboard-open .bottomNav{
+ opacity:0!important;
+ visibility:hidden!important;
+ pointer-events:none!important;
+ transform:translate3d(0,100%,0)!important;
+ -webkit-transform:translate3d(0,100%,0)!important;
+ transition:none!important;
+}
+
+html:not(.keyboard-open) .bottomNav{
+ opacity:1!important;
+ visibility:visible!important;
+ pointer-events:auto!important;
+ bottom:0!important;
+ transform:translate3d(0,0,0)!important;
+ -webkit-transform:translate3d(0,0,0)!important;
+}
+
+@media (display-mode:standalone){
+ .bottomNav{
+  position:fixed!important;
+  bottom:0!important;
+ }
+}
+
+@supports(height:100dvh){
+ html,body{min-height:100dvh}
+}

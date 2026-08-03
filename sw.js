@@ -1,17 +1,17 @@
-const CACHE='moya-robota-v15-3-job-filters-20260803-22';
+const CACHE='moya-robota-v15-4-reminders-keyboard-fix-20260803-23';
 const ASSETS=[
  './',
  './index.html',
- './styles.css?v=v15-3-job-filters-20260803-22',
- './manifest.webmanifest?v=v15-3-job-filters-20260803-22',
+ './styles.css?v=v15-4-reminders-keyboard-fix-20260803-23',
+ './manifest.webmanifest?v=v15-4-reminders-keyboard-fix-20260803-23',
  './icon-192.png',
  './icon-512.png',
- './src/app.js?v=v15-3-job-filters-20260803-22',
- './src/state.js?v=v15-3-job-filters-20260803-22',
- './src/storage.js?v=v15-3-job-filters-20260803-22',
- './src/payroll.js?v=v15-3-job-filters-20260803-22',
- './src/format.js?v=v15-3-job-filters-20260803-22',
- './src/ui.js?v=v15-3-job-filters-20260803-22'
+ './src/app.js?v=v15-4-reminders-keyboard-fix-20260803-23',
+ './src/state.js?v=v15-4-reminders-keyboard-fix-20260803-23',
+ './src/storage.js?v=v15-4-reminders-keyboard-fix-20260803-23',
+ './src/payroll.js?v=v15-4-reminders-keyboard-fix-20260803-23',
+ './src/format.js?v=v15-4-reminders-keyboard-fix-20260803-23',
+ './src/ui.js?v=v15-4-reminders-keyboard-fix-20260803-23'
 ];
 self.addEventListener('install',event=>{
  self.skipWaiting();
@@ -34,5 +34,17 @@ self.addEventListener('fetch',event=>{
    caches.open(CACHE).then(cache=>cache.put(event.request,copy));
    return response;
   }).catch(()=>caches.match(event.request))
+ );
+});
+
+self.addEventListener('notificationclick',event=>{
+ event.notification.close();
+ event.waitUntil(
+  clients.matchAll({type:'window',includeUncontrolled:true}).then(list=>{
+   for(const client of list){
+    if('focus' in client)return client.focus();
+   }
+   if(clients.openWindow)return clients.openWindow('./');
+  })
  );
 });
