@@ -1,40 +1,61 @@
-const CACHE='moya-robota-v16-5-shell-padding-fix-20260803-34';
+const CACHE='moya-robota-v16-6-optimization-widget-20260804-01';
 const ASSETS=[
  './',
  './index.html',
- './styles.css?v=v16-5-shell-padding-fix-20260803-34',
- './manifest.webmanifest?v=v16-5-shell-padding-fix-20260803-34',
+ './styles.css?v=v16-6-optimization-widget-20260804-01',
+ './manifest.webmanifest?v=v16-6-optimization-widget-20260804-01',
  './icon-192.png',
  './icon-512.png',
- './src/app.js?v=v16-5-shell-padding-fix-20260803-34',
- './src/state.js?v=v16-5-shell-padding-fix-20260803-34',
- './src/storage.js?v=v16-5-shell-padding-fix-20260803-34',
- './src/payroll.js?v=v16-5-shell-padding-fix-20260803-34',
- './src/format.js?v=v16-5-shell-padding-fix-20260803-34',
- './src/ui.js?v=v16-5-shell-padding-fix-20260803-34'
+ './widget-state-schema.json',
+ './src/app.js?v=v16-6-optimization-widget-20260804-01',
+ './src/state.js?v=v16-6-optimization-widget-20260804-01',
+ './src/storage.js?v=v16-6-optimization-widget-20260804-01',
+ './src/payroll.js?v=v16-6-optimization-widget-20260804-01',
+ './src/format.js?v=v16-6-optimization-widget-20260804-01',
+ './src/ui.js?v=v16-6-optimization-widget-20260804-01',
+ './src/widget-state.js?v=v16-6-optimization-widget-20260804-01'
 ];
+
 self.addEventListener('install',event=>{
  self.skipWaiting();
  event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(ASSETS)));
 });
+
 self.addEventListener('activate',event=>{
  event.waitUntil(Promise.all([
   self.clients.claim(),
   caches.keys().then(keys=>Promise.all(keys.filter(key=>key!==CACHE).map(key=>caches.delete(key))))
  ]));
 });
+
+async function networkFirst(request){
+ const cache=await caches.open(CACHE);
+ try{
+  const response=await fetch(request);
+  if(response&&response.ok)cache.put(request,response.clone());
+  return response;
+ }catch{
+  return (await cache.match(request))||(await cache.match('./index.html'));
+ }
+}
+
+async function staleWhileRevalidate(request){
+ const cache=await caches.open(CACHE);
+ const cached=await cache.match(request);
+ const network=fetch(request).then(response=>{
+  if(response&&response.ok)cache.put(request,response.clone());
+  return response;
+ }).catch(()=>null);
+ return cached||network||(await cache.match('./index.html'));
+}
+
 self.addEventListener('fetch',event=>{
+ if(event.request.method!=='GET')return;
  if(event.request.mode==='navigate'){
-  event.respondWith(fetch(event.request).catch(()=>caches.match('./index.html')));
+  event.respondWith(networkFirst(event.request));
   return;
  }
- event.respondWith(
-  fetch(event.request).then(response=>{
-   const copy=response.clone();
-   caches.open(CACHE).then(cache=>cache.put(event.request,copy));
-   return response;
-  }).catch(()=>caches.match(event.request))
- );
+ event.respondWith(staleWhileRevalidate(event.request));
 });
 
 self.addEventListener('notificationclick',event=>{

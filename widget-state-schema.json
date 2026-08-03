@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "description": "Модель стану для майбутнього нативного віджета iPhone.",
+  "fields": {
+    "updatedAt": "ISO-8601",
+    "profile": {
+      "id": "string|null",
+      "name": "string"
+    },
+    "job": {
+      "id": "string|null",
+      "name": "string",
+      "color": "hex color",
+      "rate": "number",
+      "currency": "string"
+    },
+    "shift": {
+      "active": "boolean",
+      "startedAt": "ISO-8601|null",
+      "elapsedSeconds": "integer",
+      "earned": "number",
+      "sessionId": "string|null"
+    }
+  }
+}
