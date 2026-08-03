@@ -1,9 +1,9 @@
 
-import {storage} from './storage.js?v=v16-2-bottom-strip-fix-20260803-31';
-import {state} from './state.js?v=v16-2-bottom-strip-fix-20260803-31';
-import {fmt} from './format.js?v=v16-2-bottom-strip-fix-20260803-31';
-import {minutes,pay,summary,daySummary} from './payroll.js?v=v16-2-bottom-strip-fix-20260803-31';
-import {template} from './ui.js?v=v16-2-bottom-strip-fix-20260803-31';
+import {storage} from './storage.js?v=v16-3-compact-bottom-navigation-20260803-32';
+import {state} from './state.js?v=v16-3-compact-bottom-navigation-20260803-32';
+import {fmt} from './format.js?v=v16-3-compact-bottom-navigation-20260803-32';
+import {minutes,pay,summary,daySummary} from './payroll.js?v=v16-3-compact-bottom-navigation-20260803-32';
+import {template} from './ui.js?v=v16-3-compact-bottom-navigation-20260803-32';
 
 state.shifts=Array.isArray(state.shifts)?state.shifts:[];
 state.plans=Array.isArray(state.plans)?state.plans:[];
@@ -975,7 +975,7 @@ function printMonthlyReport(){
  report.document.close();
 }
 
-function backupPayload(){return {backupSchema:2,appVersion:'v16.2 Bottom Strip Fix',exportedAt:new Date().toISOString(),profiles:storage.exportStore()}}
+function backupPayload(){return {backupSchema:2,appVersion:'v16.3 Compact Bottom Navigation',exportedAt:new Date().toISOString(),profiles:storage.exportStore()}}
 function renderBackupStatus(){const raw=storage.lastBackup();$('lastBackupText').textContent=raw?`Остання копія: ${new Date(raw).toLocaleString('uk-UA')}`:'Копію ще не створювали'}
 function downloadBackup(){const blob=new Blob([JSON.stringify(backupPayload(),null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`moya-robota-profiles-${new Date().toISOString().slice(0,10)}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);storage.saveLastBackup(new Date().toISOString());renderBackupStatus();toast('Резервну копію всіх профілів створено')}
 function validateBackup(p){
@@ -1111,7 +1111,7 @@ bind('endReminderHours','change',e=>saveReminderSetting('endReminderHours',Numbe
 
 bind('profilePageEdit','click',()=>openProfileEditor(storage.activeProfileId()));
 bind('languageRow','click',()=>toast('Додаткові мови з’являться в одному з наступних оновлень'));
-bind('aboutAppRow','click',()=>alert('Моя робота\nВерсія: v16.2 Bottom Strip Fix'));
+bind('aboutAppRow','click',()=>alert('Моя робота\nВерсія: v16.3 Compact Bottom Navigation'));
 bind('profileHeaderButton','click',openProfiles);
 bind('openProfilesButton','click',openProfiles);
 bind('closeProfilesButton','click',()=>$('profilesDialog').close());
