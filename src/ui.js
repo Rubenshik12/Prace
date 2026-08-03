@@ -1,7 +1,7 @@
 
 export function template(){
  return `<div class="shell">
- <header class="hero"><div class="heroRow"><div><div class="greeting" id="greeting"></div><h1>Моя робота</h1><p>Час • зарплата • плани</p><div class="appVersion">v11.7 Calendar Stable</div></div><div class="heroButtons"><button class="iconButton" id="themeButton">◐</button><button class="iconButton" data-open="settingsView">⚙︎</button></div></div></header>
+ <header class="hero"><div class="heroRow"><div><div class="greeting" id="greeting"></div><h1>Моя робота</h1><p>Час • зарплата • плани</p><div class="appVersion">v12.0 Backup & Restore</div></div><div class="heroButtons"><button class="iconButton" id="themeButton">◐</button><button class="iconButton" data-open="settingsView">⚙︎</button></div></div></header>
  <main>
   <section class="view active" id="homeView">
   <section class="card dayHero" id="dayHero">
@@ -348,12 +348,23 @@ export function template(){
   <div class="setting"><div><b>Чайові</b><div class="hint">Додаткове поле в зміні</div></div><button class="switch" id="tipsSwitch"></button></div>
   <div class="setting"><div><b>Дві виплати</b><div class="hint">1–15 та 16–кінець</div></div><button class="switch" id="paySplitSwitch"></button></div>
  </div>
+
+ <div class="sectionTitle"><h2>Безпека даних</h2></div>
+ <div class="card backupCard">
+  <div class="backupStatus"><div><b>Резервна копія</b><div class="hint" id="lastBackupText">Копію ще не створювали</div></div><span class="backupBadge">JSON</span></div>
+  <button class="backupAction primaryBackup" id="createBackupButton"><span>⬇</span><div><b>Створити резервну копію</b><small>Завантажити всі дані у файл</small></div></button>
+  <button class="backupAction" id="restoreBackupButton"><span>⬆</span><div><b>Відновити з файлу</b><small>Повернути зміни, плани й налаштування</small></div></button>
+  <input id="backupFileInput" type="file" accept="application/json,.json" hidden>
+  <button class="backupAction dangerBackup" id="clearAllDataButton"><span>🗑</span><div><b>Очистити всі дані</b><small>Цю дію неможливо скасувати</small></div></button>
+ </div>
+
 </section>
  </main></div>
  <nav class="bottomNav"><button class="nav active" data-view="homeView"><span>⌂</span>Головна</button><button class="nav" data-view="calendarView"><span>▦</span>Календар</button><button class="nav" data-view="statsView"><span>⌁</span>Статистика</button><button class="nav" data-view="plansView"><span>✓</span>Плани</button><button class="nav" data-view="settingsView"><span>⚙︎</span>Налаштування</button></nav>
  <dialog id="monthDialog"><div class="modal"><h3>Вибрати місяць</h3><label>Місяць</label><select id="monthSelect"></select><label>Рік</label><select id="yearSelect"></select><div class="modalActions"><button id="cancelMonth">Скасувати</button><button class="save" id="saveMonth">Готово</button></div></div></dialog>
  <dialog id="rateDialog"><div class="modal"><h3>Базова ставка</h3><label>Kč за годину</label><input id="rateInput" type="number"><div class="modalActions"><button id="cancelRate">Скасувати</button><button class="save" id="saveRate">Зберегти</button></div></div></dialog>
  <dialog id="startDialog"><div class="modal"><h3>Час приходу</h3><label>Дата</label><input id="startDate" type="date"><label>Час</label><input id="startTime" type="time"><div class="modalActions"><button id="cancelStart">Скасувати</button><button class="save" id="saveStart">Почати</button></div></div></dialog>
+ <dialog id="restorePreviewDialog"><div class="modal"><h3>Відновлення даних</h3><div class="restorePreview" id="restorePreview"></div><div class="modalActions"><button id="cancelRestoreButton">Скасувати</button><button class="save" id="confirmRestoreButton">Відновити</button></div></div></dialog>
  <dialog id="shiftDialog"><div class="modal"><h3 id="shiftTitle">Нова зміна</h3><label>Дата</label><input id="shiftDate" type="date"><label>Прийшов</label><input id="shiftStart" type="time"><label>Пішов</label><input id="shiftEnd" type="time"><label>Ставка</label><input id="shiftRate" type="number"><div id="holidayField"><label class="inlineCheck"><input id="shiftHoliday" type="checkbox"> Святковий день</label></div><div id="tipsField"><label>Чайові</label><input id="shiftTips" type="number" value="0"></div><label>Примітка</label><input id="shiftNote" type="text" placeholder="Необов’язково">
     <div class="archivedTasksBox" id="archivedTasksBox">
      <div class="label">Завдання зміни</div>

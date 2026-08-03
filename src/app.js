@@ -1,8 +1,9 @@
 
-import {state} from './state.js?v=v11-7-calendar-stable-20260803-8';
-import {fmt} from './format.js?v=v11-7-calendar-stable-20260803-8';
-import {minutes,pay,summary,daySummary} from './payroll.js?v=v11-7-calendar-stable-20260803-8';
-import {template} from './ui.js?v=v11-7-calendar-stable-20260803-8';
+import {storage} from './storage.js?v=v12-backup-restore-20260803-9';
+import {state} from './state.js?v=v12-backup-restore-20260803-9';
+import {fmt} from './format.js?v=v12-backup-restore-20260803-9';
+import {minutes,pay,summary,daySummary} from './payroll.js?v=v12-backup-restore-20260803-9';
+import {template} from './ui.js?v=v12-backup-restore-20260803-9';
 
 state.shifts=Array.isArray(state.shifts)?state.shifts:[];
 state.plans=Array.isArray(state.plans)?state.plans:[];
@@ -15,6 +16,7 @@ if(state.active&&!state.active.sessionId){
 }
 document.getElementById('app').innerHTML=template();
 const $=id=>document.getElementById(id);
+let pendingRestorePayload=null;
 let timerId=null,editingId=null,editingPlanId=null,planFilter='today',planCategory='all',selectedDay=null,selectedShiftId=null,previousViewId='homeView',previousScrollY=0,calendarPressTimer=null;
 const monthNames=['Січень','Лютий','Березень','Квітень','Травень','Червень','Липень','Серпень','Вересень','Жовтень','Листопад','Грудень'];
 
@@ -43,7 +45,7 @@ function render(){
  const progress=goal>0?Math.min(100,data.total/goal*100):0;
  $('goalFill').style.width=`${progress}%`;
  $('goalText').textContent=goal>0?`${fmt.money(data.total)} із ${fmt.money(goal)} · ${Math.round(progress)}%`:'Фінансова ціль вимкнена';
- renderActive();renderShiftList($('recentList'),data.selected.slice(0,3));renderShiftList($('allList'),data.selected);renderCalendar(data.selected);renderPlans();renderHomePlans();renderTodayOverview();renderStatistics(data);renderSettings();
+ renderActive();renderShiftList($('recentList'),data.selected.slice(0,3));renderShiftList($('allList'),data.selected);renderCalendar(data.selected);renderPlans();renderHomePlans();renderTodayOverview();renderStatistics(data);renderSettings();renderBackupStatus();
 }
 function renderActive(){
  const a=state.active;$('workMode').classList.toggle('inactive',!a);$('dayStatus').classList.toggle('active',!!a);$('workTasksBlock').hidden=!a;$('startButton').hidden=!!a;$('manualStartButton').hidden=!!a;$('stopButton').hidden=!a;$('editStartButton').hidden=!a;$('cancelButton').hidden=!a;$('workModeLabel').textContent=a?`На роботі з ${fmt.time(a.start)}`:'Зміна не почата';$('dayStatus').textContent=a?'На роботі':'Не на роботі';$('todaySubtitle').textContent=a?'Активна зміна триває':'Все важливе в одному місці';
@@ -634,6 +636,15 @@ function renderDailyBars(days){
  });
 }
 
+
+function backupPayload(){return {backupSchema:1,appVersion:'v12.0 Backup & Restore',exportedAt:new Date().toISOString(),data:{shifts:state.shifts,active:state.active,rate:state.rate,theme:state.theme,plans:state.plans,settings:state.settings,dayNotes:state.dayNotes,workTasks:state.workTasks}}}
+function renderBackupStatus(){const raw=storage.lastBackup();$('lastBackupText').textContent=raw?`Остання копія: ${new Date(raw).toLocaleString('uk-UA')}`:'Копію ще не створювали'}
+function downloadBackup(){const blob=new Blob([JSON.stringify(backupPayload(),null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`moya-robota-backup-${new Date().toISOString().slice(0,10)}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);storage.saveLastBackup(new Date().toISOString());renderBackupStatus();toast('Резервну копію створено')}
+function validateBackup(p){if(!p||p.backupSchema!==1||!p.data)throw new Error('Несумісний файл');for(const k of ['shifts','plans','workTasks'])if(!Array.isArray(p.data[k]))throw new Error(`Некоректне поле ${k}`);return true}
+function showRestorePreview(p){pendingRestorePayload=p;const d=p.data;$('restorePreview').innerHTML=`<div class="restorePreviewRow"><span>Зміни</span><strong>${d.shifts.length}</strong></div><div class="restorePreviewRow"><span>Плани</span><strong>${d.plans.length}</strong></div><div class="restorePreviewRow"><span>Робочі завдання</span><strong>${d.workTasks.length}</strong></div><div class="restorePreviewRow"><span>Нотатки</span><strong>${Object.keys(d.dayNotes||{}).length}</strong></div>`;$('restorePreviewDialog').showModal()}
+function applyRestore(p){const d=p.data;state.shifts=d.shifts;state.active=d.active||null;state.rate=Number(d.rate||180);state.theme=d.theme==='light'?'light':'dark';state.plans=d.plans;state.settings=d.settings||{};state.dayNotes=d.dayNotes||{};state.workTasks=d.workTasks;save();applyTheme();render();$('restorePreviewDialog').close();pendingRestorePayload=null;toast('Дані відновлено')}
+function clearAllAppData(){if(!confirm('Видалити всі дані?'))return;if(!confirm('Останнє підтвердження: дію неможливо скасувати.'))return;storage.clearAll();location.reload()}
+
 function renderSettings(){
  const pairs=[['overtimeSwitch','overtime'],['weekendSwitch','weekend'],['holidaySwitch','holiday'],['tipsSwitch','tips'],['paySplitSwitch','paySplit']];
  pairs.forEach(([id,key])=>$(id).classList.toggle('on',!!state.settings[key]));
@@ -712,6 +723,14 @@ function openDay(dateKey){
 
 const bind=(id,event,handler)=>{const node=$(id);if(node)node.addEventListener(event,handler)};
 bind('quickWorkTaskForm','submit',event=>{event.preventDefault();addQuickWorkTask()});
+
+bind('createBackupButton','click',downloadBackup);
+bind('restoreBackupButton','click',()=>$('backupFileInput').click());
+bind('backupFileInput','change',async event=>{const file=event.target.files?.[0];event.target.value='';if(!file)return;try{const p=JSON.parse(await file.text());validateBackup(p);showRestorePreview(p)}catch(e){alert(`Не вдалося відкрити копію: ${e.message}`)}});
+bind('cancelRestoreButton','click',()=>{$('restorePreviewDialog').close();pendingRestorePayload=null});
+bind('confirmRestoreButton','click',()=>{if(pendingRestorePayload)applyRestore(pendingRestorePayload)});
+bind('clearAllDataButton','click',clearAllAppData);
+
 
 bind('dayDetailsBack','click',()=>{
  const target=previousViewId==='dayDetailsView'?'calendarView':previousViewId;
