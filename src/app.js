@@ -1,9 +1,9 @@
 
-import {storage} from './storage.js?v=v12-1-navigation-20260803-10';
-import {state} from './state.js?v=v12-1-navigation-20260803-10';
-import {fmt} from './format.js?v=v12-1-navigation-20260803-10';
-import {minutes,pay,summary,daySummary} from './payroll.js?v=v12-1-navigation-20260803-10';
-import {template} from './ui.js?v=v12-1-navigation-20260803-10';
+import {storage} from './storage.js?v=v12-2-navigation-stable-20260803-11';
+import {state} from './state.js?v=v12-2-navigation-stable-20260803-11';
+import {fmt} from './format.js?v=v12-2-navigation-stable-20260803-11';
+import {minutes,pay,summary,daySummary} from './payroll.js?v=v12-2-navigation-stable-20260803-11';
+import {template} from './ui.js?v=v12-2-navigation-stable-20260803-11';
 
 state.shifts=Array.isArray(state.shifts)?state.shifts:[];
 state.plans=Array.isArray(state.plans)?state.plans:[];
@@ -345,12 +345,10 @@ function openMonth(){const [y,m]=state.month.split('-').map(Number);$('monthSele
 
 function showView(id){
  previousViewId=document.querySelector('.view.active')?.id||'homeView';
- previousScrollY=window.scrollY||document.documentElement.scrollTop||0;
+ previousScrollY=(document.scrollingElement||document.documentElement).scrollTop||window.scrollY||0;
  openView(id);
  requestAnimationFrame(()=>{
-  window.scrollTo({top:0,left:0,behavior:'instant'});
-  document.documentElement.scrollTop=0;
-  document.body.scrollTop=0;
+  setPageScroll(0);
  });
 }
 function selectedShift(){
@@ -395,9 +393,7 @@ function openShiftDetails(id){
  $('shiftDetailsNote').textContent=shift.note?.trim()||'Нотатки немає';
  showView('shiftDetailsView');
  requestAnimationFrame(()=>{
-  window.scrollTo({top:0,left:0,behavior:'instant'});
-  document.documentElement.scrollTop=0;
-  document.body.scrollTop=0;
+  setPageScroll(0);
  });
 }
 function editSelectedShift(){
@@ -735,7 +731,7 @@ bind('clearAllDataButton','click',clearAllAppData);
 bind('dayDetailsBack','click',()=>{
  const target=previousViewId==='dayDetailsView'?'calendarView':previousViewId;
  openView(target);
- requestAnimationFrame(()=>window.scrollTo({top:previousScrollY,left:0,behavior:'instant'}));
+ requestAnimationFrame(()=>setPageScroll(previousScrollY));
 });
 bind('dayDetailsQuick','click',()=>openCalendarQuick(selectedDay));
 bind('dayDetailsSaveNote','click',()=>{
@@ -760,9 +756,7 @@ bind('shiftDetailsBack','click',()=>{
  const target=previousViewId==='shiftDetailsView'?'homeView':previousViewId;
  openView(target);
  requestAnimationFrame(()=>{
-  window.scrollTo({top:previousScrollY,left:0,behavior:'instant'});
-  document.documentElement.scrollTop=previousScrollY;
-  document.body.scrollTop=previousScrollY;
+  setPageScroll(previousScrollY);
  });
 });
 bind('shiftDetailsEdit','click',editSelectedShift);
@@ -872,17 +866,24 @@ bind('themeButton','click',()=>{state.theme=state.theme==='dark'?'light':'dark';
 bind('goalAmount','input',event=>{state.settings.goalAmount=Number(event.target.value||0);save();render()});
 bind('homeMonthButton','click',openMonth);
 
+function setPageScroll(y=0){
+ const value=Math.max(0,Number(y)||0);
+ const root=document.scrollingElement||document.documentElement;
+ root.scrollTop=value;
+ document.documentElement.scrollTop=value;
+ document.body.scrollTop=value;
+ window.scrollTo(0,value);
+}
 function scrollPageToTop(){
- window.scrollTo({top:0,left:0,behavior:'instant'});
- document.documentElement.scrollTop=0;
- document.body.scrollTop=0;
+ setPageScroll(0);
+ requestAnimationFrame(()=>setPageScroll(0));
+ setTimeout(()=>setPageScroll(0),40);
+ setTimeout(()=>setPageScroll(0),140);
 }
 function openView(id,{resetScroll=false}={}){
  document.querySelectorAll('.nav').forEach(node=>node.classList.toggle('active',node.dataset.view===id));
  document.querySelectorAll('.view').forEach(node=>node.classList.toggle('active',node.id===id));
- if(resetScroll){
-  requestAnimationFrame(scrollPageToTop);
- }
+ if(resetScroll)scrollPageToTop();
 }
 document.querySelectorAll('[data-view]').forEach(button=>button.addEventListener('click',()=>{
  openView(button.dataset.view,{resetScroll:true});
