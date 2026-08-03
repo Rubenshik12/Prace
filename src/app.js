@@ -1,10 +1,10 @@
 
-import {storage} from './storage.js?v=v16-6-optimization-widget-20260804-01';
-import {state} from './state.js?v=v16-6-optimization-widget-20260804-01';
-import {fmt} from './format.js?v=v16-6-optimization-widget-20260804-01';
-import {minutes,pay,summary,daySummary} from './payroll.js?v=v16-6-optimization-widget-20260804-01';
-import {buildWidgetState,saveWidgetState,readWidgetState,widgetStateApi} from './widget-state.js?v=v16-6-optimization-widget-20260804-01';
-import {template} from './ui.js?v=v16-6-optimization-widget-20260804-01';
+import {storage} from './storage.js?v=v16-7-scroll-plans-fix-20260804-02';
+import {state} from './state.js?v=v16-7-scroll-plans-fix-20260804-02';
+import {fmt} from './format.js?v=v16-7-scroll-plans-fix-20260804-02';
+import {minutes,pay,summary,daySummary} from './payroll.js?v=v16-7-scroll-plans-fix-20260804-02';
+import {buildWidgetState,saveWidgetState,readWidgetState,widgetStateApi} from './widget-state.js?v=v16-7-scroll-plans-fix-20260804-02';
+import {template} from './ui.js?v=v16-7-scroll-plans-fix-20260804-02';
 
 state.shifts=Array.isArray(state.shifts)?state.shifts:[];
 state.plans=Array.isArray(state.plans)?state.plans:[];
@@ -171,7 +171,11 @@ function setupVisualViewportFix(){
   }
  });
 
- window.addEventListener('pageshow',()=>document.documentElement.classList.remove('keyboard-open'));
+ window.addEventListener('pageshow',()=>{
+ document.documentElement.classList.remove('keyboard-open');
+ const main=getMainScroller();
+ if(main)main.scrollTop=Math.max(0,main.scrollTop);
+});
 }
 function render(){
  renderJobFilters();
@@ -998,7 +1002,7 @@ function printMonthlyReport(){
  report.document.close();
 }
 
-function backupPayload(){return {backupSchema:2,appVersion:'v16.6 Optimization & Widget Foundation',exportedAt:new Date().toISOString(),profiles:storage.exportStore()}}
+function backupPayload(){return {backupSchema:2,appVersion:'v16.7 Scroll & Plans Fix',exportedAt:new Date().toISOString(),profiles:storage.exportStore()}}
 function renderBackupStatus(){const raw=storage.lastBackup();$('lastBackupText').textContent=raw?`Остання копія: ${new Date(raw).toLocaleString('uk-UA')}`:'Копію ще не створювали'}
 function downloadBackup(){const blob=new Blob([JSON.stringify(backupPayload(),null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`moya-robota-profiles-${new Date().toISOString().slice(0,10)}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);storage.saveLastBackup(new Date().toISOString());renderBackupStatus();toast('Резервну копію всіх профілів створено')}
 function validateBackup(p){
@@ -1134,7 +1138,7 @@ bind('endReminderHours','change',e=>saveReminderSetting('endReminderHours',Numbe
 
 bind('profilePageEdit','click',()=>openProfileEditor(storage.activeProfileId()));
 bind('languageRow','click',()=>toast('Додаткові мови з’являться в одному з наступних оновлень'));
-bind('aboutAppRow','click',()=>alert('Моя робота\nВерсія: v16.6 Optimization & Widget Foundation'));
+bind('aboutAppRow','click',()=>alert('Моя робота\nВерсія: v16.7 Scroll & Plans Fix'));
 bind('profileHeaderButton','click',openProfiles);
 bind('openProfilesButton','click',openProfiles);
 bind('closeProfilesButton','click',()=>$('profilesDialog').close());
@@ -1294,13 +1298,13 @@ bind('themeButton','click',()=>{state.theme=state.theme==='dark'?'light':'dark';
 bind('goalAmount','input',event=>{state.settings.goalAmount=Number(event.target.value||0);save();render()});
 bind('homeMonthButton','click',openMonth);
 
+function getMainScroller(){
+ return document.querySelector('.shell>main');
+}
 function setPageScroll(y=0){
  const value=Math.max(0,Number(y)||0);
- const root=document.scrollingElement||document.documentElement;
- root.scrollTop=value;
- document.documentElement.scrollTop=value;
- document.body.scrollTop=value;
- window.scrollTo(0,value);
+ const main=getMainScroller();
+ if(main)main.scrollTop=value;
 }
 function scrollPageToTop(){
  setPageScroll(0);
@@ -1311,6 +1315,7 @@ function scrollPageToTop(){
 function openView(id,{resetScroll=false}={}){
  document.querySelectorAll('.nav').forEach(node=>node.classList.toggle('active',node.dataset.view===id));
  document.querySelectorAll('.view').forEach(node=>node.classList.toggle('active',node.id===id));
+ if(id==='plansView')renderPlans();
  if(resetScroll)scrollPageToTop();
 }
 document.querySelectorAll('[data-view]').forEach(button=>button.addEventListener('click',()=>{
