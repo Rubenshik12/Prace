@@ -16,7 +16,7 @@ export function template(){
        </div>
       </div>
       <button class="activeJobChip" id="activeJobChip"><span class="activeJobDot" id="activeJobDot"></span><span><small>Активна робота</small><b id="activeJobChipName">Основна робота</b></span><span class="activeJobChevron">›</span></button>
-      <div class="appVersion finalVersion">v17.0 Chart Labels & Planner</div>
+      <div class="appVersion finalVersion">v17.1 Smart Calendar</div>
      </header>
  <main>
   <section class="view active finalHome" id="homeView">
@@ -121,7 +121,19 @@ export function template(){
   <button class="calendarMonthTitle" id="calendarMonthButton"><span class="label">Місяць</span><strong id="calendarMonthLabel"></strong></button>
   <button class="calendarArrow" id="calendarNextMonth">›</button>
  </div>
- <div class="card calendar"><div class="calendarHead"><div>Пн</div><div>Вт</div><div>Ср</div><div>Чт</div><div>Пт</div><div>Сб</div><div>Нд</div></div><div class="calendarGrid" id="calendarGrid"></div></div></section>
+ <div class="calendarLegend" aria-label="Позначення календаря">
+  <span><i class="legendDot workedDot"></i>Зміна</span>
+  <span><i class="legendDot planDot"></i>План</span>
+  <span><i class="legendDot doneDot"></i>Виконано</span>
+  <span><i class="legendDot noteDot"></i>Нотатка</span>
+  <span><i class="legendStar">★</i>Найкращий день</span>
+ </div>
+ <div class="card calendar" id="calendarCard">
+  <div class="calendarHead"><div>Пн</div><div>Вт</div><div>Ср</div><div>Чт</div><div>Пт</div><div>Сб</div><div>Нд</div></div>
+  <div class="calendarGrid" id="calendarGrid"></div>
+ </div>
+ <div class="calendarHint">Натисни на день для деталей · утримуй для швидких дій</div>
+</section>
   <section class="view" id="statsView"><div class="jobFilterBar"><label for="statsJobFilter">Робота</label><select id="statsJobFilter"></select></div>
  <div class="statsHeader">
   <div>
@@ -397,7 +409,7 @@ export function template(){
 <div class="sectionTitle"><h2>Застосунок</h2></div>
  <div class="card profileMenuCard">
   <button class="profileMenuRow" id="languageRow"><span class="profileMenuIcon">🌐</span><span><b>Мова</b><small>Українська</small></span><span class="profileMenuChevron">›</span></button>
-  <button class="profileMenuRow" id="aboutAppRow"><span class="profileMenuIcon">ℹ</span><span><b>Про застосунок</b><small>Моя робота · v17.0 Chart Labels & Planner</small></span><span class="profileMenuChevron">›</span></button>
+  <button class="profileMenuRow" id="aboutAppRow"><span class="profileMenuIcon">ℹ</span><span><b>Про застосунок</b><small>Моя робота · v17.1 Smart Calendar</small></span><span class="profileMenuChevron">›</span></button>
  </div>
  
  <div class="sectionTitle"><h2>Експорт</h2></div>

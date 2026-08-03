@@ -1,10 +1,10 @@
 
-import {storage} from './storage.js?v=v17-0-chart-labels-planner-20260804-05';
-import {state} from './state.js?v=v17-0-chart-labels-planner-20260804-05';
-import {fmt} from './format.js?v=v17-0-chart-labels-planner-20260804-05';
-import {minutes,pay,summary,daySummary} from './payroll.js?v=v17-0-chart-labels-planner-20260804-05';
-import {buildWidgetState,saveWidgetState,readWidgetState,widgetStateApi} from './widget-state.js?v=v17-0-chart-labels-planner-20260804-05';
-import {template} from './ui.js?v=v17-0-chart-labels-planner-20260804-05';
+import {storage} from './storage.js?v=v17-1-smart-calendar-20260804-06';
+import {state} from './state.js?v=v17-1-smart-calendar-20260804-06';
+import {fmt} from './format.js?v=v17-1-smart-calendar-20260804-06';
+import {minutes,pay,summary,daySummary} from './payroll.js?v=v17-1-smart-calendar-20260804-06';
+import {buildWidgetState,saveWidgetState,readWidgetState,widgetStateApi} from './widget-state.js?v=v17-1-smart-calendar-20260804-06';
+import {template} from './ui.js?v=v17-1-smart-calendar-20260804-06';
 
 state.shifts=Array.isArray(state.shifts)?state.shifts:[];
 state.plans=Array.isArray(state.plans)?state.plans:[];
@@ -485,8 +485,17 @@ function renderCalendar(items){
   const hasAllTasks=workTasks.length>0&&workTasks.every(t=>t.done);
   const isBest=bestPay>0&&info.pay===bestPay;
   const day=document.createElement('button');
+  const weekday=new Date(dateKey+'T12:00').getDay();
   day.className='day smartDay';
-  day.innerHTML=`<span class="dayBestStar" aria-hidden="true"></span><span class="dayNumber">${i}</span><span class="dayStatusDots" aria-hidden="true"></span>`;
+  if(weekday===0||weekday===6)day.classList.add('weekendDay');
+  day.innerHTML=`<span class="dayBestStar" aria-hidden="true"></span><span class="dayNumber">${i}</span><span class="dayPay"></span><span class="dayStatusDots" aria-hidden="true"></span>`;
+  if(info.pay>0){
+   const compactPay=info.pay>=1000?`${Math.round(info.pay/100)/10}k`:Math.round(info.pay);
+   day.querySelector('.dayPay').textContent=`${compactPay}`;
+   day.setAttribute('aria-label',`${i} число, ${fmt.money(info.pay)}, ${info.items.length} змін`);
+  }else{
+   day.setAttribute('aria-label',`${i} число`);
+  }
   const dots=day.querySelector('.dayStatusDots');
   const statuses=[];
   if(info.items.length){
@@ -524,7 +533,18 @@ function renderCalendar(items){
   node.appendChild(day);
  }
 }
-function changeMonth(delta){const [y,m]=state.month.split('-').map(Number),d=new Date(y,m-1+delta,1);state.month=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;render()}
+function changeMonth(delta){
+ const card=$('calendarCard');
+ if(card){
+  card.classList.remove('slidePrev','slideNext');
+  void card.offsetWidth;
+  card.classList.add(delta>0?'slideNext':'slidePrev');
+ }
+ const [y,m]=state.month.split('-').map(Number),d=new Date(y,m-1+delta,1);
+ state.month=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+ render();
+ setTimeout(()=>card?.classList.remove('slidePrev','slideNext'),260);
+}
 function openMonth(){const [y,m]=state.month.split('-').map(Number);$('monthSelect').innerHTML=monthNames.map((n,i)=>`<option value="${i+1}">${n}</option>`).join('');$('yearSelect').innerHTML=Array.from({length:11},(_,i)=>y-5+i).map(v=>`<option>${v}</option>`).join('');$('monthSelect').value=m;$('yearSelect').value=y;$('monthDialog').showModal()}
 
 function showView(id){
@@ -1031,7 +1051,7 @@ function printMonthlyReport(){
  report.document.close();
 }
 
-function backupPayload(){return {backupSchema:2,appVersion:'v17.0 Chart Labels & Planner',exportedAt:new Date().toISOString(),profiles:storage.exportStore()}}
+function backupPayload(){return {backupSchema:2,appVersion:'v17.1 Smart Calendar',exportedAt:new Date().toISOString(),profiles:storage.exportStore()}}
 function renderBackupStatus(){const raw=storage.lastBackup();$('lastBackupText').textContent=raw?`Остання копія: ${new Date(raw).toLocaleString('uk-UA')}`:'Копію ще не створювали'}
 function downloadBackup(){const blob=new Blob([JSON.stringify(backupPayload(),null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`moya-robota-profiles-${new Date().toISOString().slice(0,10)}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);storage.saveLastBackup(new Date().toISOString());renderBackupStatus();toast('Резервну копію всіх профілів створено')}
 function validateBackup(p){
@@ -1167,7 +1187,7 @@ bind('endReminderHours','change',e=>saveReminderSetting('endReminderHours',Numbe
 
 bind('profilePageEdit','click',()=>openProfileEditor(storage.activeProfileId()));
 bind('languageRow','click',()=>toast('Додаткові мови з’являться в одному з наступних оновлень'));
-bind('aboutAppRow','click',()=>alert('Моя робота\nВерсія: v17.0 Chart Labels & Planner'));
+bind('aboutAppRow','click',()=>alert('Моя робота\nВерсія: v17.1 Smart Calendar'));
 bind('profileHeaderButton','click',openProfiles);
 bind('openProfilesButton','click',openProfiles);
 bind('closeProfilesButton','click',()=>$('profilesDialog').close());
@@ -1376,6 +1396,18 @@ document.querySelectorAll('[data-plan-filter]').forEach(button=>button.addEventL
 }));
 
 bind('calendarTodayButton','click',()=>{state.month=new Date().toISOString().slice(0,7);render()});
+{
+ const card=$('calendarCard');
+ let startX=0,startY=0;
+ card?.addEventListener('touchstart',event=>{
+  const touch=event.touches[0];startX=touch.clientX;startY=touch.clientY;
+ },{passive:true});
+ card?.addEventListener('touchend',event=>{
+  const touch=event.changedTouches[0];
+  const dx=touch.clientX-startX,dy=touch.clientY-startY;
+  if(Math.abs(dx)>55&&Math.abs(dx)>Math.abs(dy)*1.35)changeMonth(dx<0?1:-1);
+ },{passive:true});
+}
 bind('calendarPrevMonth','click',()=>changeMonth(-1));
 bind('calendarNextMonth','click',()=>changeMonth(1));
 bind('calendarMonthButton','click',openMonth);

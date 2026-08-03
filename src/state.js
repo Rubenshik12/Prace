@@ -1,4 +1,4 @@
-import {storage} from './storage.js?v=v17-0-chart-labels-planner-20260804-05-34';
+import {storage} from './storage.js?v=v17-1-smart-calendar-20260804-06-34';
 
 export const state={
  month:new Date().toISOString().slice(0,7),
