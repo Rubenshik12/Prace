@@ -39,36 +39,34 @@ function legacyData(){
  };
 }
 
+function createJob(name='Основна робота',data={}){
+ return {id:data.id||uid(),name:(name||'Основна робота').trim()||'Основна робота',rate:Number(data.rate||180),currency:data.currency||'Kč',color:data.color||'#4A67E8',archived:!!data.archived,note:data.note||'',createdAt:data.createdAt||new Date().toISOString()};
+}
+function migrateProfileJobs(profile){
+ const data=profile.data||{};
+ if(!Array.isArray(data.jobs)||!data.jobs.length){
+  const job=createJob(profile.job||'Основна робота',{rate:Number(data.rate||180),currency:profile.currency||'Kč'});
+  data.jobs=[job];data.activeJobId=job.id;
+ }
+ if(!data.activeJobId||!data.jobs.some(job=>job.id===data.activeJobId&&!job.archived))data.activeJobId=(data.jobs.find(job=>!job.archived)||data.jobs[0]).id;
+ const defaultJobId=data.activeJobId;
+ data.shifts=(Array.isArray(data.shifts)?data.shifts:[]).map(item=>({...item,jobId:item.jobId||defaultJobId}));
+ data.plans=(Array.isArray(data.plans)?data.plans:[]).map(item=>({...item,jobId:item.jobId||defaultJobId}));
+ data.workTasks=(Array.isArray(data.workTasks)?data.workTasks:[]).map(item=>({...item,jobId:item.jobId||defaultJobId}));
+ if(data.active&&!data.active.jobId)data.active.jobId=defaultJobId;
+ profile.data=data;return profile;
+}
 function createProfile(name='Мій профіль',data=null){
- const d=data||{};
- return {
-  id:uid(),
-  name:name.trim()||'Мій профіль',
-  job:d.job||'',
-  currency:d.currency||'Kč',
-  createdAt:new Date().toISOString(),
-  data:{
-   shifts:Array.isArray(d.shifts)?d.shifts:[],
-   active:d.active||null,
-   rate:Number(d.rate||180),
-   theme:d.theme==='dark'?'dark':'light',
-   plans:Array.isArray(d.plans)?d.plans:[],
-   settings:Object.assign(defaultSettings(),d.settings||{}),
-   dayNotes:d.dayNotes&&typeof d.dayNotes==='object'?d.dayNotes:{},
-   workTasks:Array.isArray(d.workTasks)?d.workTasks:[],
-   lastBackup:d.lastBackup||''
-  }
- };
+ const d=data||{};const defaultJob=createJob(d.job||'Основна робота',{rate:Number(d.rate||180),currency:d.currency||'Kč'});
+ return migrateProfileJobs({id:uid(),name:name.trim()||'Мій профіль',job:d.job||'',currency:d.currency||'Kč',createdAt:new Date().toISOString(),data:{jobs:Array.isArray(d.jobs)&&d.jobs.length?d.jobs:[defaultJob],activeJobId:d.activeJobId||defaultJob.id,shifts:Array.isArray(d.shifts)?d.shifts:[],active:d.active||null,rate:Number(d.rate||180),theme:d.theme==='dark'?'dark':'light',plans:Array.isArray(d.plans)?d.plans:[],settings:Object.assign(defaultSettings(),d.settings||{}),dayNotes:d.dayNotes&&typeof d.dayNotes==='object'?d.dayNotes:{},workTasks:Array.isArray(d.workTasks)?d.workTasks:[],lastBackup:d.lastBackup||''}});
 }
 
 function ensureStore(){
  let store=safeJSON(STORE_KEY,null);
  if(store&&Array.isArray(store.profiles)&&store.profiles.length){
-  if(!store.activeProfileId||!store.profiles.some(p=>p.id===store.activeProfileId)){
-   store.activeProfileId=store.profiles[0].id;
-   localStorage.setItem(STORE_KEY,JSON.stringify(store));
-  }
-  return store;
+  let changed=false;store.profiles=store.profiles.map(profile=>{const before=JSON.stringify(profile.data?.jobs||null);const migrated=migrateProfileJobs(profile);if(before!==JSON.stringify(migrated.data.jobs))changed=true;return migrated});
+  if(!store.activeProfileId||!store.profiles.some(p=>p.id===store.activeProfileId)){store.activeProfileId=store.profiles[0].id;changed=true}
+  if(store.schema!==2){store.schema=2;changed=true}if(changed)localStorage.setItem(STORE_KEY,JSON.stringify(store));return store;
  }
  const legacy=legacyData();
  if(!localStorage.getItem(LEGACY_SNAPSHOT_KEY)){
@@ -105,8 +103,8 @@ export const storage={
  saveShifts:v=>write('shifts',v),
  active:()=>read('active',null),
  saveActive:v=>write('active',v),
- rate:()=>Number(read('rate',180)),
- saveRate:v=>write('rate',Number(v)),
+ rate:()=>{const profile=activeProfile();const job=profile.data.jobs.find(item=>item.id===profile.data.activeJobId)||profile.data.jobs[0];return Number(job?.rate||profile.data.rate||180)},
+ saveRate:v=>{const store=getStore();const profile=activeProfile(store);const job=profile.data.jobs.find(item=>item.id===profile.data.activeJobId);if(job)job.rate=Number(v);profile.data.rate=Number(v);saveStore(store)},
  theme:()=>read('theme','light'),
  saveTheme:v=>write('theme',v),
  plans:()=>read('plans',[]),
@@ -119,6 +117,14 @@ export const storage={
  saveWorkTasks:v=>write('workTasks',v),
  lastBackup:()=>read('lastBackup',''),
  saveLastBackup:v=>write('lastBackup',v),
+
+ jobs:()=>activeProfile().data.jobs.map(job=>({...job})),
+ activeJobId:()=>activeProfile().data.activeJobId,
+ activeJob:()=>{const profile=activeProfile();const job=profile.data.jobs.find(item=>item.id===profile.data.activeJobId)||profile.data.jobs[0];return {...job}},
+ switchJob:id=>{const store=getStore();const profile=activeProfile(store);const job=profile.data.jobs.find(item=>item.id===id&&!item.archived);if(!job)throw new Error('Роботу не знайдено');if(profile.data.active)throw new Error('Спочатку заверши активну зміну');profile.data.activeJobId=id;profile.data.rate=Number(job.rate||180);profile.currency=job.currency||profile.currency||'Kč';saveStore(store)},
+ createJob:payload=>{const store=getStore();const profile=activeProfile(store);const job=createJob(payload.name,payload);profile.data.jobs.push(job);profile.data.activeJobId=job.id;profile.data.rate=job.rate;profile.currency=job.currency;saveStore(store);return job.id},
+ updateJob:(id,patch)=>{const store=getStore();const profile=activeProfile(store);const job=profile.data.jobs.find(item=>item.id===id);if(!job)throw new Error('Роботу не знайдено');if(typeof patch.name==='string')job.name=patch.name.trim()||job.name;if(patch.rate!==undefined)job.rate=Number(patch.rate||0);if(typeof patch.currency==='string')job.currency=patch.currency;if(typeof patch.color==='string')job.color=patch.color;if(typeof patch.note==='string')job.note=patch.note.trim();if(profile.data.activeJobId===id){profile.data.rate=job.rate;profile.currency=job.currency}saveStore(store)},
+ archiveJob:id=>{const store=getStore();const profile=activeProfile(store);const activeJobs=profile.data.jobs.filter(job=>!job.archived);if(activeJobs.length<=1)throw new Error('Не можна архівувати єдину активну роботу');if(profile.data.active?.jobId===id)throw new Error('Спочатку заверши активну зміну');const job=profile.data.jobs.find(item=>item.id===id);if(!job)throw new Error('Роботу не знайдено');job.archived=true;if(profile.data.activeJobId===id){const next=profile.data.jobs.find(item=>!item.archived);profile.data.activeJobId=next.id;profile.data.rate=next.rate;profile.currency=next.currency}saveStore(store)},
 
  profiles:()=>getStore().profiles.map(({data,...profile})=>({
   ...profile,

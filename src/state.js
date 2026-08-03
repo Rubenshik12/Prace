@@ -1,8 +1,11 @@
-import {storage} from './storage.js?v=v15-final-ui-20260803-19';
+import {storage} from './storage.js?v=v15-1-multi-job-20260803-20';
 
 export const state={
  month:new Date().toISOString().slice(0,7),
  loadProfile(){
+  this.jobs=storage.jobs();
+  this.activeJobId=storage.activeJobId();
+  this.activeJob=storage.activeJob();
   this.shifts=storage.shifts();
   this.active=storage.active();
   this.rate=storage.rate();

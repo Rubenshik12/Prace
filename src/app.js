@@ -1,9 +1,9 @@
 
-import {storage} from './storage.js?v=v15-final-ui-20260803-19';
-import {state} from './state.js?v=v15-final-ui-20260803-19';
-import {fmt} from './format.js?v=v15-final-ui-20260803-19';
-import {minutes,pay,summary,daySummary} from './payroll.js?v=v15-final-ui-20260803-19';
-import {template} from './ui.js?v=v15-final-ui-20260803-19';
+import {storage} from './storage.js?v=v15-1-multi-job-20260803-20';
+import {state} from './state.js?v=v15-1-multi-job-20260803-20';
+import {fmt} from './format.js?v=v15-1-multi-job-20260803-20';
+import {minutes,pay,summary,daySummary} from './payroll.js?v=v15-1-multi-job-20260803-20';
+import {template} from './ui.js?v=v15-1-multi-job-20260803-20';
 
 state.shifts=Array.isArray(state.shifts)?state.shifts:[];
 state.plans=Array.isArray(state.plans)?state.plans:[];
@@ -17,32 +17,40 @@ if(state.active&&!state.active.sessionId){
 document.getElementById('app').innerHTML=template();
 const $=id=>document.getElementById(id);
 let pendingRestorePayload=null;
+let editingJobId=null;
 let editingProfileId=null;
 let timerId=null,editingId=null,editingPlanId=null,planFilter='today',planCategory='all',selectedDay=null,selectedShiftId=null,previousViewId='homeView',previousScrollY=0,calendarPressTimer=null;
 const monthNames=['Січень','Лютий','Березень','Квітень','Травень','Червень','Липень','Серпень','Вересень','Жовтень','Листопад','Грудень'];
 
 function applyTheme(){document.documentElement.dataset.theme=state.theme;$('settingsTheme').value=state.theme}
 function save(){state.save()}
-function monthData(){return summary(state.shifts,state.month,state.rate,state.settings)}
+function monthData(){return summary(jobShifts(),state.month,state.rate,state.settings)}
 function shiftPay(s){return pay(s,state.rate,state.settings)}
 function greeting(){const h=new Date().getHours();return h<12?'Доброго ранку 👋':h<18?'Добрий день 👋':'Добрий вечір 👋'}
+function activeJob(){return storage.activeJob()}
+function activeJobId(){return storage.activeJobId()}
+function jobShifts(){const id=activeJobId();return state.shifts.filter(item=>(item.jobId||id)===id)}
+function jobPlans(){const id=activeJobId();return state.plans.filter(item=>(item.jobId||id)===id)}
 
 function render(){
  const data=monthData();
  const profile=storage.activeProfile();
+ const job=activeJob();
  $('greeting').textContent=`${greeting().replace(' 👋','')}, ${profile.name} 👋`;
  $('profileHeaderInitial').textContent=(profile.name||'М').trim().charAt(0).toUpperCase();
  $('topProfileName').textContent=profile.name;
- $('topProfileMeta').textContent=[profile.job,`${state.rate} ${profile.currency||'Kč'}/год`].filter(Boolean).join(' · ');
+ $('topProfileMeta').textContent=`${job.name} · ${job.rate} ${job.currency}/год`;
+ $('activeJobChipName').textContent=job.name;
+ $('activeJobDot').style.background=job.color||'#4A67E8';
  $('currentProfileAvatar').textContent=(profile.name||'М').trim().charAt(0).toUpperCase();
  $('currentProfileName').textContent=profile.name;
  $('currentProfileMeta').textContent=[profile.job,`${state.rate} ${profile.currency||'Kč'}/год`].filter(Boolean).join(' · ');
  $('profilePageAvatar').textContent=(profile.name||'М').trim().charAt(0).toUpperCase();
  $('profilePageName').textContent=profile.name;
- $('profilePageMeta').textContent=[profile.job,`${state.rate} ${profile.currency||'Kč'}/год`].filter(Boolean).join(' · ');
+ $('profilePageMeta').textContent=`${job.name} · ${job.rate} ${job.currency}/год`;
  $('calendarMonthLabel').textContent=fmt.month(state.month);
  $('homeMonthLabel').textContent=fmt.month(state.month);
- $('homeRateValue').textContent=`${state.rate} ${profile.currency||'Kč'}`;
+ $('homeRateValue').textContent=`${job.rate} ${job.currency}`;
  $('settingsRate').value=state.rate;
  $('goalAmount').value=Number(state.settings.goalAmount||0);
  $('todayTitle').textContent=new Date().toLocaleDateString('uk-UA',{weekday:'long',day:'numeric',month:'long'});
@@ -67,7 +75,7 @@ function renderActive(){
 
 function currentWorkTasks(){
  if(!state.active?.sessionId)return [];
- return state.workTasks.filter(task=>task.sessionId===state.active.sessionId);
+ return state.workTasks.filter(task=>task.sessionId===state.active.sessionId&&task.jobId===activeJobId());
 }
 function renderWorkTasks(){
  const node=$('workTasksList');
@@ -105,7 +113,7 @@ function addQuickWorkTask(){
  const text=input.value.trim();
  if(!text)return;
  state.workTasks.push({
-  id:crypto.randomUUID(),sessionId:state.active.sessionId,text,done:false,
+  id:crypto.randomUUID(),sessionId:state.active.sessionId,jobId:activeJobId(),text,done:false,
   createdAt:new Date().toISOString(),completedAt:null
  });
  save();
@@ -225,7 +233,7 @@ function renderPlans(){
  const tomorrow=new Date(today);tomorrow.setDate(today.getDate()+1);
  const tomorrowKey=tomorrow.toISOString().slice(0,10);
 
- let items=[...state.plans];
+ let items=[...jobPlans()];
  if(planFilter==='today')items=items.filter(p=>p.date===todayKey);
  if(planFilter==='tomorrow')items=items.filter(p=>p.date===tomorrowKey);
  if(planCategory!=='all')items=items.filter(p=>(p.category||'other')===planCategory);
@@ -235,7 +243,7 @@ function renderPlans(){
   return `${a.date||''} ${a.time||''}`.localeCompare(`${b.date||''} ${b.time||''}`);
  });
 
- const todayItems=state.plans.filter(p=>p.date===todayKey);
+ const todayItems=jobPlans().filter(p=>p.date===todayKey);
  const doneToday=todayItems.filter(p=>p.done).length;
  const totalToday=todayItems.length;
  const angle=totalToday?Math.round(doneToday/totalToday*360):0;
@@ -301,13 +309,13 @@ function renderCalendar(items){
  const days=new Date(y,m,0).getDate(),today=new Date();
  const daily=Array.from({length:days},(_,idx)=>{
   const dateKey=`${y}-${String(m).padStart(2,'0')}-${String(idx+1).padStart(2,'0')}`;
-  return {dateKey,info:daySummary(state.shifts,dateKey,state.rate,state.settings)};
+  return {dateKey,info:daySummary(jobShifts(),dateKey,state.rate,state.settings)};
  });
  const bestPay=Math.max(0,...daily.map(d=>d.info.pay));
  for(let i=1;i<=days;i++){
   const dateKey=`${y}-${String(m).padStart(2,'0')}-${String(i).padStart(2,'0')}`;
   const info=daily[i-1].info;
-  const plans=state.plans.filter(p=>p.date===dateKey);
+  const plans=jobPlans().filter(p=>p.date===dateKey);
   const workTasks=info.items.flatMap(s=>Array.isArray(s.workTasks)?s.workTasks:[]);
   const hasAllTasks=workTasks.length>0&&workTasks.every(t=>t.done);
   const isBest=bestPay>0&&info.pay===bestPay;
@@ -645,6 +653,11 @@ function renderDailyBars(days){
 
 
 
+function jobInitial(name){return (name||'Р').trim().charAt(0).toUpperCase()}
+function renderJobs(){const node=$('jobsList');if(!node)return;const jobs=storage.jobs(),current=storage.activeJobId();node.innerHTML='';jobs.filter(job=>!job.archived).forEach(job=>{const row=document.createElement('div');row.className=`jobRow ${job.id===current?'active':''}`;row.innerHTML=`<button class="jobSelectButton" type="button"><span class="jobAvatar" style="background:${job.color}">${jobInitial(job.name)}</span><span class="jobText"><b>${job.name}</b><small>${job.rate} ${job.currency}/год${job.note?` · ${job.note}`:''}</small></span><span class="jobActiveMark">${job.id===current?'✓':'›'}</span></button><button class="jobEditButton" type="button">Редагувати</button>`;row.querySelector('.jobSelectButton').onclick=()=>{if(job.id===current)return;try{storage.switchJob(job.id);state.loadProfile();applyTheme();render();toast(`Активна робота: ${job.name}`)}catch(error){alert(error.message)}};row.querySelector('.jobEditButton').onclick=()=>openJobEditor(job.id);node.appendChild(row)})}
+function openJobEditor(id=null){editingJobId=id;const job=id?storage.jobs().find(item=>item.id===id):null;$('jobEditTitle').textContent=job?'Редагувати роботу':'Нова робота';$('jobNameInput').value=job?.name||'';$('jobRateInput').value=job?.rate??state.rate;$('jobCurrencyInput').value=job?.currency||activeJob().currency||'Kč';$('jobColorInput').value=job?.color||'#4A67E8';$('jobNoteInput').value=job?.note||'';$('archiveJobButton').hidden=!job||storage.jobs().filter(item=>!item.archived).length<=1;$('jobEditDialog').showModal()}
+function saveJobEditor(){const name=$('jobNameInput').value.trim();if(!name)return alert('Введи назву роботи');const payload={name,rate:Number($('jobRateInput').value||0),currency:$('jobCurrencyInput').value,color:$('jobColorInput').value,note:$('jobNoteInput').value.trim()};if(editingJobId)storage.updateJob(editingJobId,payload);else storage.createJob(payload);state.loadProfile();editingJobId=null;$('jobEditDialog').close();render();toast('Роботу збережено')}
+function archiveEditingJob(){if(!editingJobId)return;const job=storage.jobs().find(item=>item.id===editingJobId);if(!job||!confirm(`Архівувати роботу «${job.name}»? Історія змін залишиться.`))return;try{storage.archiveJob(editingJobId);state.loadProfile();editingJobId=null;$('jobEditDialog').close();render();toast('Роботу архівовано')}catch(error){alert(error.message)}}
 function profileInitial(name){return (name||'М').trim().charAt(0).toUpperCase()}
 function renderProfilesList(){
  const node=$('profilesList');
@@ -724,7 +737,7 @@ function deleteEditingProfile(){
  }catch(error){alert(error.message)}
 }
 
-function backupPayload(){return {backupSchema:2,appVersion:'v13.0 Core Profiles',exportedAt:new Date().toISOString(),profiles:storage.exportStore()}}
+function backupPayload(){return {backupSchema:2,appVersion:'v15.1 Multi Job',exportedAt:new Date().toISOString(),profiles:storage.exportStore()}}
 function renderBackupStatus(){const raw=storage.lastBackup();$('lastBackupText').textContent=raw?`Остання копія: ${new Date(raw).toLocaleString('uk-UA')}`:'Копію ще не створювали'}
 function downloadBackup(){const blob=new Blob([JSON.stringify(backupPayload(),null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`moya-robota-profiles-${new Date().toISOString().slice(0,10)}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);storage.saveLastBackup(new Date().toISOString());renderBackupStatus();toast('Резервну копію всіх профілів створено')}
 function validateBackup(p){
@@ -763,6 +776,7 @@ function applyRestore(p){
 function clearAllAppData(){if(!confirm('Видалити всі профілі та їхні дані?'))return;if(!confirm('Останнє підтвердження: дію неможливо скасувати.'))return;storage.clearAll();location.reload()}
 
 function renderSettings(){
+ renderJobs();
  const pairs=[['overtimeSwitch','overtime'],['weekendSwitch','weekend'],['holidaySwitch','holiday'],['tipsSwitch','tips'],['paySplitSwitch','paySplit']];
  pairs.forEach(([id,key])=>$(id).classList.toggle('on',!!state.settings[key]));
  $('overtimeAfter').value=state.settings.overtimeAfter;
@@ -792,8 +806,8 @@ function renderDayTaskRows(node,tasks,emptyText){
 }
 function openDayDetails(dateKey){
  selectedDay=dateKey;
- const info=daySummary(state.shifts,dateKey,state.rate,state.settings);
- const plans=state.plans.filter(p=>p.date===dateKey);
+ const info=daySummary(jobShifts(),dateKey,state.rate,state.settings);
+ const plans=jobPlans().filter(p=>p.date===dateKey);
  const workTasks=info.items.flatMap(s=>Array.isArray(s.workTasks)?s.workTasks:[]);
  const doneTasks=workTasks.filter(t=>t.done).length;
  $('dayDetailsDate').textContent=new Date(dateKey+'T12:00').toLocaleDateString('uk-UA',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
@@ -811,8 +825,8 @@ function openDayDetails(dateKey){
 
 function openDay(dateKey){
  selectedDay=dateKey;
- const info=daySummary(state.shifts,dateKey,state.rate,state.settings);
- const plans=state.plans.filter(p=>p.date===dateKey);
+ const info=daySummary(jobShifts(),dateKey,state.rate,state.settings);
+ const plans=jobPlans().filter(p=>p.date===dateKey);
  $('dayDialogTitle').textContent=new Date(dateKey+'T12:00').toLocaleDateString('uk-UA',{weekday:'long',day:'numeric',month:'long'});
  $('dayDialogSummary').innerHTML=`<div class="label">Підсумок дня</div><strong>${fmt.duration(info.minutes)} год · ${fmt.money(info.pay)}</strong>`;
  $('dayNote').value=state.dayNotes[dateKey]||'';
@@ -842,9 +856,14 @@ const bind=(id,event,handler)=>{const node=$(id);if(node)node.addEventListener(e
 bind('quickWorkTaskForm','submit',event=>{event.preventDefault();addQuickWorkTask()});
 
 
+bind('activeJobChip','click',()=>{openView('settingsView',{resetScroll:true});setTimeout(()=>$('jobsList').scrollIntoView({behavior:'smooth',block:'start'}),120)});
+bind('addJobButton','click',()=>openJobEditor());
+bind('cancelJobEdit','click',()=>{$('jobEditDialog').close();editingJobId=null});
+bind('saveJobEdit','click',saveJobEditor);
+bind('archiveJobButton','click',archiveEditingJob);
 bind('profilePageEdit','click',()=>openProfileEditor(storage.activeProfileId()));
 bind('languageRow','click',()=>toast('Додаткові мови з’являться в одному з наступних оновлень'));
-bind('aboutAppRow','click',()=>alert('Моя робота\nВерсія: v15.0 Final UI'));
+bind('aboutAppRow','click',()=>alert('Моя робота\nВерсія: v15.1 Multi Job'));
 bind('profileHeaderButton','click',openProfiles);
 bind('openProfilesButton','click',openProfiles);
 bind('closeProfilesButton','click',()=>$('profilesDialog').close());
@@ -912,7 +931,7 @@ bind('rateButton','click',()=>{$('rateInput').value=state.rate;$('rateDialog').s
 bind('cancelRate','click',()=>$('rateDialog').close());
 bind('saveRate','click',()=>{state.rate=Number($('rateInput').value||0);save();$('rateDialog').close();render()});
 
-bind('startButton','click',()=>{state.active={start:new Date().toISOString(),sessionId:crypto.randomUUID()};save();render()});
+bind('startButton','click',()=>{state.active={start:new Date().toISOString(),sessionId:crypto.randomUUID(),jobId:activeJobId()};save();render()});
 bind('manualStartButton','click',()=>{
  const now=new Date();
  $('startDate').value=now.toISOString().slice(0,10);
@@ -934,7 +953,7 @@ bind('saveStart','click',()=>{
  if(state.active){
  state.active.start=date.toISOString();
 }else{
- state.active={start:date.toISOString(),sessionId:crypto.randomUUID()};
+ state.active={start:date.toISOString(),sessionId:crypto.randomUUID(),jobId:activeJobId()};
 }
 save();$('startDialog').close();render();
 });
@@ -943,7 +962,7 @@ bind('stopButton','click',()=>{
  const sessionId=state.active.sessionId;
  const workTasks=state.workTasks.filter(task=>task.sessionId===sessionId).map(task=>({...task}));
  const shift={
-  id:crypto.randomUUID(),start:state.active.start,end:new Date().toISOString(),
+  id:crypto.randomUUID(),jobId:state.active.jobId||activeJobId(),start:state.active.start,end:new Date().toISOString(),
   rate:state.rate,holiday:false,tips:0,note:'',workTasks
  };
  state.shifts.push(shift);
@@ -966,7 +985,8 @@ bind('saveShift','click',()=>{
  const endDate=new Date(`${$('shiftDate').value}T${$('shiftEnd').value}`);
  if(Number.isNaN(startDate.getTime())||Number.isNaN(endDate.getTime()))return alert('Вкажи правильний час');
  if(endDate<=startDate)return alert('Час виходу має бути пізніше');
- const shift={id:editingId||crypto.randomUUID(),start:startDate.toISOString(),end:endDate.toISOString(),rate:Number($('shiftRate').value||state.rate),holiday:$('shiftHoliday').checked,tips:Number($('shiftTips').value||0),note:$('shiftNote').value.trim()};
+ const previousShift=editingId?state.shifts.find(item=>item.id===editingId):null;
+ const shift={id:editingId||crypto.randomUUID(),jobId:previousShift?.jobId||activeJobId(),start:startDate.toISOString(),end:endDate.toISOString(),rate:Number($('shiftRate').value||state.rate),holiday:$('shiftHoliday').checked,tips:Number($('shiftTips').value||0),note:$('shiftNote').value.trim()};
  if(editingId){const index=state.shifts.findIndex(item=>item.id===editingId);if(index>=0)state.shifts[index]=shift}else state.shifts.push(shift);
  save();$('shiftDialog').close();render();if(editingId){selectedShiftId=editingId;openShiftDetails(editingId)};
 });
@@ -990,7 +1010,7 @@ bind('quickPlan','click',()=>{
 bind('cancelPlan','click',()=>$('planDialog').close());
 bind('savePlan','click',()=>{
  const text=$('planText').value.trim();if(!text)return alert('Напиши план');
- state.plans.push({id:crypto.randomUUID(),date:$('planDate').value,text,priority:$('planPriority').value,done:false});
+ state.plans.push({id:crypto.randomUUID(),jobId:activeJobId(),date:$('planDate').value,text,priority:$('planPriority').value,done:false});
  save();$('planDialog').close();render();
 });
 

@@ -15,7 +15,8 @@ export function template(){
         <button class="iconButton" data-open="settingsView" aria-label="Відкрити профіль">⚙︎</button>
        </div>
       </div>
-      <div class="appVersion finalVersion">v15.0 Final UI</div>
+      <button class="activeJobChip" id="activeJobChip"><span class="activeJobDot" id="activeJobDot"></span><span><small>Активна робота</small><b id="activeJobChipName">Основна робота</b></span><span class="activeJobChevron">›</span></button>
+      <div class="appVersion finalVersion">v15.1 Multi Job</div>
      </header>
  <main>
   <section class="view active finalHome" id="homeView">
@@ -335,7 +336,9 @@ export function template(){
   <div class="profilePageIdentity"><div class="eyebrow">Особистий простір</div><h2 id="profilePageName">Мій профіль</h2><p id="profilePageMeta">180 Kč/год</p></div>
   <button class="profilePageEdit" id="profilePageEdit">Редагувати</button>
  </div>
- <div class="sectionTitle"><h2>Налаштування</h2></div>
+ <div class="sectionTitle"><h2>Мої роботи</h2><button class="textAction" id="addJobButton">＋ Додати</button></div>
+ <div class="card jobsCard" id="jobsList"></div>
+ <div class="sectionTitle"><h2>Налаштування активної роботи</h2></div>
  <div class="card settingsCard">
   <div class="setting"><div><b>Базова ставка</b><div class="hint">Для нових змін</div></div><input id="settingsRate" type="number"></div>
   <div class="setting"><div><b>Тема</b><div class="hint">Світла або темна</div></div><select id="settingsTheme"><option value="light">Світла</option><option value="dark">Темна</option></select></div>
@@ -409,6 +412,12 @@ export function template(){
  <dialog id="monthDialog"><div class="modal"><h3>Вибрати місяць</h3><label>Місяць</label><select id="monthSelect"></select><label>Рік</label><select id="yearSelect"></select><div class="modalActions"><button id="cancelMonth">Скасувати</button><button class="save" id="saveMonth">Готово</button></div></div></dialog>
  <dialog id="rateDialog"><div class="modal"><h3>Базова ставка</h3><label>Kč за годину</label><input id="rateInput" type="number"><div class="modalActions"><button id="cancelRate">Скасувати</button><button class="save" id="saveRate">Зберегти</button></div></div></dialog>
  <dialog id="startDialog"><div class="modal"><h3>Час приходу</h3><label>Дата</label><input id="startDate" type="date"><label>Час</label><input id="startTime" type="time"><div class="modalActions"><button id="cancelStart">Скасувати</button><button class="save" id="saveStart">Почати</button></div></div></dialog>
+ <dialog id="jobEditDialog"><div class="modal">
+ <h3 id="jobEditTitle">Нова робота</h3><label>Назва роботи</label><input id="jobNameInput" type="text" placeholder="Наприклад: Hej Foods">
+ <label>Ставка за годину</label><input id="jobRateInput" type="number" min="0"><label>Валюта</label><select id="jobCurrencyInput"><option value="Kč">Kč</option><option value="€">€</option><option value="$">$</option><option value="₴">₴</option><option value="£">£</option></select>
+ <label>Колір</label><input id="jobColorInput" type="color" value="#4A67E8"><label>Нотатка</label><textarea id="jobNoteInput" rows="2"></textarea>
+ <div class="modalActions"><button id="cancelJobEdit">Скасувати</button><button class="save" id="saveJobEdit">Зберегти</button></div><button class="dangerLink" id="archiveJobButton">Архівувати роботу</button>
+ </div></dialog>
  <dialog id="profilesDialog"><div class="modal profileModal">
       <div class="profileModalHeader"><div><div class="eyebrow">Окремі дані й ставка</div><h3>Профілі</h3></div><button class="dialogClose" id="closeProfilesButton">×</button></div>
       <div class="profilesList" id="profilesList"></div>
