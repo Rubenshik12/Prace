@@ -1,10 +1,10 @@
 
-import {storage} from './storage.js?v=v16-9-statistics-chart-fix-20260804-04';
-import {state} from './state.js?v=v16-9-statistics-chart-fix-20260804-04';
-import {fmt} from './format.js?v=v16-9-statistics-chart-fix-20260804-04';
-import {minutes,pay,summary,daySummary} from './payroll.js?v=v16-9-statistics-chart-fix-20260804-04';
-import {buildWidgetState,saveWidgetState,readWidgetState,widgetStateApi} from './widget-state.js?v=v16-9-statistics-chart-fix-20260804-04';
-import {template} from './ui.js?v=v16-9-statistics-chart-fix-20260804-04';
+import {storage} from './storage.js?v=v17-0-chart-labels-planner-20260804-05';
+import {state} from './state.js?v=v17-0-chart-labels-planner-20260804-05';
+import {fmt} from './format.js?v=v17-0-chart-labels-planner-20260804-05';
+import {minutes,pay,summary,daySummary} from './payroll.js?v=v17-0-chart-labels-planner-20260804-05';
+import {buildWidgetState,saveWidgetState,readWidgetState,widgetStateApi} from './widget-state.js?v=v17-0-chart-labels-planner-20260804-05';
+import {template} from './ui.js?v=v17-0-chart-labels-planner-20260804-05';
 
 state.shifts=Array.isArray(state.shifts)?state.shifts:[];
 state.plans=Array.isArray(state.plans)?state.plans:[];
@@ -401,15 +401,31 @@ function renderPlans(){
  $('plansProgressSubtitle').textContent=totalToday?(doneToday===totalToday?'Усе виконано 🎉':'Продовжуй, чудовий темп'):'Додай перший план';
 
  if(!items.length){
-  node.innerHTML='<div class="planEmpty"><strong>Планів немає</strong>Додай новий план на цей день</div>';
+  node.innerHTML='<div class="planEmpty"><div class="planEmptyIcon">✓</div><strong>Планів немає</strong><span>Додай перше завдання й організуй свій день</span><button type="button" id="emptyAddPlan">＋ Додати завдання</button></div>';
+  node.querySelector('#emptyAddPlan')?.addEventListener('click',()=>openPlanDialog(planFilter==='tomorrow'?tomorrowKey:todayKey));
   return;
  }
 
  const icons={work:'💼',personal:'👤',shopping:'🛒',study:'📚',other:'✨'};
  const labels={work:'Робота',personal:'Особисте',shopping:'Покупки',study:'Навчання',other:'Інше'};
  const repeatLabels={daily:'Щодня',weekly:'Щотижня',monthly:'Щомісяця'};
+ let lastGroup='';
+ const groupLabel=date=>{
+  if(date===todayKey)return 'Сьогодні';
+  if(date===tomorrowKey)return 'Завтра';
+  if(date<todayKey)return 'Прострочені';
+  return new Date(date+'T12:00').toLocaleDateString('uk-UA',{weekday:'long',day:'numeric',month:'long'});
+ };
 
  items.forEach(p=>{
+  const currentGroup=groupLabel(p.date||todayKey);
+  if(currentGroup!==lastGroup){
+   const heading=document.createElement('div');
+   heading.className=`planGroupHeading ${p.date<todayKey&&!p.done?'overdue':''}`;
+   heading.textContent=currentGroup;
+   node.appendChild(heading);
+   lastGroup=currentGroup;
+  }
   const category=p.category||'other';
   const wrapper=document.createElement('div');
   wrapper.className='swipePlan';
@@ -420,7 +436,7 @@ function renderPlans(){
   deleteButton.innerHTML='<span>🗑</span><b>Видалити</b>';
 
   const row=document.createElement('div');
-  row.className=`premiumPlan ${p.done?'done':''}`;
+  row.className=`premiumPlan ${p.done?'done':''} ${p.date<todayKey&&!p.done?'overdue':''}`;
   const dateLabel=new Date(p.date+'T12:00').toLocaleDateString('uk-UA',{day:'numeric',month:'short'});
   row.innerHTML=`
    <div class="planIcon ${category}">${icons[category]}</div>
@@ -429,7 +445,8 @@ function renderPlans(){
     <div class="planMetaRow">
      <span class="planMetaTag">${dateLabel}${p.time?` · ${p.time}`:''}</span>
      <span class="planMetaTag">${labels[category]}</span>
-     ${p.repeat&&p.repeat!=='none'?`<span class="planMetaTag">↻ ${repeatLabels[p.repeat]}</span>`:''}
+     ${p.repeat&&p.repeat!=='none'?`<span class="planMetaTag repeat">↻ ${repeatLabels[p.repeat]}</span>`:''}
+     ${p.date<todayKey&&!p.done?'<span class="planMetaTag overdue">Прострочено</span>':''}
     </div>
    </div>
    <button class="planCheckButton ${p.done?'done':''}">${p.done?'✓':''}</button>`;
@@ -804,7 +821,12 @@ function renderDailyBars(days){
   item.className=`barItem ${d.date===best.date?'best':''}`;
   item.setAttribute('aria-label',`${new Date(d.date+'T12:00').toLocaleDateString('uk-UA')}: ${fmt.money(d.pay)}`);
   const h=Math.max(10,d.pay/max*100);
-  item.innerHTML=`<span class="barAmount">${fmt.money(d.pay)}</span><div class="barTrack"><div class="barValue" style="height:${h}%"></div></div><span class="barLabel">${new Date(d.date+'T12:00').getDate()}</span>`;
+  const dayNumber=new Date(d.date+'T12:00').getDate();
+  const index=days.indexOf(d);
+  const labelStep=days.length<=7?1:days.length<=15?2:5;
+  const showLabel=days.length===1||index===0||index===days.length-1||dayNumber%labelStep===0;
+  item.classList.toggle('hideDayLabel',!showLabel);
+  item.innerHTML=`<span class="barAmount">${fmt.money(d.pay)}</span><div class="barTrack"><div class="barValue" style="height:${h}%"></div></div><span class="barLabel">${dayNumber}</span>`;
   item.onclick=()=>openDayDetails(d.date);
   node.appendChild(item);
  });
@@ -1009,7 +1031,7 @@ function printMonthlyReport(){
  report.document.close();
 }
 
-function backupPayload(){return {backupSchema:2,appVersion:'v16.9 Statistics Chart Fix',exportedAt:new Date().toISOString(),profiles:storage.exportStore()}}
+function backupPayload(){return {backupSchema:2,appVersion:'v17.0 Chart Labels & Planner',exportedAt:new Date().toISOString(),profiles:storage.exportStore()}}
 function renderBackupStatus(){const raw=storage.lastBackup();$('lastBackupText').textContent=raw?`Остання копія: ${new Date(raw).toLocaleString('uk-UA')}`:'Копію ще не створювали'}
 function downloadBackup(){const blob=new Blob([JSON.stringify(backupPayload(),null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`moya-robota-profiles-${new Date().toISOString().slice(0,10)}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);storage.saveLastBackup(new Date().toISOString());renderBackupStatus();toast('Резервну копію всіх профілів створено')}
 function validateBackup(p){
@@ -1145,7 +1167,7 @@ bind('endReminderHours','change',e=>saveReminderSetting('endReminderHours',Numbe
 
 bind('profilePageEdit','click',()=>openProfileEditor(storage.activeProfileId()));
 bind('languageRow','click',()=>toast('Додаткові мови з’являться в одному з наступних оновлень'));
-bind('aboutAppRow','click',()=>alert('Моя робота\nВерсія: v16.9 Statistics Chart Fix'));
+bind('aboutAppRow','click',()=>alert('Моя робота\nВерсія: v17.0 Chart Labels & Planner'));
 bind('profileHeaderButton','click',openProfiles);
 bind('openProfilesButton','click',openProfiles);
 bind('closeProfilesButton','click',()=>$('profilesDialog').close());
@@ -1293,10 +1315,25 @@ bind('quickPlan','click',()=>{
  }else openPlanDialog();
 });
 bind('cancelPlan','click',()=>$('planDialog').close());
+bind('deletePlanDialog','click',()=>{if(!editingPlanId)return;const plan=state.plans.find(p=>p.id===editingPlanId);if(plan&&confirm(`Видалити завдання «${plan.text}»?`)){state.plans=state.plans.filter(p=>p.id!==editingPlanId);save();$('planDialog').close();editingPlanId=null;render();}});
 bind('savePlan','click',()=>{
- const text=$('planText').value.trim();if(!text)return alert('Напиши план');
- state.plans.push({id:crypto.randomUUID(),jobId:activeJobId(),date:$('planDate').value,text,priority:$('planPriority').value,done:false});
- save();$('planDialog').close();render();
+ const text=$('planText').value.trim();if(!text)return alert('Напиши завдання');
+ const payload={
+  jobId:activeJobId(),
+  date:$('planDate').value,
+  time:$('planTime').value,
+  text,
+  category:$('planCategory').value,
+  priority:$('planPriority').value,
+  repeat:$('planRepeat').value
+ };
+ if(editingPlanId){
+  const existing=state.plans.find(plan=>plan.id===editingPlanId);
+  if(existing)Object.assign(existing,payload);
+ }else{
+  state.plans.push({id:crypto.randomUUID(),...payload,done:false,createdAt:new Date().toISOString()});
+ }
+ save();$('planDialog').close();editingPlanId=null;render();
 });
 
 bind('settingsRate','input',event=>{state.rate=Number(event.target.value||0);save();render()});
