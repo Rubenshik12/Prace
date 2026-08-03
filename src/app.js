@@ -1,8 +1,8 @@
 
-import {state} from './state.js?v=v11-2-work-mode-20260803-3';
-import {fmt} from './format.js?v=v11-2-work-mode-20260803-3';
-import {minutes,pay,summary,daySummary} from './payroll.js?v=v11-2-work-mode-20260803-3';
-import {template} from './ui.js?v=v11-2-work-mode-20260803-3';
+import {state} from './state.js?v=v11-3-shift-details-20260803-4';
+import {fmt} from './format.js?v=v11-3-shift-details-20260803-4';
+import {minutes,pay,summary,daySummary} from './payroll.js?v=v11-3-shift-details-20260803-4';
+import {template} from './ui.js?v=v11-3-shift-details-20260803-4';
 
 state.shifts=Array.isArray(state.shifts)?state.shifts:[];
 state.plans=Array.isArray(state.plans)?state.plans:[];
@@ -15,7 +15,7 @@ if(state.active&&!state.active.sessionId){
 }
 document.getElementById('app').innerHTML=template();
 const $=id=>document.getElementById(id);
-let timerId=null,editingId=null,editingPlanId=null,planFilter='today',planCategory='all',selectedDay=null;
+let timerId=null,editingId=null,editingPlanId=null,planFilter='today',planCategory='all',selectedDay=null,selectedShiftId=null,previousViewId='homeView';
 const monthNames=['Січень','Лютий','Березень','Квітень','Травень','Червень','Липень','Серпень','Вересень','Жовтень','Листопад','Грудень'];
 
 function applyTheme(){document.documentElement.dataset.theme=state.theme;$('settingsTheme').value=state.theme}
@@ -116,7 +116,7 @@ function renderArchivedTasks(shift){
 
 function renderShiftList(node,items){
  node.innerHTML='';if(!items.length){node.innerHTML='<div class="empty">Ще немає змін</div>';return}
- items.forEach(s=>{const row=document.createElement('div');row.className='shift';row.innerHTML=`<div class="shiftLeft"><div class="shiftDate">${fmt.date(s.start)}</div><div class="meta">${fmt.time(s.start)} → ${fmt.time(s.end)} · ${Number(s.rate||state.rate)} Kč/год</div></div><div><div class="money">${fmt.money(shiftPay(s))}</div><div class="hours">${fmt.duration(minutes(s.start,s.end))} год</div></div>`;row.onclick=()=>openShift(s.id);node.appendChild(row)});
+ items.forEach(s=>{const row=document.createElement('div');row.className='shift';row.innerHTML=`<div class="shiftLeft"><div class="shiftDate">${fmt.date(s.start)}</div><div class="meta">${fmt.time(s.start)} → ${fmt.time(s.end)} · ${Number(s.rate||state.rate)} Kč/год</div></div><div><div class="money">${fmt.money(shiftPay(s))}</div><div class="hours">${fmt.duration(minutes(s.start,s.end))} год</div></div>`;row.onclick=()=>openShiftDetails(s.id);node.appendChild(row)});
 }
 
 function closeOpenPlanSwipes(except=null){
@@ -299,6 +299,94 @@ function renderCalendar(items){
 }
 function changeMonth(delta){const [y,m]=state.month.split('-').map(Number),d=new Date(y,m-1+delta,1);state.month=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;render()}
 function openMonth(){const [y,m]=state.month.split('-').map(Number);$('monthSelect').innerHTML=monthNames.map((n,i)=>`<option value="${i+1}">${n}</option>`).join('');$('yearSelect').innerHTML=Array.from({length:11},(_,i)=>y-5+i).map(v=>`<option>${v}</option>`).join('');$('monthSelect').value=m;$('yearSelect').value=y;$('monthDialog').showModal()}
+
+function showView(id){
+ previousViewId=document.querySelector('.view.active')?.id||'homeView';
+ openView(id);
+}
+function selectedShift(){
+ return state.shifts.find(shift=>shift.id===selectedShiftId)||null;
+}
+function openShiftDetails(id){
+ selectedShiftId=id;
+ const shift=selectedShift();
+ if(!shift)return;
+ const duration=minutes(shift.start,shift.end);
+ const shiftRate=Number(shift.rate||state.rate);
+ const totalPay=shiftPay(shift);
+ const overtimeThreshold=Number(state.settings.overtimeAfter||8)*60;
+ const overtime=state.settings.overtime?Math.max(0,duration-overtimeThreshold):0;
+ const tasks=Array.isArray(shift.workTasks)?shift.workTasks:[];
+ const doneTasks=tasks.filter(task=>task.done).length;
+
+ $('shiftDetailsDate').textContent=new Date(shift.start).toLocaleDateString('uk-UA',{
+  weekday:'long',day:'numeric',month:'long',year:'numeric'
+ });
+ $('shiftDetailsStart').textContent=fmt.time(shift.start);
+ $('shiftDetailsEnd').textContent=fmt.time(shift.end);
+ $('shiftDetailsDuration').textContent=`${fmt.duration(duration)} год`;
+ $('shiftDetailsPay').textContent=fmt.money(totalPay);
+ $('shiftDetailsRate').textContent=`${shiftRate} Kč`;
+ $('shiftDetailsTips').textContent=fmt.money(Number(shift.tips||0));
+ $('shiftDetailsOvertime').textContent=fmt.duration(overtime);
+ $('shiftDetailsTasksCount').textContent=`${doneTasks}/${tasks.length}`;
+
+ const taskNode=$('shiftDetailsTasks');
+ taskNode.innerHTML='';
+ if(!tasks.length){
+  taskNode.innerHTML='<div class="empty">У цієї зміни немає робочих завдань</div>';
+ }else{
+  tasks.forEach(task=>{
+   const row=document.createElement('div');
+   row.className=`detailsTaskRow ${task.done?'done':''}`;
+   row.innerHTML=`<div class="detailsTaskIcon">${task.done?'✓':'○'}</div><div class="detailsTaskText">${task.text}</div>`;
+   taskNode.appendChild(row);
+  });
+ }
+ $('shiftDetailsNote').textContent=shift.note?.trim()||'Нотатки немає';
+ showView('shiftDetailsView');
+}
+function editSelectedShift(){
+ const shift=selectedShift();
+ if(!shift)return;
+ openShift(shift.id);
+}
+function duplicateSelectedShift(){
+ const shift=selectedShift();
+ if(!shift)return;
+ const duration=new Date(shift.end)-new Date(shift.start);
+ const start=new Date(shift.start);
+ start.setDate(start.getDate()+1);
+ const end=new Date(start.getTime()+duration);
+ const copy={
+  ...shift,
+  id:crypto.randomUUID(),
+  start:start.toISOString(),
+  end:end.toISOString(),
+  workTasks:Array.isArray(shift.workTasks)
+   ? shift.workTasks.map(task=>({...task,id:crypto.randomUUID(),done:false,completedAt:null}))
+   : []
+ };
+ state.shifts.push(copy);
+ save();
+ render();
+ selectedShiftId=copy.id;
+ openShiftDetails(copy.id);
+ toast('Зміну продубльовано на наступний день');
+}
+function deleteSelectedShift(){
+ const shift=selectedShift();
+ if(!shift)return;
+ if(confirm('Видалити цю зміну назавжди?')){
+  state.shifts=state.shifts.filter(item=>item.id!==shift.id);
+  selectedShiftId=null;
+  save();
+  render();
+  openView(previousViewId==='shiftDetailsView'?'homeView':previousViewId);
+  toast('Зміну видалено');
+ }
+}
+
 function openShift(id=null){editingId=id;const s=id?state.shifts.find(x=>x.id===id):null,st=s?new Date(s.start):new Date(),en=s?new Date(s.end):new Date(Date.now()+8*3600000);$('shiftTitle').textContent=s?'Редагування зміни':'Нова зміна';$('deleteShift').hidden=!s;$('shiftDate').value=st.toISOString().slice(0,10);$('shiftStart').value=st.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});$('shiftEnd').value=en.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});$('shiftRate').value=s?Number(s.rate||state.rate):state.rate;$('shiftHoliday').checked=s?!!s.holiday:false;$('shiftTips').value=s?Number(s.tips||0):0;$('shiftNote').value=s?s.note||'':'';$('holidayField').hidden=!state.settings.holiday;$('tipsField').hidden=!state.settings.tips;renderArchivedTasks(s);$('shiftDialog').showModal()}
 function toast(text){const t=document.getElementById('toast');t.textContent=text;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500)}
 
@@ -528,7 +616,7 @@ function openDay(dateKey){
   const item=document.createElement('div');
   item.className='dayShiftItem';
   item.innerHTML=`<div><b>${fmt.time(s.start)} → ${fmt.time(s.end)}</b><div class="meta">${fmt.duration(minutes(s.start,s.end))} год${s.note?` · ${s.note}`:''}</div></div><div class="money">${fmt.money(shiftPay(s))}</div>`;
-  item.onclick=()=>{$('dayDialog').close();openShift(s.id)};
+  item.onclick=()=>{$('dayDialog').close();openShiftDetails(s.id)};
   list.appendChild(item);
  });
  $('dayDialog').showModal();
@@ -536,6 +624,13 @@ function openDay(dateKey){
 
 const bind=(id,event,handler)=>{const node=$(id);if(node)node.addEventListener(event,handler)};
 bind('quickWorkTaskForm','submit',event=>{event.preventDefault();addQuickWorkTask()});
+
+bind('shiftDetailsBack','click',()=>openView(previousViewId==='shiftDetailsView'?'homeView':previousViewId));
+bind('shiftDetailsEdit','click',editSelectedShift);
+bind('shiftDetailsEditBottom','click',editSelectedShift);
+bind('shiftDetailsDuplicate','click',duplicateSelectedShift);
+bind('shiftDetailsDelete','click',deleteSelectedShift);
+
 
 bind('prevMonth','click',()=>changeMonth(-1));
 bind('nextMonth','click',()=>changeMonth(1));
@@ -606,7 +701,7 @@ bind('saveShift','click',()=>{
  if(endDate<=startDate)return alert('Час виходу має бути пізніше');
  const shift={id:editingId||crypto.randomUUID(),start:startDate.toISOString(),end:endDate.toISOString(),rate:Number($('shiftRate').value||state.rate),holiday:$('shiftHoliday').checked,tips:Number($('shiftTips').value||0),note:$('shiftNote').value.trim()};
  if(editingId){const index=state.shifts.findIndex(item=>item.id===editingId);if(index>=0)state.shifts[index]=shift}else state.shifts.push(shift);
- save();$('shiftDialog').close();render();
+ save();$('shiftDialog').close();render();if(editingId){selectedShiftId=editingId;openShiftDetails(editingId)};
 });
 bind('deleteShift','click',()=>{if(editingId&&confirm('Видалити цю зміну?')){state.shifts=state.shifts.filter(item=>item.id!==editingId);save();$('shiftDialog').close();render()}});
 

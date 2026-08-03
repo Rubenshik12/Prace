@@ -1,5 +1,5 @@
 
-import {storage} from './storage.js?v=v11-2-work-mode-20260803-3';
+import {storage} from './storage.js?v=v11-3-shift-details-20260803-4';
 export const state={
  shifts:storage.shifts(),active:storage.active(),rate:storage.rate(),theme:storage.theme(),
  plans:storage.plans(),settings:storage.settings(),dayNotes:storage.dayNotes(),workTasks:storage.workTasks(),month:new Date().toISOString().slice(0,7),

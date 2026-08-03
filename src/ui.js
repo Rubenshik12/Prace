@@ -1,7 +1,7 @@
 
 export function template(){
  return `<div class="shell">
- <header class="hero"><div class="heroRow"><div><div class="greeting" id="greeting"></div><h1>Моя робота</h1><p>Час • зарплата • плани</p><div class="appVersion">v11.2 Work Mode</div></div><div class="heroButtons"><button class="iconButton" id="themeButton">◐</button><button class="iconButton" data-open="settingsView">⚙︎</button></div></div></header>
+ <header class="hero"><div class="heroRow"><div><div class="greeting" id="greeting"></div><h1>Моя робота</h1><p>Час • зарплата • плани</p><div class="appVersion">v11.3 Shift Details</div></div><div class="heroButtons"><button class="iconButton" id="themeButton">◐</button><button class="iconButton" data-open="settingsView">⚙︎</button></div></div></header>
  <main>
   <section class="view active" id="homeView">
   <section class="card dayHero" id="dayHero">
@@ -253,7 +253,49 @@ export function template(){
  <div class="card plans premiumPlans" id="plansList"></div>
 </section>
 
-<section class="view" id="settingsView">
+<section class="view" id="shiftDetailsView">
+      <div class="detailsTopBar">
+       <button class="detailsBackButton" id="shiftDetailsBack">‹</button>
+       <div>
+        <div class="eyebrow">Деталі зміни</div>
+        <h2 id="shiftDetailsDate">Зміна</h2>
+       </div>
+       <button class="detailsMoreButton" id="shiftDetailsEdit">Редагувати</button>
+      </div>
+
+      <div class="card shiftSummaryHero">
+       <div class="shiftSummaryTimes">
+        <div><span>Початок</span><strong id="shiftDetailsStart">—</strong></div>
+        <div class="shiftArrow">→</div>
+        <div><span>Кінець</span><strong id="shiftDetailsEnd">—</strong></div>
+       </div>
+       <div class="shiftSummaryMain">
+        <div><span>Тривалість</span><strong id="shiftDetailsDuration">0:00</strong></div>
+        <div><span>Зароблено</span><strong id="shiftDetailsPay">0 Kč</strong></div>
+       </div>
+      </div>
+
+      <div class="detailsMetrics">
+       <div class="card detailsMetric"><span>Ставка</span><strong id="shiftDetailsRate">0 Kč</strong><small>за годину</small></div>
+       <div class="card detailsMetric"><span>Чайові</span><strong id="shiftDetailsTips">0 Kč</strong><small>за зміну</small></div>
+       <div class="card detailsMetric"><span>Понаднормово</span><strong id="shiftDetailsOvertime">0:00</strong><small>після норми</small></div>
+       <div class="card detailsMetric"><span>Завдань</span><strong id="shiftDetailsTasksCount">0/0</strong><small>виконано</small></div>
+      </div>
+
+      <div class="sectionTitle"><h2>Робочі завдання</h2></div>
+      <div class="card detailsTasksList" id="shiftDetailsTasks"></div>
+
+      <div class="sectionTitle"><h2>Нотатка</h2></div>
+      <div class="card detailsNote" id="shiftDetailsNote">Нотатки немає</div>
+
+      <div class="detailsActions">
+       <button class="detailsAction primaryAction" id="shiftDetailsEditBottom">Редагувати</button>
+       <button class="detailsAction secondaryAction" id="shiftDetailsDuplicate">Дублювати</button>
+       <button class="detailsAction dangerAction" id="shiftDetailsDelete">Видалити</button>
+      </div>
+     </section>
+
+     <section class="view" id="settingsView">
  <div class="sectionTitle"><h2>Налаштування</h2></div>
  <div class="card settingsCard">
   <div class="setting"><div><b>Базова ставка</b><div class="hint">Для нових змін</div></div><input id="settingsRate" type="number"></div>
