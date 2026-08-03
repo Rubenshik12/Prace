@@ -1,9 +1,9 @@
 
-import {storage} from './storage.js?v=v15-4-reminders-keyboard-fix-20260803-23';
-import {state} from './state.js?v=v15-4-reminders-keyboard-fix-20260803-23';
-import {fmt} from './format.js?v=v15-4-reminders-keyboard-fix-20260803-23';
-import {minutes,pay,summary,daySummary} from './payroll.js?v=v15-4-reminders-keyboard-fix-20260803-23';
-import {template} from './ui.js?v=v15-4-reminders-keyboard-fix-20260803-23';
+import {storage} from './storage.js?v=v15-5-navigation-architecture-20260803-24';
+import {state} from './state.js?v=v15-5-navigation-architecture-20260803-24';
+import {fmt} from './format.js?v=v15-5-navigation-architecture-20260803-24';
+import {minutes,pay,summary,daySummary} from './payroll.js?v=v15-5-navigation-architecture-20260803-24';
+import {template} from './ui.js?v=v15-5-navigation-architecture-20260803-24';
 
 state.shifts=Array.isArray(state.shifts)?state.shifts:[];
 state.plans=Array.isArray(state.plans)?state.plans:[];
@@ -127,45 +127,76 @@ function saveReminderSetting(key,value){
 }
 function setupVisualViewportFix(){
  const nav=document.querySelector('.bottomNav');
- if(!nav)return;
+ const shell=document.querySelector('.shell');
+ const main=document.querySelector('main');
+ if(!nav||!shell||!main)return;
+
  let restoreTimer=0;
- const isEditable=element=>element&&(
-  element.matches?.('input,textarea,select,[contenteditable="true"]')
- );
+ const editable=element=>element&&element.matches?.('input,textarea,select,[contenteditable="true"]');
+
+ const hardReset=()=>{
+  window.scrollTo(0,0);
+  document.documentElement.scrollTop=0;
+  document.body.scrollTop=0;
+  nav.style.position='fixed';
+  nav.style.left='0px';
+  nav.style.right='0px';
+  nav.style.bottom='0px';
+  nav.style.transform='translate3d(0,0,0)';
+  shell.style.top='0px';
+  document.documentElement.classList.remove('viewport-shifted');
+ };
+
  const update=()=>{
-  const vv=window.visualViewport;
-  const keyboardOpen=!!vv&&window.innerHeight-vv.height>150;
-  const editing=isEditable(document.activeElement);
-  document.documentElement.classList.toggle('keyboard-open',keyboardOpen||editing);
-  if(!(keyboardOpen||editing)){
-   nav.style.removeProperty('bottom');
-   nav.style.removeProperty('transform');
-   document.documentElement.style.setProperty('--visual-bottom','0px');
+  const viewport=window.visualViewport;
+  const keyboardOpen=!!viewport&&(window.innerHeight-viewport.height>150);
+  const isEditing=editable(document.activeElement);
+
+  document.documentElement.classList.toggle('keyboard-open',keyboardOpen||isEditing);
+
+  if(keyboardOpen){
+   document.documentElement.style.setProperty('--keyboard-height',`${Math.max(0,window.innerHeight-viewport.height)}px`);
+  }else{
+   document.documentElement.style.setProperty('--keyboard-height','0px');
+   hardReset();
   }
  };
+
  document.addEventListener('focusin',event=>{
-  if(isEditable(event.target)){
-   document.documentElement.classList.add('keyboard-open');
+  if(editable(event.target)){
    clearTimeout(restoreTimer);
+   document.documentElement.classList.add('keyboard-open');
   }
  });
+
  document.addEventListener('focusout',()=>{
   clearTimeout(restoreTimer);
   restoreTimer=setTimeout(()=>{
    document.documentElement.classList.remove('keyboard-open');
-   nav.style.removeProperty('bottom');
-   nav.style.removeProperty('transform');
-   window.scrollBy(0,0);
-   update();
-  },320);
+   document.documentElement.style.setProperty('--keyboard-height','0px');
+   hardReset();
+  },380);
  });
+
+ document.addEventListener('change',event=>{
+  if(event.target?.matches?.('select,input[type="date"],input[type="time"],input[type="color"]')){
+   clearTimeout(restoreTimer);
+   restoreTimer=setTimeout(hardReset,120);
+  }
+ });
+
  window.visualViewport?.addEventListener('resize',update);
  window.visualViewport?.addEventListener('scroll',update);
- window.addEventListener('orientationchange',()=>setTimeout(update,500));
- window.addEventListener('pageshow',()=>setTimeout(update,50));
+ window.addEventListener('resize',()=>setTimeout(update,80));
+ window.addEventListener('orientationchange',()=>setTimeout(hardReset,550));
+ window.addEventListener('pageshow',()=>setTimeout(hardReset,50));
+ document.addEventListener('visibilitychange',()=>{
+  if(document.visibilityState==='visible')setTimeout(hardReset,80);
+ });
+
+ hardReset();
  update();
 }
-
 function render(){
  renderJobFilters();
  renderReminderSettings();
@@ -878,7 +909,7 @@ function deleteEditingProfile(){
  }catch(error){alert(error.message)}
 }
 
-function backupPayload(){return {backupSchema:2,appVersion:'v15.4 Reminders & Keyboard Fix',exportedAt:new Date().toISOString(),profiles:storage.exportStore()}}
+function backupPayload(){return {backupSchema:2,appVersion:'v15.5 Navigation Architecture Fix',exportedAt:new Date().toISOString(),profiles:storage.exportStore()}}
 function renderBackupStatus(){const raw=storage.lastBackup();$('lastBackupText').textContent=raw?`Остання копія: ${new Date(raw).toLocaleString('uk-UA')}`:'Копію ще не створювали'}
 function downloadBackup(){const blob=new Blob([JSON.stringify(backupPayload(),null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`moya-robota-profiles-${new Date().toISOString().slice(0,10)}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);storage.saveLastBackup(new Date().toISOString());renderBackupStatus();toast('Резервну копію всіх профілів створено')}
 function validateBackup(p){
@@ -1014,7 +1045,7 @@ bind('endReminderHours','change',e=>saveReminderSetting('endReminderHours',Numbe
 
 bind('profilePageEdit','click',()=>openProfileEditor(storage.activeProfileId()));
 bind('languageRow','click',()=>toast('Додаткові мови з’являться в одному з наступних оновлень'));
-bind('aboutAppRow','click',()=>alert('Моя робота\nВерсія: v15.4 Reminders & Keyboard Fix'));
+bind('aboutAppRow','click',()=>alert('Моя робота\nВерсія: v15.5 Navigation Architecture Fix'));
 bind('profileHeaderButton','click',openProfiles);
 bind('openProfilesButton','click',openProfiles);
 bind('closeProfilesButton','click',()=>$('profilesDialog').close());
