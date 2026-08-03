@@ -2001,3 +2001,160 @@ html:not(.keyboard-open) .bottomNav{
 @supports(height:100dvh){
  html,body{min-height:100dvh}
 }
+
+/* v15.5 — navigation architecture fix */
+:root{
+ --app-nav-height:74px;
+ --app-safe-bottom:env(safe-area-inset-bottom,0px);
+ --app-nav-total:calc(var(--app-nav-height) + var(--app-safe-bottom));
+ --keyboard-height:0px;
+}
+
+html{
+ width:100%;
+ height:100%;
+ min-height:100%;
+ overflow:hidden!important;
+ overscroll-behavior:none;
+}
+
+body{
+ position:fixed!important;
+ inset:0!important;
+ width:100%!important;
+ height:100%!important;
+ min-height:0!important;
+ margin:0!important;
+ padding:0!important;
+ overflow:hidden!important;
+ overscroll-behavior:none;
+ -webkit-overflow-scrolling:auto;
+}
+
+.shell{
+ position:fixed!important;
+ inset:0 0 var(--app-nav-total) 0!important;
+ width:100%!important;
+ height:auto!important;
+ min-height:0!important;
+ display:flex!important;
+ flex-direction:column!important;
+ overflow:hidden!important;
+ transform:none!important;
+ -webkit-transform:none!important;
+ contain:layout paint;
+}
+
+.shell>.hero{
+ flex:0 0 auto!important;
+ position:relative!important;
+ inset:auto!important;
+ z-index:5!important;
+}
+
+.shell>main{
+ position:relative!important;
+ flex:1 1 auto!important;
+ min-height:0!important;
+ width:100%!important;
+ height:auto!important;
+ padding-bottom:22px!important;
+ overflow-x:hidden!important;
+ overflow-y:auto!important;
+ overscroll-behavior-y:contain;
+ -webkit-overflow-scrolling:touch;
+ scroll-behavior:auto;
+}
+
+.shell>main>.view{
+ min-height:auto!important;
+ padding-bottom:24px!important;
+}
+
+.bottomNav{
+ position:fixed!important;
+ left:0!important;
+ right:0!important;
+ top:auto!important;
+ bottom:0!important;
+ width:100%!important;
+ height:var(--app-nav-total)!important;
+ min-height:var(--app-nav-total)!important;
+ max-height:var(--app-nav-total)!important;
+ margin:0!important;
+ padding:7px 8px calc(7px + var(--app-safe-bottom))!important;
+ z-index:10000!important;
+ transform:translate3d(0,0,0)!important;
+ -webkit-transform:translate3d(0,0,0)!important;
+ will-change:auto!important;
+ contain:layout paint;
+}
+
+.bottomNav .nav{
+ height:58px!important;
+ min-height:58px!important;
+ max-height:58px!important;
+}
+
+/* While the keyboard is open, hide the bar instead of allowing iOS to move it.
+   The shell remains fixed and main keeps its own scroll position. */
+html.keyboard-open .bottomNav{
+ display:none!important;
+ opacity:0!important;
+ visibility:hidden!important;
+ transform:none!important;
+}
+
+html.keyboard-open .shell{
+ bottom:0!important;
+}
+
+html:not(.keyboard-open) .bottomNav{
+ display:flex!important;
+ opacity:1!important;
+ visibility:visible!important;
+ left:0!important;
+ right:0!important;
+ bottom:0!important;
+ transform:translate3d(0,0,0)!important;
+ -webkit-transform:translate3d(0,0,0)!important;
+}
+
+html:not(.keyboard-open) .shell{
+ inset:0 0 var(--app-nav-total) 0!important;
+}
+
+/* Native select/date/time pickers sometimes leave the layout viewport shifted.
+   These rules keep the app attached to the physical viewport. */
+@supports(height:100dvh){
+ html,body{
+  height:100dvh!important;
+ }
+}
+
+@media(display-mode:standalone){
+ html,body{
+  height:100dvh!important;
+ }
+ .shell{
+  position:fixed!important;
+ }
+ .bottomNav{
+  position:fixed!important;
+  bottom:0!important;
+ }
+}
+
+dialog{
+ position:fixed!important;
+ z-index:20000!important;
+}
+
+dialog[open]{
+ position:fixed!important;
+}
+
+/* Old page-level bottom padding is no longer needed because main ends above nav. */
+main,.view{
+ margin-bottom:0!important;
+}

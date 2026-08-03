@@ -1,17 +1,17 @@
-const CACHE='moya-robota-v15-4-reminders-keyboard-fix-20260803-23';
+const CACHE='moya-robota-v15-5-navigation-architecture-20260803-24';
 const ASSETS=[
  './',
  './index.html',
- './styles.css?v=v15-4-reminders-keyboard-fix-20260803-23',
- './manifest.webmanifest?v=v15-4-reminders-keyboard-fix-20260803-23',
+ './styles.css?v=v15-5-navigation-architecture-20260803-24',
+ './manifest.webmanifest?v=v15-5-navigation-architecture-20260803-24',
  './icon-192.png',
  './icon-512.png',
- './src/app.js?v=v15-4-reminders-keyboard-fix-20260803-23',
- './src/state.js?v=v15-4-reminders-keyboard-fix-20260803-23',
- './src/storage.js?v=v15-4-reminders-keyboard-fix-20260803-23',
- './src/payroll.js?v=v15-4-reminders-keyboard-fix-20260803-23',
- './src/format.js?v=v15-4-reminders-keyboard-fix-20260803-23',
- './src/ui.js?v=v15-4-reminders-keyboard-fix-20260803-23'
+ './src/app.js?v=v15-5-navigation-architecture-20260803-24',
+ './src/state.js?v=v15-5-navigation-architecture-20260803-24',
+ './src/storage.js?v=v15-5-navigation-architecture-20260803-24',
+ './src/payroll.js?v=v15-5-navigation-architecture-20260803-24',
+ './src/format.js?v=v15-5-navigation-architecture-20260803-24',
+ './src/ui.js?v=v15-5-navigation-architecture-20260803-24'
 ];
 self.addEventListener('install',event=>{
  self.skipWaiting();
