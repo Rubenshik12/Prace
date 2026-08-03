@@ -1,7 +1,7 @@
 
 export function template(){
  return `<div class="shell">
- <header class="hero"><div class="heroRow"><div><div class="greeting" id="greeting"></div><h1>Моя робота</h1><p>Час • зарплата • плани</p><div class="appVersion">v12.2 Navigation Stable</div></div><div class="heroButtons"><button class="iconButton" id="themeButton">◐</button><button class="iconButton" data-open="settingsView">⚙︎</button></div></div></header>
+ <header class="hero"><div class="heroRow"><div><div class="greeting" id="greeting"></div><h1>Моя робота</h1><p>Час • зарплата • плани</p><div class="appVersion">v12.3 UI Polish</div></div><div class="heroButtons"><button class="iconButton" id="themeButton">◐</button><button class="iconButton" data-open="settingsView">⚙︎</button></div></div></header>
  <main>
   <section class="view active" id="homeView">
   <section class="card dayHero" id="dayHero">
@@ -360,7 +360,28 @@ export function template(){
 
 </section>
  </main></div>
- <nav class="bottomNav"><button class="nav active" data-view="homeView"><span>⌂</span>Головна</button><button class="nav" data-view="calendarView"><span>▦</span>Календар</button><button class="nav" data-view="statsView"><span>⌁</span>Статистика</button><button class="nav" data-view="plansView"><span>✓</span>Плани</button><button class="nav" data-view="settingsView"><span>⚙︎</span>Налаштування</button></nav>
+ <nav class="bottomNav" aria-label="Основна навігація">
+  <button class="nav active" data-view="homeView" aria-label="Головна">
+   <span class="navIcon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 10.5 12 3.8l8.5 6.7v9.2a1.8 1.8 0 0 1-1.8 1.8h-4.2v-6.3h-5v6.3H5.3a1.8 1.8 0 0 1-1.8-1.8z"/></svg></span>
+   <span>Головна</span>
+  </button>
+  <button class="nav" data-view="calendarView" aria-label="Календар">
+   <span class="navIcon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5.5" width="17" height="15" rx="2"/><path d="M8 3.5v4M16 3.5v4M3.5 9.5h17"/></svg></span>
+   <span>Календар</span>
+  </button>
+  <button class="nav" data-view="statsView" aria-label="Статистика">
+   <span class="navIcon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V11M12 20V4M19 20v-7"/></svg></span>
+   <span>Статистика</span>
+  </button>
+  <button class="nav" data-view="plansView" aria-label="Плани">
+   <span class="navIcon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4.5 7.5 2 2 3.5-4M11 7.5h8M4.5 14.5l2 2 3.5-4M11 14.5h8"/></svg></span>
+   <span>Плани</span>
+  </button>
+  <button class="nav" data-view="settingsView" aria-label="Налаштування">
+   <span class="navIcon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7Z"/><path d="M19.4 13.5a7.8 7.8 0 0 0 .1-1.5 7.8 7.8 0 0 0-.1-1.5l2-1.6-2-3.4-2.5 1a8.5 8.5 0 0 0-2.6-1.5L14 2.3h-4L9.7 5a8.5 8.5 0 0 0-2.6 1.5l-2.5-1-2 3.4 2 1.6A7.8 7.8 0 0 0 4.5 12c0 .5 0 1 .1 1.5l-2 1.6 2 3.4 2.5-1a8.5 8.5 0 0 0 2.6 1.5l.3 2.7h4l.3-2.7a8.5 8.5 0 0 0 2.6-1.5l2.5 1 2-3.4z"/></svg></span>
+   <span>Налаштування</span>
+  </button>
+ </nav>
  <dialog id="monthDialog"><div class="modal"><h3>Вибрати місяць</h3><label>Місяць</label><select id="monthSelect"></select><label>Рік</label><select id="yearSelect"></select><div class="modalActions"><button id="cancelMonth">Скасувати</button><button class="save" id="saveMonth">Готово</button></div></div></dialog>
  <dialog id="rateDialog"><div class="modal"><h3>Базова ставка</h3><label>Kč за годину</label><input id="rateInput" type="number"><div class="modalActions"><button id="cancelRate">Скасувати</button><button class="save" id="saveRate">Зберегти</button></div></div></dialog>
  <dialog id="startDialog"><div class="modal"><h3>Час приходу</h3><label>Дата</label><input id="startDate" type="date"><label>Час</label><input id="startTime" type="time"><div class="modalActions"><button id="cancelStart">Скасувати</button><button class="save" id="saveStart">Почати</button></div></div></dialog>
