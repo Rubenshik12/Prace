@@ -2344,3 +2344,100 @@ body::before{
  z-index:-2;
  pointer-events:none;
 }
+
+/* v15.8 — exact visible viewport height */
+:root{
+ --app-visible-height:100vh;
+ --app-viewport-top:0px;
+ --nav-bar-height:74px;
+ --safe-bottom:env(safe-area-inset-bottom,0px);
+ --nav-total-height:calc(var(--nav-bar-height) + var(--safe-bottom));
+}
+
+html,body{
+ width:100%!important;
+ height:var(--app-visible-height)!important;
+ min-height:var(--app-visible-height)!important;
+ max-height:var(--app-visible-height)!important;
+ overflow:hidden!important;
+ background:var(--bg)!important;
+}
+
+body{
+ position:fixed!important;
+ top:var(--app-viewport-top)!important;
+ right:0!important;
+ bottom:auto!important;
+ left:0!important;
+}
+
+.shell{
+ position:fixed!important;
+ top:var(--app-viewport-top)!important;
+ left:0!important;
+ right:0!important;
+ bottom:auto!important;
+ width:100%!important;
+ height:calc(var(--app-visible-height) - var(--nav-total-height))!important;
+ max-height:calc(var(--app-visible-height) - var(--nav-total-height))!important;
+ min-height:0!important;
+ display:grid!important;
+ grid-template-rows:auto minmax(0,1fr)!important;
+ overflow:hidden!important;
+ background:var(--bg)!important;
+}
+
+.shell>main{
+ min-height:0!important;
+ height:100%!important;
+ max-height:100%!important;
+ overflow-y:auto!important;
+ overflow-x:hidden!important;
+ background:var(--bg)!important;
+ padding-bottom:28px!important;
+ box-sizing:border-box!important;
+}
+
+.bottomNav{
+ position:fixed!important;
+ top:calc(var(--app-viewport-top) + var(--app-visible-height) - var(--nav-total-height))!important;
+ bottom:auto!important;
+ left:0!important;
+ right:0!important;
+ height:var(--nav-total-height)!important;
+ min-height:var(--nav-total-height)!important;
+ max-height:var(--nav-total-height)!important;
+ transform:none!important;
+ -webkit-transform:none!important;
+ margin:0!important;
+ z-index:999999!important;
+}
+
+html.keyboard-open .bottomNav{
+ display:none!important;
+}
+
+html.keyboard-open .shell{
+ height:var(--app-visible-height)!important;
+ max-height:var(--app-visible-height)!important;
+}
+
+/* Ensure every visible layer uses app background */
+html,body,.shell,.shell>main,.view{
+ background:var(--bg)!important;
+}
+
+body::before{
+ background:var(--bg)!important;
+}
+
+/* Remove stale large minimum heights from older iterations */
+.view,
+.finalHome,
+.profileView,
+#calendarView,
+#statsView,
+#plansView{
+ min-height:0!important;
+ height:auto!important;
+}

@@ -1,17 +1,17 @@
-const CACHE='moya-robota-v15-7-fullscreen-layout-20260803-26';
+const CACHE='moya-robota-v15-8-visual-viewport-20260803-27';
 const ASSETS=[
  './',
  './index.html',
- './styles.css?v=v15-7-fullscreen-layout-20260803-26',
- './manifest.webmanifest?v=v15-7-fullscreen-layout-20260803-26',
+ './styles.css?v=v15-8-visual-viewport-20260803-27',
+ './manifest.webmanifest?v=v15-8-visual-viewport-20260803-27',
  './icon-192.png',
  './icon-512.png',
- './src/app.js?v=v15-7-fullscreen-layout-20260803-26',
- './src/state.js?v=v15-7-fullscreen-layout-20260803-26',
- './src/storage.js?v=v15-7-fullscreen-layout-20260803-26',
- './src/payroll.js?v=v15-7-fullscreen-layout-20260803-26',
- './src/format.js?v=v15-7-fullscreen-layout-20260803-26',
- './src/ui.js?v=v15-7-fullscreen-layout-20260803-26'
+ './src/app.js?v=v15-8-visual-viewport-20260803-27',
+ './src/state.js?v=v15-8-visual-viewport-20260803-27',
+ './src/storage.js?v=v15-8-visual-viewport-20260803-27',
+ './src/payroll.js?v=v15-8-visual-viewport-20260803-27',
+ './src/format.js?v=v15-8-visual-viewport-20260803-27',
+ './src/ui.js?v=v15-8-visual-viewport-20260803-27'
 ];
 self.addEventListener('install',event=>{
  self.skipWaiting();
