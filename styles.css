@@ -1780,115 +1780,60 @@ main,.view{
  }
 }
 
-.smartDashboard{padding-top:4px}
-.dashboardGreeting{display:flex;justify-content:space-between;gap:16px;margin:4px 2px 16px}.dashboardGreeting h2{font-size:30px;margin:4px 0 0;letter-spacing:-.045em}.dashboardGreeting p{margin:6px 0 0;color:var(--muted)}
-.dashboardShiftCard{padding:17px}.dashboardShiftTop{display:flex;justify-content:space-between;align-items:center}.dashboardStatus{padding:8px 12px;border-radius:999px;background:var(--surface2);color:var(--muted);font-weight:850;font-size:12px}.dashboardStatus.active{background:var(--greenSoft);color:var(--green)}.dashboardMore{width:38px;height:38px;border:0;border-radius:13px;background:var(--surface2);color:var(--muted)}
-.dashboardShiftMain{display:grid;grid-template-columns:1fr 160px 1fr;align-items:center;gap:8px;margin:16px 0}.dashboardSideMetric span{display:block;color:var(--muted);font-size:10px;font-weight:850;text-transform:uppercase}.dashboardSideMetric strong{display:block;font-size:19px;margin-top:8px}.dashboardPayMetric{text-align:right}.dashboardPayMetric strong{color:var(--green)}
-.dashboardRingWrap{position:relative;width:160px;height:160px}.dashboardRing{width:100%;height:100%;transform:rotate(-90deg)}.dashboardRingTrack,.dashboardRingProgress{fill:none;stroke-width:9}.dashboardRingTrack{stroke:color-mix(in srgb,var(--green) 12%,var(--surface2))}.dashboardRingProgress{stroke:var(--green);stroke-linecap:round;stroke-dasharray:314;stroke-dashoffset:314;transition:.35s}.dashboardRingContent{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}.dashboardRingContent strong{font-size:24px;letter-spacing:-.05em}.dashboardRingContent span{font-size:10px;color:var(--muted);margin-top:5px}
-.dashboardActions{display:grid;grid-template-columns:1fr 1fr;gap:9px}.dashboardActions button{min-height:50px;border-radius:16px;font-weight:850}.dashboardPrimaryAction{grid-column:span 2}.dashboardSecondaryAction{border:1px solid var(--line);background:var(--surface2);color:var(--blue)}.dashboardCancelAction{grid-column:span 2;border:0;background:transparent;color:var(--red)}
-.dashboardGoalCard{display:grid;grid-template-columns:1fr 1.3fr;align-items:center;gap:16px;padding:17px;margin-top:11px}.dashboardGoalCard strong{display:block;font-size:27px;margin-top:7px}.dashboardGoalCard small{display:block;color:var(--muted);font-size:10px;margin-top:5px}.dashboardGoalVisual{text-align:right}.dashboardGoalVisual>span{font-weight:900;color:var(--green)}.dashboardGoalTrack{height:9px;border-radius:999px;background:var(--surface2);overflow:hidden;margin-top:10px}.dashboardGoalTrack i{display:block;width:0;height:100%;background:var(--green);border-radius:inherit}
-.dashboardNextTaskCard{display:grid;grid-template-columns:46px 1fr 18px;align-items:center;gap:12px;padding:15px;margin-top:11px}.dashboardTaskIcon{width:46px;height:46px;border-radius:15px;display:grid;place-items:center;background:var(--blueSoft);color:var(--blue);font-weight:950}.dashboardTaskContent strong,.dashboardTaskContent small{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.dashboardTaskContent strong{font-size:16px;margin-top:5px}.dashboardTaskContent small{color:var(--muted);font-size:10px;margin-top:4px}.dashboardChevron{font-size:24px;color:var(--muted)}
-.dashboardTodayGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:11px}.dashboardTodayCard{padding:15px;min-height:105px}.dashboardTodayCard span,.dashboardTodayCard small{display:block;color:var(--muted);font-size:10px}.dashboardTodayCard strong{display:block;font-size:23px;margin:12px 0 7px}
-.dashboardMonthCard{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:16px;margin-top:11px}.dashboardMonthCard strong{display:block;font-size:15px;margin-top:6px}.dashboardMonthCard button{border:0;background:var(--blueSoft);color:var(--blue);height:40px;padding:0 12px;border-radius:13px;font-weight:850}.taskBookIcon svg{stroke-width:1.75!important}
-@media(max-width:390px){.dashboardShiftMain{grid-template-columns:1fr 138px 1fr}.dashboardRingWrap{width:138px;height:138px}.dashboardRingContent strong{font-size:21px}.dashboardSideMetric strong{font-size:15px}.dashboardGoalCard{grid-template-columns:1fr}}
-
-/* v14.1 Dashboard Polish */
-.dashboardGreeting{
- margin-top:8px!important;
- align-items:center!important;
+/* v15.0 Final UI — frozen design system */
+.finalTopBar{
+ padding:calc(10px + env(safe-area-inset-top)) 16px 12px!important;
+ border-radius:0 0 22px 22px!important;
 }
-.dashboardGreeting h2{
- font-size:27px!important;
- line-height:1.08!important;
+.finalTopInner{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.profileCompactButton{
+ min-width:0;max-width:72%;display:flex;align-items:center;gap:10px;border:0;
+ background:transparent;color:inherit;padding:0;text-align:left
 }
-.dashboardGreeting p{
- font-size:13px!important;
+.profileCompactButton>span:first-child{
+ width:40px;height:40px;flex:0 0 40px;border-radius:13px;display:grid;place-items:center;
+ background:rgba(255,255,255,.14);font-weight:950
 }
-.dashboardShiftCard{
- padding:16px!important;
- border-radius:22px!important;
+.profileCompactText{min-width:0}.profileCompactText b,.profileCompactText small{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.profileCompactText b{font-size:14px}.profileCompactText small{font-size:9px;color:#C7D3E5;margin-top:3px}
+.finalVersion{font-size:8px!important;margin-top:8px!important;opacity:.7}
+.finalHome{padding-top:14px}
+.finalShiftCard{padding:16px!important;border-radius:20px!important}
+.finalShiftHead{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.finalShiftHead h2{font-size:23px;margin:4px 0 0;letter-spacing:-.04em}
+.finalShiftHead p{margin:5px 0 0;color:var(--muted);font-size:11px}
+.finalWorkMode{margin-top:14px!important;padding:15px!important;border-radius:17px!important}
+.finalShiftValues{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.finalMainTime,.finalMainPay{padding:13px;border-radius:15px;background:color-mix(in srgb,var(--surface) 70%,transparent);border:1px solid var(--line)}
+.finalMainTime span,.finalMainPay span{display:block;color:var(--muted);font-size:9px;font-weight:850;text-transform:uppercase;letter-spacing:.05em}
+.finalMainTime strong,.finalMainPay strong{display:block;margin-top:8px;font-size:24px;letter-spacing:-.045em}
+.finalMainPay strong{color:var(--green)}
+.finalStartLabel{margin:12px 2px 0!important;color:var(--muted);font-size:11px!important}
+.finalPrimaryButton,.finalStopButton{width:100%;min-height:50px;border-radius:15px!important;margin-top:12px!important;font-size:15px!important}
+.finalSecondaryButton{width:100%;min-height:43px;border-radius:14px!important;margin-top:8px!important}
+.finalQuickNotes{margin-top:13px!important;padding:13px!important;border-radius:16px!important}
+.finalQuickNotes .workTasksHead span{font-size:13px}
+.finalQuickNotes .workTasksHead small{font-size:9px}
+.finalSummaryGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.finalSummaryCard{padding:14px;min-height:94px}.finalSummaryCard span,.finalSummaryCard small{display:block;color:var(--muted);font-size:9px}.finalSummaryCard strong{display:block;font-size:23px;margin:11px 0 6px}
+.finalSectionTitle{margin-top:17px!important;margin-bottom:8px!important}
+.finalSectionTitle h2{font-size:17px!important}
+.finalMonthGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.finalMetric{min-height:88px;padding:14px}.finalMetric span{display:block;color:var(--muted);font-size:9px}.finalMetric strong{display:block;font-size:21px;margin-top:12px}
+.finalMetricWide{grid-column:span 2}
+.finalNextTask,.finalRecentList{border-radius:18px!important;overflow:hidden}
+.taskBookIcon svg{stroke-width:1.75!important}
+.profileView .profilePageHero{margin-bottom:14px!important}
+[data-theme="light"] .finalTopBar{
+ background:linear-gradient(145deg,#FFFFFF 0%,#F4F6FF 68%,#ECEFFF 100%)!important;
+ color:#171A20!important;border-bottom:1px solid rgba(74,103,232,.10)!important
 }
-.dashboardShiftMain{
- grid-template-columns:minmax(62px,1fr) 146px minmax(74px,1fr)!important;
- gap:8px!important;
- margin:14px 0 16px!important;
-}
-.dashboardRingWrap{
- width:146px!important;
- height:146px!important;
-}
-.dashboardRingContent strong{
- font-size:21px!important;
-}
-.dashboardSideMetric strong{
- font-size:16px!important;
-}
-.dashboardActions{
- display:flex!important;
- flex-direction:column!important;
- gap:9px!important;
-}
-.dashboardActions button{
- width:100%!important;
- min-height:48px!important;
- border-radius:15px!important;
- font-size:14px!important;
-}
-.dashboardPrimaryAction{
- grid-column:auto!important;
-}
-.dashboardSecondaryAction{
- min-height:44px!important;
- background:transparent!important;
-}
-.dashboardCancelAction{
- min-height:36px!important;
- font-size:12px!important;
-}
-.dashboardActions button[hidden]{
- display:none!important;
-}
-.profilePageHero{
- grid-template-columns:54px minmax(0,1fr) auto!important;
- gap:12px!important;
- padding:15px!important;
-}
-.profilePageAvatar{
- width:54px!important;
- height:54px!important;
- border-radius:17px!important;
-}
-.profilePageIdentity h2{
- font-size:20px!important;
-}
-.profilePageEdit{
- height:38px!important;
- padding:0 11px!important;
- font-size:11px!important;
-}
-.profileView>.sectionTitle:first-of-type{
- margin-top:16px!important;
-}
+[data-theme="light"] .profileCompactButton>span:first-child{background:#E9EDFF;color:#4A67E8}
+[data-theme="light"] .profileCompactText small{color:#737B89}
+[data-theme="light"] .finalVersion{color:#7C8392!important}
+[data-theme="light"] .finalMainTime,[data-theme="light"] .finalMainPay{background:#F7F5F0}
 @media(max-width:390px){
- .dashboardShiftMain{
-  grid-template-columns:minmax(54px,1fr) 132px minmax(66px,1fr)!important;
- }
- .dashboardRingWrap{
-  width:132px!important;
-  height:132px!important;
- }
- .dashboardSideMetric span{
-  font-size:8px!important;
- }
- .dashboardSideMetric strong{
-  font-size:14px!important;
- }
- .dashboardRingContent strong{
-  font-size:19px!important;
- }
+ .profileCompactButton{max-width:66%}
+ .finalMainTime strong,.finalMainPay strong{font-size:21px}
+ .finalSummaryCard strong{font-size:21px}
 }
-
-/* v14.1 final cleanup */
-.smartDashboard{padding-top:18px!important}
-.dashboardShiftCard{margin-top:0!important}
-#legacyHomeCompatibility{display:none!important}
