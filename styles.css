@@ -1838,3 +1838,95 @@ main,.view{
  .finalSummaryCard strong{font-size:21px}
 }
 .activeJobChip{width:100%;display:grid;grid-template-columns:10px minmax(0,1fr) 18px;align-items:center;gap:10px;margin-top:9px;padding:9px 11px;border:1px solid rgba(255,255,255,.12);border-radius:14px;background:rgba(255,255,255,.08);color:inherit;text-align:left}.activeJobDot{width:10px;height:10px;border-radius:50%;display:block}.activeJobChip small,.activeJobChip b{display:block}.activeJobChip small{font-size:8px;color:#C7D3E5}.activeJobChip b{font-size:12px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.activeJobChevron{font-size:20px;opacity:.7}[data-theme="light"] .activeJobChip{background:#F7F8FF;border-color:rgba(74,103,232,.12);color:#171A20}[data-theme="light"] .activeJobChip small{color:#747C8B}.jobsCard{padding:5px 12px}.jobRow{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:8px;border-bottom:1px solid var(--line)}.jobRow:last-child{border-bottom:0}.jobSelectButton{display:grid;grid-template-columns:44px minmax(0,1fr) 18px;align-items:center;gap:11px;padding:11px 0;border:0;background:transparent;color:var(--text);text-align:left;min-width:0}.jobAvatar{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;color:#fff;font-weight:950}.jobText{min-width:0}.jobText b,.jobText small{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.jobText b{font-size:14px}.jobText small{font-size:9px;color:var(--muted);margin-top:4px}.jobActiveMark{color:var(--blue);font-weight:950;font-size:18px}.jobEditButton{border:0;background:var(--surface2);color:var(--blue);border-radius:11px;padding:8px;font-size:9px;font-weight:850}.jobRow.active .jobText b{color:var(--blue)}
+/* v15.2 — fixed bottom navigation */
+:root{
+ --bottom-nav-height:74px;
+ --bottom-nav-safe:env(safe-area-inset-bottom,0px);
+}
+
+html,body{
+ min-height:100%;
+}
+
+body{
+ padding-bottom:0!important;
+}
+
+main{
+ padding-bottom:calc(var(--bottom-nav-height) + var(--bottom-nav-safe) + 22px)!important;
+}
+
+.view{
+ padding-bottom:calc(var(--bottom-nav-height) + var(--bottom-nav-safe) + 22px)!important;
+}
+
+.bottomNav{
+ position:fixed!important;
+ left:0!important;
+ right:0!important;
+ bottom:0!important;
+ width:100%!important;
+ min-height:var(--bottom-nav-height)!important;
+ height:calc(var(--bottom-nav-height) + var(--bottom-nav-safe))!important;
+ padding:7px 8px calc(7px + var(--bottom-nav-safe))!important;
+ margin:0!important;
+ border-radius:0!important;
+ transform:none!important;
+ z-index:9999!important;
+ box-sizing:border-box!important;
+ overflow:visible!important;
+}
+
+.bottomNav::before{
+ content:"";
+ position:absolute;
+ inset:0;
+ background:inherit;
+ pointer-events:none;
+ z-index:-1;
+}
+
+.bottomNav .nav{
+ min-height:58px!important;
+ height:58px!important;
+ align-self:flex-start!important;
+}
+
+.bottomNav .nav.active{
+ border-radius:18px!important;
+}
+
+[data-theme="dark"] .bottomNav{
+ background:rgba(14,27,45,.97)!important;
+ border-top:1px solid rgba(113,145,190,.18)!important;
+ box-shadow:0 -10px 30px rgba(0,0,0,.24)!important;
+ backdrop-filter:blur(18px)!important;
+ -webkit-backdrop-filter:blur(18px)!important;
+}
+
+[data-theme="light"] .bottomNav{
+ background:rgba(252,251,248,.97)!important;
+ border-top:1px solid rgba(24,30,42,.08)!important;
+ box-shadow:0 -10px 28px rgba(38,43,55,.09)!important;
+ backdrop-filter:blur(18px)!important;
+ -webkit-backdrop-filter:blur(18px)!important;
+}
+
+dialog[open]{
+ z-index:12000!important;
+}
+
+@supports (-webkit-touch-callout:none){
+ body{
+  min-height:-webkit-fill-available;
+ }
+ .bottomNav{
+  transform:translateZ(0)!important;
+  -webkit-transform:translateZ(0)!important;
+ }
+}
+
+/* keep last cards fully visible above the fixed bar */
+.view>*:last-child{
+ margin-bottom:10px!important;
+}
