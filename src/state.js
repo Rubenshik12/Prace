@@ -1,4 +1,4 @@
-import {storage} from './storage.js?v=v16-3-compact-bottom-navigation-20260803-32';
+import {storage} from './storage.js?v=v16-5-shell-padding-fix-20260803-34';
 
 export const state={
  month:new Date().toISOString().slice(0,7),
