@@ -1,9 +1,9 @@
 
-import {storage} from './storage.js?v=v15-8-visual-viewport-20260803-27';
-import {state} from './state.js?v=v15-8-visual-viewport-20260803-27';
-import {fmt} from './format.js?v=v15-8-visual-viewport-20260803-27';
-import {minutes,pay,summary,daySummary} from './payroll.js?v=v15-8-visual-viewport-20260803-27';
-import {template} from './ui.js?v=v15-8-visual-viewport-20260803-27';
+import {storage} from './storage.js?v=v15-9-navigation-cleanup-20260803-28';
+import {state} from './state.js?v=v15-9-navigation-cleanup-20260803-28';
+import {fmt} from './format.js?v=v15-9-navigation-cleanup-20260803-28';
+import {minutes,pay,summary,daySummary} from './payroll.js?v=v15-9-navigation-cleanup-20260803-28';
+import {template} from './ui.js?v=v15-9-navigation-cleanup-20260803-28';
 
 state.shifts=Array.isArray(state.shifts)?state.shifts:[];
 state.plans=Array.isArray(state.plans)?state.plans:[];
@@ -126,76 +126,36 @@ function saveReminderSetting(key,value){
  renderReminderSettings();
 }
 function setupVisualViewportFix(){
- const nav=document.querySelector('.bottomNav');
- const shell=document.querySelector('.shell');
- if(!nav||!shell)return;
-
- let restoreTimer=0;
  const editable=element=>element&&element.matches?.('input,textarea,select,[contenteditable="true"]');
-
- const setViewportMetrics=()=>{
-  const vv=window.visualViewport;
-  const visibleHeight=Math.round(vv?.height||window.innerHeight);
-  const offsetTop=Math.round(vv?.offsetTop||0);
-  const keyboardOpen=!!vv&&(window.innerHeight-vv.height>150);
-  const editing=editable(document.activeElement);
-
-  document.documentElement.style.setProperty('--app-visible-height',`${visibleHeight}px`);
-  document.documentElement.style.setProperty('--app-viewport-top',`${offsetTop}px`);
-  document.documentElement.classList.toggle('keyboard-open',keyboardOpen||editing);
-
-  if(!(keyboardOpen||editing)){
-   document.documentElement.style.setProperty('--keyboard-height','0px');
-   window.scrollTo(0,0);
-   document.documentElement.scrollTop=0;
-   document.body.scrollTop=0;
-   nav.style.removeProperty('transform');
-   nav.style.removeProperty('bottom');
-  }
- };
-
- const hardReset=()=>{
-  document.documentElement.classList.remove('viewport-shifted');
-  nav.style.removeProperty('transform');
-  nav.style.removeProperty('bottom');
-  nav.style.removeProperty('top');
-  shell.style.removeProperty('transform');
+ let timer=0;
+ const restore=()=>{
+  document.documentElement.classList.remove('keyboard-open');
   window.scrollTo(0,0);
   document.documentElement.scrollTop=0;
   document.body.scrollTop=0;
-  setViewportMetrics();
  };
-
  document.addEventListener('focusin',event=>{
   if(editable(event.target)){
-   clearTimeout(restoreTimer);
-   setViewportMetrics();
+   clearTimeout(timer);
+   document.documentElement.classList.add('keyboard-open');
   }
  });
-
  document.addEventListener('focusout',()=>{
-  clearTimeout(restoreTimer);
-  restoreTimer=setTimeout(hardReset,420);
+  clearTimeout(timer);
+  timer=setTimeout(restore,350);
  });
-
  document.addEventListener('change',event=>{
   if(event.target?.matches?.('select,input[type="date"],input[type="time"],input[type="color"]')){
-   clearTimeout(restoreTimer);
-   restoreTimer=setTimeout(hardReset,180);
+   clearTimeout(timer);
+   timer=setTimeout(restore,120);
   }
  });
-
- window.visualViewport?.addEventListener('resize',setViewportMetrics);
- window.visualViewport?.addEventListener('scroll',setViewportMetrics);
- window.addEventListener('resize',()=>setTimeout(setViewportMetrics,60));
- window.addEventListener('orientationchange',()=>setTimeout(hardReset,600));
- window.addEventListener('pageshow',()=>setTimeout(hardReset,80));
+ window.addEventListener('pageshow',()=>setTimeout(restore,50));
+ window.addEventListener('orientationchange',()=>setTimeout(restore,500));
  document.addEventListener('visibilitychange',()=>{
-  if(document.visibilityState==='visible')setTimeout(hardReset,100);
+  if(document.visibilityState==='visible')setTimeout(restore,80);
  });
-
- setViewportMetrics();
- setTimeout(hardReset,120);
+ restore();
 }
 function render(){
  renderJobFilters();
@@ -1022,7 +982,7 @@ function printMonthlyReport(){
  report.document.close();
 }
 
-function backupPayload(){return {backupSchema:2,appVersion:'v15.8 Visual Viewport Fix',exportedAt:new Date().toISOString(),profiles:storage.exportStore()}}
+function backupPayload(){return {backupSchema:2,appVersion:'v15.9 Navigation Cleanup',exportedAt:new Date().toISOString(),profiles:storage.exportStore()}}
 function renderBackupStatus(){const raw=storage.lastBackup();$('lastBackupText').textContent=raw?`Остання копія: ${new Date(raw).toLocaleString('uk-UA')}`:'Копію ще не створювали'}
 function downloadBackup(){const blob=new Blob([JSON.stringify(backupPayload(),null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`moya-robota-profiles-${new Date().toISOString().slice(0,10)}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);storage.saveLastBackup(new Date().toISOString());renderBackupStatus();toast('Резервну копію всіх профілів створено')}
 function validateBackup(p){
@@ -1158,7 +1118,7 @@ bind('endReminderHours','change',e=>saveReminderSetting('endReminderHours',Numbe
 
 bind('profilePageEdit','click',()=>openProfileEditor(storage.activeProfileId()));
 bind('languageRow','click',()=>toast('Додаткові мови з’являться в одному з наступних оновлень'));
-bind('aboutAppRow','click',()=>alert('Моя робота\nВерсія: v15.8 Visual Viewport Fix'));
+bind('aboutAppRow','click',()=>alert('Моя робота\nВерсія: v15.9 Navigation Cleanup'));
 bind('profileHeaderButton','click',openProfiles);
 bind('openProfilesButton','click',openProfiles);
 bind('closeProfilesButton','click',()=>$('profilesDialog').close());
