@@ -1,17 +1,17 @@
-const CACHE='moya-robota-v16-app-shell-rebuild-20260803-29';
+const CACHE='moya-robota-v16-1-bottom-content-spacing-20260803-30';
 const ASSETS=[
  './',
  './index.html',
- './styles.css?v=v16-app-shell-rebuild-20260803-29',
- './manifest.webmanifest?v=v16-app-shell-rebuild-20260803-29',
+ './styles.css?v=v16-1-bottom-content-spacing-20260803-30',
+ './manifest.webmanifest?v=v16-1-bottom-content-spacing-20260803-30',
  './icon-192.png',
  './icon-512.png',
- './src/app.js?v=v16-app-shell-rebuild-20260803-29',
- './src/state.js?v=v16-app-shell-rebuild-20260803-29',
- './src/storage.js?v=v16-app-shell-rebuild-20260803-29',
- './src/payroll.js?v=v16-app-shell-rebuild-20260803-29',
- './src/format.js?v=v16-app-shell-rebuild-20260803-29',
- './src/ui.js?v=v16-app-shell-rebuild-20260803-29'
+ './src/app.js?v=v16-1-bottom-content-spacing-20260803-30',
+ './src/state.js?v=v16-1-bottom-content-spacing-20260803-30',
+ './src/storage.js?v=v16-1-bottom-content-spacing-20260803-30',
+ './src/payroll.js?v=v16-1-bottom-content-spacing-20260803-30',
+ './src/format.js?v=v16-1-bottom-content-spacing-20260803-30',
+ './src/ui.js?v=v16-1-bottom-content-spacing-20260803-30'
 ];
 self.addEventListener('install',event=>{
  self.skipWaiting();
