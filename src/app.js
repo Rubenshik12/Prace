@@ -1,13 +1,18 @@
 
-import {state} from './state.js?v=v11-1-statistics-swipe-20260803-2';
-import {fmt} from './format.js?v=v11-1-statistics-swipe-20260803-2';
-import {minutes,pay,summary,daySummary} from './payroll.js?v=v11-1-statistics-swipe-20260803-2';
-import {template} from './ui.js?v=v11-1-statistics-swipe-20260803-2';
+import {state} from './state.js?v=v11-2-work-mode-20260803-3';
+import {fmt} from './format.js?v=v11-2-work-mode-20260803-3';
+import {minutes,pay,summary,daySummary} from './payroll.js?v=v11-2-work-mode-20260803-3';
+import {template} from './ui.js?v=v11-2-work-mode-20260803-3';
 
 state.shifts=Array.isArray(state.shifts)?state.shifts:[];
 state.plans=Array.isArray(state.plans)?state.plans:[];
 state.settings=state.settings&&typeof state.settings==='object'?state.settings:{};
 state.dayNotes=state.dayNotes&&typeof state.dayNotes==='object'?state.dayNotes:{};
+state.workTasks=Array.isArray(state.workTasks)?state.workTasks:[];
+if(state.active&&!state.active.sessionId){
+ state.active.sessionId=crypto.randomUUID();
+ state.save();
+}
 document.getElementById('app').innerHTML=template();
 const $=id=>document.getElementById(id);
 let timerId=null,editingId=null,editingPlanId=null,planFilter='today',planCategory='all',selectedDay=null;
@@ -41,11 +46,74 @@ function render(){
  renderActive();renderShiftList($('recentList'),data.selected.slice(0,3));renderShiftList($('allList'),data.selected);renderCalendar(data.selected);renderPlans();renderHomePlans();renderTodayOverview();renderStatistics(data);renderSettings();
 }
 function renderActive(){
- const a=state.active;$('workMode').classList.toggle('inactive',!a);$('dayStatus').classList.toggle('active',!!a);$('startButton').hidden=!!a;$('manualStartButton').hidden=!!a;$('stopButton').hidden=!a;$('editStartButton').hidden=!a;$('cancelButton').hidden=!a;$('workModeLabel').textContent=a?`На роботі з ${fmt.time(a.start)}`:'Зміна не почата';$('dayStatus').textContent=a?'На роботі':'Не на роботі';$('todaySubtitle').textContent=a?'Активна зміна триває':'Все важливе в одному місці';
+ const a=state.active;$('workMode').classList.toggle('inactive',!a);$('dayStatus').classList.toggle('active',!!a);$('workTasksBlock').hidden=!a;$('startButton').hidden=!!a;$('manualStartButton').hidden=!!a;$('stopButton').hidden=!a;$('editStartButton').hidden=!a;$('cancelButton').hidden=!a;$('workModeLabel').textContent=a?`На роботі з ${fmt.time(a.start)}`:'Зміна не почата';$('dayStatus').textContent=a?'На роботі':'Не на роботі';$('todaySubtitle').textContent=a?'Активна зміна триває':'Все важливе в одному місці';
  clearInterval(timerId);
  const tick=()=>{if(!state.active){$('timer').textContent='0:00:00';$('livePay').textContent='0 Kč';return}const sec=Math.max(0,Math.floor((Date.now()-new Date(state.active.start))/1000));$('timer').textContent=`${Math.floor(sec/3600)}:${String(Math.floor(sec%3600/60)).padStart(2,'0')}:${String(sec%60).padStart(2,'0')}`;$('livePay').textContent=fmt.money(shiftPay({start:state.active.start,end:new Date().toISOString(),rate:state.rate,holiday:false,tips:0}))};
- tick();if(a)timerId=setInterval(tick,1000);
+ renderWorkTasks();tick();if(a)timerId=setInterval(tick,1000);
 }
+
+function currentWorkTasks(){
+ if(!state.active?.sessionId)return [];
+ return state.workTasks.filter(task=>task.sessionId===state.active.sessionId);
+}
+function renderWorkTasks(){
+ const node=$('workTasksList');
+ const tasks=currentWorkTasks().sort((a,b)=>a.createdAt.localeCompare(b.createdAt));
+ const done=tasks.filter(task=>task.done).length;
+ $('workTasksCounter').textContent=`${done}/${tasks.length}`;
+ node.innerHTML='';
+ if(!state.active)return;
+ if(!tasks.length){
+  node.innerHTML='<div class="workTasksEmpty">Швидко запиши, що потрібно зробити</div>';
+  return;
+ }
+ tasks.forEach(task=>{
+  const row=document.createElement('div');
+  row.className='workTaskRow';
+  row.innerHTML=`
+   <button class="workTaskCheck ${task.done?'done':''}" type="button">${task.done?'✓':''}</button>
+   <div class="workTaskText ${task.done?'done':''}">${task.text}</div>
+   <button class="workTaskDelete" type="button" aria-label="Видалити">×</button>`;
+  row.querySelector('.workTaskCheck').onclick=()=>{
+   task.done=!task.done;
+   task.completedAt=task.done?new Date().toISOString():null;
+   save();renderWorkTasks();
+  };
+  row.querySelector('.workTaskDelete').onclick=()=>{
+   state.workTasks=state.workTasks.filter(item=>item.id!==task.id);
+   save();renderWorkTasks();
+  };
+  node.appendChild(row);
+ });
+}
+function addQuickWorkTask(){
+ if(!state.active?.sessionId)return;
+ const input=$('quickWorkTaskInput');
+ const text=input.value.trim();
+ if(!text)return;
+ state.workTasks.push({
+  id:crypto.randomUUID(),sessionId:state.active.sessionId,text,done:false,
+  createdAt:new Date().toISOString(),completedAt:null
+ });
+ save();
+ input.value='';
+ renderWorkTasks();
+ requestAnimationFrame(()=>input.focus());
+}
+function renderArchivedTasks(shift){
+ const box=$('archivedTasksBox');
+ const node=$('archivedTasksList');
+ const tasks=Array.isArray(shift?.workTasks)?shift.workTasks:[];
+ box.hidden=!shift||!tasks.length;
+ node.innerHTML='';
+ tasks.forEach(task=>{
+  const row=document.createElement('div');
+  row.className=`archivedTaskRow ${task.done?'':'open'}`;
+  row.innerHTML=`<span class="archivedTaskIcon">${task.done?'✓':'○'}</span><span>${task.text}</span>`;
+  node.appendChild(row);
+ });
+}
+
 function renderShiftList(node,items){
  node.innerHTML='';if(!items.length){node.innerHTML='<div class="empty">Ще немає змін</div>';return}
  items.forEach(s=>{const row=document.createElement('div');row.className='shift';row.innerHTML=`<div class="shiftLeft"><div class="shiftDate">${fmt.date(s.start)}</div><div class="meta">${fmt.time(s.start)} → ${fmt.time(s.end)} · ${Number(s.rate||state.rate)} Kč/год</div></div><div><div class="money">${fmt.money(shiftPay(s))}</div><div class="hours">${fmt.duration(minutes(s.start,s.end))} год</div></div>`;row.onclick=()=>openShift(s.id);node.appendChild(row)});
@@ -231,7 +299,7 @@ function renderCalendar(items){
 }
 function changeMonth(delta){const [y,m]=state.month.split('-').map(Number),d=new Date(y,m-1+delta,1);state.month=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;render()}
 function openMonth(){const [y,m]=state.month.split('-').map(Number);$('monthSelect').innerHTML=monthNames.map((n,i)=>`<option value="${i+1}">${n}</option>`).join('');$('yearSelect').innerHTML=Array.from({length:11},(_,i)=>y-5+i).map(v=>`<option>${v}</option>`).join('');$('monthSelect').value=m;$('yearSelect').value=y;$('monthDialog').showModal()}
-function openShift(id=null){editingId=id;const s=id?state.shifts.find(x=>x.id===id):null,st=s?new Date(s.start):new Date(),en=s?new Date(s.end):new Date(Date.now()+8*3600000);$('shiftTitle').textContent=s?'Редагування зміни':'Нова зміна';$('deleteShift').hidden=!s;$('shiftDate').value=st.toISOString().slice(0,10);$('shiftStart').value=st.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});$('shiftEnd').value=en.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});$('shiftRate').value=s?Number(s.rate||state.rate):state.rate;$('shiftHoliday').checked=s?!!s.holiday:false;$('shiftTips').value=s?Number(s.tips||0):0;$('shiftNote').value=s?s.note||'':'';$('holidayField').hidden=!state.settings.holiday;$('tipsField').hidden=!state.settings.tips;$('shiftDialog').showModal()}
+function openShift(id=null){editingId=id;const s=id?state.shifts.find(x=>x.id===id):null,st=s?new Date(s.start):new Date(),en=s?new Date(s.end):new Date(Date.now()+8*3600000);$('shiftTitle').textContent=s?'Редагування зміни':'Нова зміна';$('deleteShift').hidden=!s;$('shiftDate').value=st.toISOString().slice(0,10);$('shiftStart').value=st.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});$('shiftEnd').value=en.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});$('shiftRate').value=s?Number(s.rate||state.rate):state.rate;$('shiftHoliday').checked=s?!!s.holiday:false;$('shiftTips').value=s?Number(s.tips||0):0;$('shiftNote').value=s?s.note||'':'';$('holidayField').hidden=!state.settings.holiday;$('tipsField').hidden=!state.settings.tips;renderArchivedTasks(s);$('shiftDialog').showModal()}
 function toast(text){const t=document.getElementById('toast');t.textContent=text;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500)}
 
 
@@ -467,6 +535,7 @@ function openDay(dateKey){
 }
 
 const bind=(id,event,handler)=>{const node=$(id);if(node)node.addEventListener(event,handler)};
+bind('quickWorkTaskForm','submit',event=>{event.preventDefault();addQuickWorkTask()});
 
 bind('prevMonth','click',()=>changeMonth(-1));
 bind('nextMonth','click',()=>changeMonth(1));
@@ -481,7 +550,7 @@ bind('rateButton','click',()=>{$('rateInput').value=state.rate;$('rateDialog').s
 bind('cancelRate','click',()=>$('rateDialog').close());
 bind('saveRate','click',()=>{state.rate=Number($('rateInput').value||0);save();$('rateDialog').close();render()});
 
-bind('startButton','click',()=>{state.active={start:new Date().toISOString()};save();render()});
+bind('startButton','click',()=>{state.active={start:new Date().toISOString(),sessionId:crypto.randomUUID()};save();render()});
 bind('manualStartButton','click',()=>{
  const now=new Date();
  $('startDate').value=now.toISOString().slice(0,10);
@@ -500,14 +569,33 @@ bind('saveStart','click',()=>{
  const date=new Date(`${$('startDate').value}T${$('startTime').value}`);
  if(Number.isNaN(date.getTime()))return alert('Вкажи правильну дату і час');
  if(date>new Date())return alert('Час не може бути в майбутньому');
- state.active={start:date.toISOString()};save();$('startDialog').close();render();
+ if(state.active){
+ state.active.start=date.toISOString();
+}else{
+ state.active={start:date.toISOString(),sessionId:crypto.randomUUID()};
+}
+save();$('startDialog').close();render();
 });
 bind('stopButton','click',()=>{
  if(!state.active)return;
- const shift={id:crypto.randomUUID(),start:state.active.start,end:new Date().toISOString(),rate:state.rate,holiday:false,tips:0,note:''};
- state.shifts.push(shift);state.active=null;save();render();toast(`Зміна збережена · ${fmt.money(shiftPay(shift))}`);
+ const sessionId=state.active.sessionId;
+ const workTasks=state.workTasks.filter(task=>task.sessionId===sessionId).map(task=>({...task}));
+ const shift={
+  id:crypto.randomUUID(),start:state.active.start,end:new Date().toISOString(),
+  rate:state.rate,holiday:false,tips:0,note:'',workTasks
+ };
+ state.shifts.push(shift);
+ state.workTasks=state.workTasks.filter(task=>task.sessionId!==sessionId);
+ state.active=null;
+ save();render();toast(`Зміна збережена · ${fmt.money(shiftPay(shift))}`);
 });
-bind('cancelButton','click',()=>{if(confirm('Скасувати початок зміни?')){state.active=null;save();render()}});
+bind('cancelButton','click',()=>{
+ if(confirm('Скасувати початок зміни разом із робочими завданнями?')){
+  const sessionId=state.active?.sessionId;
+  state.workTasks=state.workTasks.filter(task=>task.sessionId!==sessionId);
+  state.active=null;save();render();
+ }
+});
 
 bind('addShiftButton','click',()=>openShift());
 bind('quickShift','click',()=>openShift());
@@ -522,8 +610,21 @@ bind('saveShift','click',()=>{
 });
 bind('deleteShift','click',()=>{if(editingId&&confirm('Видалити цю зміну?')){state.shifts=state.shifts.filter(item=>item.id!==editingId);save();$('shiftDialog').close();render()}});
 
-bind('addPlanButton','click',()=>openPlanDialog());
-bind('quickPlan','click',()=>openPlanDialog());
+bind('addPlanButton','click',()=>{
+ if(state.active){
+  openView('homeView');
+  setTimeout(()=>{
+   $('workTasksBlock').scrollIntoView({behavior:'smooth',block:'center'});
+   $('quickWorkTaskInput').focus();
+  },150);
+ }else openPlanDialog();
+});
+bind('quickPlan','click',()=>{
+ if(state.active){
+  $('workTasksBlock').scrollIntoView({behavior:'smooth',block:'center'});
+  setTimeout(()=>$('quickWorkTaskInput').focus(),250);
+ }else openPlanDialog();
+});
 bind('cancelPlan','click',()=>$('planDialog').close());
 bind('savePlan','click',()=>{
  const text=$('planText').value.trim();if(!text)return alert('Напиши план');

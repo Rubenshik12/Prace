@@ -1,7 +1,7 @@
 
-import {storage} from './storage.js?v=v11-1-statistics-swipe-20260803-2';
+import {storage} from './storage.js?v=v11-2-work-mode-20260803-3';
 export const state={
  shifts:storage.shifts(),active:storage.active(),rate:storage.rate(),theme:storage.theme(),
- plans:storage.plans(),settings:storage.settings(),dayNotes:storage.dayNotes(),month:new Date().toISOString().slice(0,7),
- save(){storage.saveShifts(this.shifts);storage.saveActive(this.active);storage.saveRate(this.rate);storage.saveTheme(this.theme);storage.savePlans(this.plans);storage.saveSettings(this.settings);storage.saveDayNotes(this.dayNotes)}
+ plans:storage.plans(),settings:storage.settings(),dayNotes:storage.dayNotes(),workTasks:storage.workTasks(),month:new Date().toISOString().slice(0,7),
+ save(){storage.saveShifts(this.shifts);storage.saveActive(this.active);storage.saveRate(this.rate);storage.saveTheme(this.theme);storage.savePlans(this.plans);storage.saveSettings(this.settings);storage.saveDayNotes(this.dayNotes);storage.saveWorkTasks(this.workTasks)}
 };

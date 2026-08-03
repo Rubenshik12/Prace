@@ -1,7 +1,7 @@
 
 export function template(){
  return `<div class="shell">
- <header class="hero"><div class="heroRow"><div><div class="greeting" id="greeting"></div><h1>Моя робота</h1><p>Час • зарплата • плани</p><div class="appVersion">v11.1 Statistics</div></div><div class="heroButtons"><button class="iconButton" id="themeButton">◐</button><button class="iconButton" data-open="settingsView">⚙︎</button></div></div></header>
+ <header class="hero"><div class="heroRow"><div><div class="greeting" id="greeting"></div><h1>Моя робота</h1><p>Час • зарплата • плани</p><div class="appVersion">v11.2 Work Mode</div></div><div class="heroButtons"><button class="iconButton" id="themeButton">◐</button><button class="iconButton" data-open="settingsView">⚙︎</button></div></div></header>
  <main>
   <section class="view active" id="homeView">
   <section class="card dayHero" id="dayHero">
@@ -21,6 +21,17 @@ export function template(){
 
       <button class="primary start" id="startButton">Я прийшов зараз</button>
       <button class="secondary" id="manualStartButton">Вказати час приходу</button>
+      <div class="workTasksBlock" id="workTasksBlock">
+       <div class="workTasksHead">
+        <div><span>Робочі завдання</span><small>Поточна зміна</small></div>
+        <strong id="workTasksCounter">0/0</strong>
+       </div>
+       <form class="quickWorkTaskForm" id="quickWorkTaskForm">
+        <input id="quickWorkTaskInput" type="text" autocomplete="off" enterkeyhint="done" placeholder="Що потрібно зробити?">
+        <button id="quickWorkTaskAdd" type="submit" aria-label="Додати завдання">＋</button>
+       </form>
+       <div class="workTasksList" id="workTasksList"></div>
+      </div>
       <button class="primary stop" id="stopButton">Закінчити зміну</button>
       <button class="secondary" id="editStartButton">Змінити час приходу</button>
       <button class="dangerLink" id="cancelButton">Скасувати помилковий старт</button>
@@ -266,7 +277,12 @@ export function template(){
  <dialog id="monthDialog"><div class="modal"><h3>Вибрати місяць</h3><label>Місяць</label><select id="monthSelect"></select><label>Рік</label><select id="yearSelect"></select><div class="modalActions"><button id="cancelMonth">Скасувати</button><button class="save" id="saveMonth">Готово</button></div></div></dialog>
  <dialog id="rateDialog"><div class="modal"><h3>Базова ставка</h3><label>Kč за годину</label><input id="rateInput" type="number"><div class="modalActions"><button id="cancelRate">Скасувати</button><button class="save" id="saveRate">Зберегти</button></div></div></dialog>
  <dialog id="startDialog"><div class="modal"><h3>Час приходу</h3><label>Дата</label><input id="startDate" type="date"><label>Час</label><input id="startTime" type="time"><div class="modalActions"><button id="cancelStart">Скасувати</button><button class="save" id="saveStart">Почати</button></div></div></dialog>
- <dialog id="shiftDialog"><div class="modal"><h3 id="shiftTitle">Нова зміна</h3><label>Дата</label><input id="shiftDate" type="date"><label>Прийшов</label><input id="shiftStart" type="time"><label>Пішов</label><input id="shiftEnd" type="time"><label>Ставка</label><input id="shiftRate" type="number"><div id="holidayField"><label class="inlineCheck"><input id="shiftHoliday" type="checkbox"> Святковий день</label></div><div id="tipsField"><label>Чайові</label><input id="shiftTips" type="number" value="0"></div><label>Примітка</label><input id="shiftNote" type="text" placeholder="Необов’язково"><div class="modalActions"><button id="deleteShift">Видалити</button><button class="save" id="saveShift">Зберегти</button></div></div></dialog>
+ <dialog id="shiftDialog"><div class="modal"><h3 id="shiftTitle">Нова зміна</h3><label>Дата</label><input id="shiftDate" type="date"><label>Прийшов</label><input id="shiftStart" type="time"><label>Пішов</label><input id="shiftEnd" type="time"><label>Ставка</label><input id="shiftRate" type="number"><div id="holidayField"><label class="inlineCheck"><input id="shiftHoliday" type="checkbox"> Святковий день</label></div><div id="tipsField"><label>Чайові</label><input id="shiftTips" type="number" value="0"></div><label>Примітка</label><input id="shiftNote" type="text" placeholder="Необов’язково">
+    <div class="archivedTasksBox" id="archivedTasksBox">
+     <div class="label">Завдання зміни</div>
+     <div id="archivedTasksList"></div>
+    </div>
+    <div class="modalActions"><button id="deleteShift">Видалити</button><button class="save" id="saveShift">Зберегти</button></div></div></dialog>
  <dialog id="planDialog"><div class="modal"><h3 id="planDialogTitle">Новий план</h3>
     <label>Дата</label><input id="planDate" type="date">
     <label>Час</label><input id="planTime" type="time">

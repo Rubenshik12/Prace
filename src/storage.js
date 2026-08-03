@@ -10,7 +10,7 @@ function safeJSON(key,fallback){
 }
 const KEYS={
  shifts:'workTrackerDataV1',active:'workTrackerActiveV1',rate:'workTrackerRateV1',
- theme:'workThemeV1',plans:'workPlansV1',settings:'workSettingsV7',dayNotes:'workDayNotesV1'
+ theme:'workThemeV1',plans:'workPlansV1',settings:'workSettingsV7',dayNotes:'workDayNotesV1',workTasks:'workTasksV1'
 };
 export const storage={
  shifts:()=>safeJSON(KEYS.shifts,[]).map(s=>({...s,rate:s.rate||null,note:s.note||''})),
@@ -31,5 +31,7 @@ export const storage={
  },safeJSON(KEYS.settings,{})),
  saveSettings:v=>localStorage.setItem(KEYS.settings,JSON.stringify(v)),
  dayNotes:()=>safeJSON(KEYS.dayNotes,{}),
- saveDayNotes:v=>localStorage.setItem(KEYS.dayNotes,JSON.stringify(v))
+ saveDayNotes:v=>localStorage.setItem(KEYS.dayNotes,JSON.stringify(v)),
+ workTasks:()=>safeJSON(KEYS.workTasks,[]),
+ saveWorkTasks:v=>localStorage.setItem(KEYS.workTasks,JSON.stringify(v))
 };
