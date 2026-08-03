@@ -1,9 +1,10 @@
 
-import {storage} from './storage.js?v=v16-5-shell-padding-fix-20260803-34';
-import {state} from './state.js?v=v16-5-shell-padding-fix-20260803-34';
-import {fmt} from './format.js?v=v16-5-shell-padding-fix-20260803-34';
-import {minutes,pay,summary,daySummary} from './payroll.js?v=v16-5-shell-padding-fix-20260803-34';
-import {template} from './ui.js?v=v16-5-shell-padding-fix-20260803-34';
+import {storage} from './storage.js?v=v16-6-optimization-widget-20260804-01';
+import {state} from './state.js?v=v16-6-optimization-widget-20260804-01';
+import {fmt} from './format.js?v=v16-6-optimization-widget-20260804-01';
+import {minutes,pay,summary,daySummary} from './payroll.js?v=v16-6-optimization-widget-20260804-01';
+import {buildWidgetState,saveWidgetState,readWidgetState,widgetStateApi} from './widget-state.js?v=v16-6-optimization-widget-20260804-01';
+import {template} from './ui.js?v=v16-6-optimization-widget-20260804-01';
 
 state.shifts=Array.isArray(state.shifts)?state.shifts:[];
 state.plans=Array.isArray(state.plans)?state.plans:[];
@@ -23,7 +24,29 @@ let timerId=null,editingId=null,editingPlanId=null,planFilter='today',planCatego
 const monthNames=['Січень','Лютий','Березень','Квітень','Травень','Червень','Липень','Серпень','Вересень','Жовтень','Листопад','Грудень'];
 
 function applyTheme(){document.documentElement.dataset.theme=state.theme;$('settingsTheme').value=state.theme}
-function save(){state.save()}
+let lastWidgetSyncSecond=-1;
+function syncWidgetState(force=false){
+ const profile=storage.activeProfile();
+ const job=activeJob();
+ const second=Math.floor(Date.now()/1000);
+ if(!force&&second===lastWidgetSyncSecond)return readWidgetState();
+ lastWidgetSyncSecond=second;
+ const earned=state.active
+  ?shiftPay({start:state.active.start,end:new Date().toISOString(),rate:state.rate,holiday:false,tips:0})
+  :0;
+ const snapshot=buildWidgetState({
+  profile,
+  job,
+  active:state.active,
+  rate:state.rate,
+  currency:job.currency||profile.currency||'Kč',
+  earned
+ });
+ saveWidgetState(snapshot);
+ window.MoyaRobotaWidget={...widgetStateApi,current:()=>readWidgetState()};
+ return snapshot;
+}
+function save(){state.save();syncWidgetState(true)}
 function monthData(){return summary(jobShifts(),state.month,state.rate,state.settings)}
 function shiftPay(s){return pay(s,state.rate,state.settings)}
 function greeting(){const h=new Date().getHours();return h<12?'Доброго ранку 👋':h<18?'Добрий день 👋':'Добрий вечір 👋'}
@@ -190,7 +213,7 @@ function render(){
 function renderActive(){
  const a=state.active;$('workMode').classList.toggle('inactive',!a);$('dayStatus').classList.toggle('active',!!a);$('workTasksBlock').hidden=!a;$('startButton').hidden=!!a;$('manualStartButton').hidden=!!a;$('stopButton').hidden=!a;$('editStartButton').hidden=!a;$('cancelButton').hidden=!a;$('workModeLabel').textContent=a?`На роботі з ${fmt.time(a.start)}`:'Зміна не почата';$('dayStatus').textContent=a?'На роботі':'Не на роботі';$('todaySubtitle').textContent=a?'Активна зміна триває':'Все важливе в одному місці';
  clearInterval(timerId);
- const tick=()=>{if(!state.active){$('timer').textContent='0:00:00';$('livePay').textContent='0 Kč';return}const sec=Math.max(0,Math.floor((Date.now()-new Date(state.active.start))/1000));$('timer').textContent=`${Math.floor(sec/3600)}:${String(Math.floor(sec%3600/60)).padStart(2,'0')}:${String(sec%60).padStart(2,'0')}`;$('livePay').textContent=fmt.money(shiftPay({start:state.active.start,end:new Date().toISOString(),rate:state.rate,holiday:false,tips:0}))};
+ const tick=()=>{if(!state.active){$('timer').textContent='0:00:00';$('livePay').textContent='0 Kč';return}const sec=Math.max(0,Math.floor((Date.now()-new Date(state.active.start))/1000));$('timer').textContent=`${Math.floor(sec/3600)}:${String(Math.floor(sec%3600/60)).padStart(2,'0')}:${String(sec%60).padStart(2,'0')}`;$('livePay').textContent=fmt.money(shiftPay({start:state.active.start,end:new Date().toISOString(),rate:state.rate,holiday:false,tips:0}));if(sec%15===0)syncWidgetState()};
  renderWorkTasks();tick();if(a)timerId=setInterval(tick,1000);
 }
 
@@ -975,7 +998,7 @@ function printMonthlyReport(){
  report.document.close();
 }
 
-function backupPayload(){return {backupSchema:2,appVersion:'v16.5 Shell Padding Fix',exportedAt:new Date().toISOString(),profiles:storage.exportStore()}}
+function backupPayload(){return {backupSchema:2,appVersion:'v16.6 Optimization & Widget Foundation',exportedAt:new Date().toISOString(),profiles:storage.exportStore()}}
 function renderBackupStatus(){const raw=storage.lastBackup();$('lastBackupText').textContent=raw?`Остання копія: ${new Date(raw).toLocaleString('uk-UA')}`:'Копію ще не створювали'}
 function downloadBackup(){const blob=new Blob([JSON.stringify(backupPayload(),null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`moya-robota-profiles-${new Date().toISOString().slice(0,10)}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);storage.saveLastBackup(new Date().toISOString());renderBackupStatus();toast('Резервну копію всіх профілів створено')}
 function validateBackup(p){
@@ -1111,7 +1134,7 @@ bind('endReminderHours','change',e=>saveReminderSetting('endReminderHours',Numbe
 
 bind('profilePageEdit','click',()=>openProfileEditor(storage.activeProfileId()));
 bind('languageRow','click',()=>toast('Додаткові мови з’являться в одному з наступних оновлень'));
-bind('aboutAppRow','click',()=>alert('Моя робота\nВерсія: v16.5 Shell Padding Fix'));
+bind('aboutAppRow','click',()=>alert('Моя робота\nВерсія: v16.6 Optimization & Widget Foundation'));
 bind('profileHeaderButton','click',openProfiles);
 bind('openProfilesButton','click',openProfiles);
 bind('closeProfilesButton','click',()=>$('profilesDialog').close());
@@ -1314,7 +1337,7 @@ bind('addPlanForDay','click',()=>{$('dayDialog').close();openPlanDialog(selected
 [['overtimeSwitch','overtime'],['weekendSwitch','weekend'],['holidaySwitch','holiday'],['tipsSwitch','tips'],['paySplitSwitch','paySplit']].forEach(([id,key])=>bind(id,'click',()=>{state.settings[key]=!state.settings[key];save();render()}));
 ['overtimeAfter','overtimePercent','weekendPercent','holidayPercent'].forEach(id=>bind(id,'input',event=>{state.settings[id]=Number(event.target.value||0);save();render()}));
 
-applyTheme();render();if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js');
+applyTheme();render();syncWidgetState(true);if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js');
 
 setupVisualViewportFix();
 setInterval(checkReminders,60000);
