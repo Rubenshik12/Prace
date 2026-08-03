@@ -1,9 +1,9 @@
 
-import {storage} from './storage.js?v=v14-1-dashboard-polish-20260803-18';
-import {state} from './state.js?v=v14-1-dashboard-polish-20260803-18';
-import {fmt} from './format.js?v=v14-1-dashboard-polish-20260803-18';
-import {minutes,pay,summary,daySummary} from './payroll.js?v=v14-1-dashboard-polish-20260803-18';
-import {template} from './ui.js?v=v14-1-dashboard-polish-20260803-18';
+import {storage} from './storage.js?v=v15-final-ui-20260803-19';
+import {state} from './state.js?v=v15-final-ui-20260803-19';
+import {fmt} from './format.js?v=v15-final-ui-20260803-19';
+import {minutes,pay,summary,daySummary} from './payroll.js?v=v15-final-ui-20260803-19';
+import {template} from './ui.js?v=v15-final-ui-20260803-19';
 
 state.shifts=Array.isArray(state.shifts)?state.shifts:[];
 state.plans=Array.isArray(state.plans)?state.plans:[];
@@ -27,50 +27,13 @@ function monthData(){return summary(state.shifts,state.month,state.rate,state.se
 function shiftPay(s){return pay(s,state.rate,state.settings)}
 function greeting(){const h=new Date().getHours();return h<12?'Доброго ранку 👋':h<18?'Добрий день 👋':'Добрий вечір 👋'}
 
-
-function renderSmartDashboard(){
- const profile=storage.activeProfile();
- const now=new Date();
- const dayKey=now.toISOString().slice(0,10);
- const todayShifts=state.shifts.filter(s=>s.start?.slice(0,10)===dayKey);
- const doneMinutes=todayShifts.reduce((sum,s)=>sum+minutes(s.start,s.end),0);
- const donePay=todayShifts.reduce((sum,s)=>sum+shiftPay(s),0);
- const activeMinutes=state.active?Math.max(0,Math.floor((Date.now()-new Date(state.active.start).getTime())/60000)):0;
- const activePay=state.active?shiftPay({start:state.active.start,end:new Date().toISOString(),rate:state.active.rate||state.rate,holiday:false,tips:0}):0;
- const totalMinutes=doneMinutes+activeMinutes;
- const goalHours=Number(state.settings?.dailyGoalHours||10);
- const goalMinutes=Math.max(60,goalHours*60);
- const progress=Math.min(100,Math.round(totalMinutes/goalMinutes*100));
- const tasks=[...(state.workTasks||[]),...(state.plans||[])].filter(task=>!task.done);
-
- $('dashboardGreetingTitle').textContent=`Привіт, ${profile.name} 👋`;
- $('dashboardDate').textContent=now.toLocaleDateString('uk-UA',{weekday:'long',day:'numeric',month:'long'});
- $('dashboardStatus').textContent=state.active?'На роботі':'Не на роботі';
- $('dashboardStatus').classList.toggle('active',!!state.active);
- $('dashboardStartTime').textContent=state.active?fmt.time(state.active.start):'—';
- $('dashboardRingLabel').textContent=state.active?'триває зміна':'зміна не почата';
- $('dashboardRingProgress').style.strokeDashoffset=String(314-(314*progress/100));
- $('dashboardGoalTitle').textContent=`${goalHours} год`;
- $('dashboardGoalSubtitle').textContent=progress>=100?'Ціль виконана':`Ще ${fmt.duration(Math.max(0,goalMinutes-totalMinutes))}`;
- $('dashboardGoalPercent').textContent=`${progress}%`;
- $('dashboardGoalFill').style.width=`${progress}%`;
- $('dashboardNextTask').textContent=tasks[0]?.text||'Завдань немає';
- $('dashboardTaskMeta').textContent=tasks.length>1?`Ще ${tasks.length-1}`:'Додай нове завдання';
- $('todayWorked').textContent=fmt.duration(totalMinutes);
- $('todayPay').textContent=fmt.money(donePay+activePay);
-
- const monthShifts=state.shifts.filter(s=>s.start?.slice(0,7)===state.month);
- const monthMinutes=monthShifts.reduce((sum,s)=>sum+minutes(s.start,s.end),0);
- const monthPay=monthShifts.reduce((sum,s)=>sum+shiftPay(s),0);
- $('dashboardMonthSummary').textContent=`${monthShifts.length} змін · ${fmt.duration(monthMinutes)} · ${fmt.money(monthPay)}`;
-}
-
 function render(){
- renderSmartDashboard();
  const data=monthData();
  const profile=storage.activeProfile();
  $('greeting').textContent=`${greeting().replace(' 👋','')}, ${profile.name} 👋`;
  $('profileHeaderInitial').textContent=(profile.name||'М').trim().charAt(0).toUpperCase();
+ $('topProfileName').textContent=profile.name;
+ $('topProfileMeta').textContent=[profile.job,`${state.rate} ${profile.currency||'Kč'}/год`].filter(Boolean).join(' · ');
  $('currentProfileAvatar').textContent=(profile.name||'М').trim().charAt(0).toUpperCase();
  $('currentProfileName').textContent=profile.name;
  $('currentProfileMeta').textContent=[profile.job,`${state.rate} ${profile.currency||'Kč'}/год`].filter(Boolean).join(' · ');
@@ -98,7 +61,7 @@ function render(){
 function renderActive(){
  const a=state.active;$('workMode').classList.toggle('inactive',!a);$('dayStatus').classList.toggle('active',!!a);$('workTasksBlock').hidden=!a;$('startButton').hidden=!!a;$('manualStartButton').hidden=!!a;$('stopButton').hidden=!a;$('editStartButton').hidden=!a;$('cancelButton').hidden=!a;$('workModeLabel').textContent=a?`На роботі з ${fmt.time(a.start)}`:'Зміна не почата';$('dayStatus').textContent=a?'На роботі':'Не на роботі';$('todaySubtitle').textContent=a?'Активна зміна триває':'Все важливе в одному місці';
  clearInterval(timerId);
- const tick=()=>{if(!state.active){$('timer').textContent='0:00:00';$('livePay').textContent='0 Kč';return}const sec=Math.max(0,Math.floor((Date.now()-new Date(state.active.start))/1000));$('timer').textContent=`${Math.floor(sec/3600)}:${String(Math.floor(sec%3600/60)).padStart(2,'0')}:${String(sec%60).padStart(2,'0')}`;$('livePay').textContent=fmt.money(shiftPay({start:state.active.start,end:new Date().toISOString(),rate:state.rate,holiday:false,tips:0}));if(sec%30===0)renderSmartDashboard()};
+ const tick=()=>{if(!state.active){$('timer').textContent='0:00:00';$('livePay').textContent='0 Kč';return}const sec=Math.max(0,Math.floor((Date.now()-new Date(state.active.start))/1000));$('timer').textContent=`${Math.floor(sec/3600)}:${String(Math.floor(sec%3600/60)).padStart(2,'0')}:${String(sec%60).padStart(2,'0')}`;$('livePay').textContent=fmt.money(shiftPay({start:state.active.start,end:new Date().toISOString(),rate:state.rate,holiday:false,tips:0}))};
  renderWorkTasks();tick();if(a)timerId=setInterval(tick,1000);
 }
 
@@ -247,7 +210,7 @@ function bindPlanSwipe(wrapper,content,plan){
    state.plans=state.plans.filter(p=>p.id!==plan.id);
    save();
    render();
-   toast('План видалено');
+   toast('Завдання видалено');
   }else{
    reset();
   }
@@ -881,7 +844,7 @@ bind('quickWorkTaskForm','submit',event=>{event.preventDefault();addQuickWorkTas
 
 bind('profilePageEdit','click',()=>openProfileEditor(storage.activeProfileId()));
 bind('languageRow','click',()=>toast('Додаткові мови з’являться в одному з наступних оновлень'));
-bind('aboutAppRow','click',()=>alert('Моя робота\nВерсія: v14.1 Dashboard Polish'));
+bind('aboutAppRow','click',()=>alert('Моя робота\nВерсія: v15.0 Final UI'));
 bind('profileHeaderButton','click',openProfiles);
 bind('openProfilesButton','click',openProfiles);
 bind('closeProfilesButton','click',()=>$('profilesDialog').close());
