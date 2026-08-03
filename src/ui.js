@@ -16,7 +16,7 @@ export function template(){
        </div>
       </div>
       <button class="activeJobChip" id="activeJobChip"><span class="activeJobDot" id="activeJobDot"></span><span><small>Активна робота</small><b id="activeJobChipName">Основна робота</b></span><span class="activeJobChevron">›</span></button>
-      <div class="appVersion finalVersion">v15.5 Navigation Architecture Fix</div>
+      <div class="appVersion finalVersion">v15.6 Data Export</div>
      </header>
  <main>
   <section class="view active finalHome" id="homeView">
@@ -397,9 +397,29 @@ export function template(){
 <div class="sectionTitle"><h2>Застосунок</h2></div>
  <div class="card profileMenuCard">
   <button class="profileMenuRow" id="languageRow"><span class="profileMenuIcon">🌐</span><span><b>Мова</b><small>Українська</small></span><span class="profileMenuChevron">›</span></button>
-  <button class="profileMenuRow" id="aboutAppRow"><span class="profileMenuIcon">ℹ</span><span><b>Про застосунок</b><small>Моя робота · v15.5 Navigation Architecture Fix</small></span><span class="profileMenuChevron">›</span></button>
+  <button class="profileMenuRow" id="aboutAppRow"><span class="profileMenuIcon">ℹ</span><span><b>Про застосунок</b><small>Моя робота · v15.6 Data Export</small></span><span class="profileMenuChevron">›</span></button>
  </div>
- <div class="sectionTitle"><h2>Безпека даних</h2></div>
+ 
+ <div class="sectionTitle"><h2>Експорт</h2></div>
+ <div class="card exportCard">
+  <button class="exportAction" id="exportShiftsCsvButton">
+   <span class="exportIcon">▦</span>
+   <span><b>Зміни для Excel</b><small>CSV з годинами, оплатою та роботою</small></span>
+   <span class="profileMenuChevron">›</span>
+  </button>
+  <button class="exportAction" id="exportTasksCsvButton">
+   <span class="exportIcon">☑</span>
+   <span><b>Завдання для Excel</b><small>CSV з усіма завданнями профілю</small></span>
+   <span class="profileMenuChevron">›</span>
+  </button>
+  <button class="exportAction" id="printMonthlyReportButton">
+   <span class="exportIcon">▤</span>
+   <span><b>Місячний звіт</b><small>Друк або збереження у PDF</small></span>
+   <span class="profileMenuChevron">›</span>
+  </button>
+ </div>
+
+<div class="sectionTitle"><h2>Безпека даних</h2></div>
  <div class="card backupCard">
   <div class="backupStatus"><div><b>Резервна копія</b><div class="hint" id="lastBackupText">Копію ще не створювали</div></div><span class="backupBadge">JSON</span></div>
   <button class="backupAction primaryBackup" id="createBackupButton"><span>⬇</span><div><b>Створити резервну копію</b><small>Завантажити всі дані у файл</small></div></button>

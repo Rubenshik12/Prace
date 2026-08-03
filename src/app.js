@@ -1,9 +1,9 @@
 
-import {storage} from './storage.js?v=v15-5-navigation-architecture-20260803-24';
-import {state} from './state.js?v=v15-5-navigation-architecture-20260803-24';
-import {fmt} from './format.js?v=v15-5-navigation-architecture-20260803-24';
-import {minutes,pay,summary,daySummary} from './payroll.js?v=v15-5-navigation-architecture-20260803-24';
-import {template} from './ui.js?v=v15-5-navigation-architecture-20260803-24';
+import {storage} from './storage.js?v=v15-6-data-export-20260803-25';
+import {state} from './state.js?v=v15-6-data-export-20260803-25';
+import {fmt} from './format.js?v=v15-6-data-export-20260803-25';
+import {minutes,pay,summary,daySummary} from './payroll.js?v=v15-6-data-export-20260803-25';
+import {template} from './ui.js?v=v15-6-data-export-20260803-25';
 
 state.shifts=Array.isArray(state.shifts)?state.shifts:[];
 state.plans=Array.isArray(state.plans)?state.plans:[];
@@ -909,7 +909,120 @@ function deleteEditingProfile(){
  }catch(error){alert(error.message)}
 }
 
-function backupPayload(){return {backupSchema:2,appVersion:'v15.5 Navigation Architecture Fix',exportedAt:new Date().toISOString(),profiles:storage.exportStore()}}
+
+function csvCell(value){
+ const text=String(value??'').replace(/"/g,'""');
+ return `"${text}"`;
+}
+function csvDownload(filename,headers,rows){
+ const content='\uFEFF'+[headers,...rows].map(row=>row.map(csvCell).join(';')).join('\r\n');
+ const blob=new Blob([content],{type:'text/csv;charset=utf-8'});
+ const url=URL.createObjectURL(blob);
+ const link=document.createElement('a');
+ link.href=url;link.download=filename;link.click();
+ setTimeout(()=>URL.revokeObjectURL(url),1200);
+}
+function profileJobsMap(){
+ return new Map(storage.jobs().map(job=>[job.id,job]));
+}
+function exportShiftsCsv(){
+ const profile=storage.activeProfile();
+ const jobs=profileJobsMap();
+ const rows=state.shifts
+  .slice()
+  .sort((a,b)=>new Date(a.start)-new Date(b.start))
+  .map(shift=>{
+   const job=jobs.get(shift.jobId)||activeJob();
+   const mins=minutes(shift.start,shift.end);
+   return [
+    new Date(shift.start).toLocaleDateString('uk-UA'),
+    fmt.time(shift.start),
+    fmt.time(shift.end),
+    Math.floor(mins/60),
+    mins%60,
+    Number(shift.rate||job.rate||state.rate),
+    job.currency||profile.currency||'Kč',
+    shiftPay(shift).toFixed(2),
+    job.name,
+    shift.holiday?'Так':'Ні',
+    Number(shift.tips||0)
+   ];
+  });
+ csvDownload(
+  `moya-robota-zminy-${new Date().toISOString().slice(0,10)}.csv`,
+  ['Дата','Початок','Кінець','Години','Хвилини','Ставка','Валюта','Зароблено','Робота','Свято','Чайові'],
+  rows
+ );
+ toast('Зміни експортовано для Excel');
+}
+function exportTasksCsv(){
+ const jobs=profileJobsMap();
+ const rows=state.plans
+  .slice()
+  .sort((a,b)=>(a.date||'').localeCompare(b.date||''))
+  .map(task=>{
+   const job=jobs.get(task.jobId)||activeJob();
+   return [
+    task.date||'',
+    task.time||'',
+    task.text||'',
+    task.done?'Виконано':'Не виконано',
+    job.name,
+    task.createdAt?new Date(task.createdAt).toLocaleString('uk-UA'):''
+   ];
+  });
+ csvDownload(
+  `moya-robota-zavdannia-${new Date().toISOString().slice(0,10)}.csv`,
+  ['Дата','Час','Завдання','Статус','Робота','Створено'],
+  rows
+ );
+ toast('Завдання експортовано для Excel');
+}
+function reportEscape(value){
+ return String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+}
+function printMonthlyReport(){
+ const profile=storage.activeProfile();
+ const jobs=profileJobsMap();
+ const shifts=state.shifts.filter(shift=>shift.start?.slice(0,7)===state.month);
+ const totalMinutes=shifts.reduce((sum,shift)=>sum+minutes(shift.start,shift.end),0);
+ const totalPay=shifts.reduce((sum,shift)=>sum+shiftPay(shift),0);
+ const monthLabel=new Date(`${state.month}-01T12:00`).toLocaleDateString('uk-UA',{month:'long',year:'numeric'});
+ const rows=shifts.map(shift=>{
+  const job=jobs.get(shift.jobId)||activeJob();
+  return `<tr>
+   <td>${reportEscape(new Date(shift.start).toLocaleDateString('uk-UA'))}</td>
+   <td>${reportEscape(fmt.time(shift.start))}–${reportEscape(fmt.time(shift.end))}</td>
+   <td>${reportEscape(fmt.duration(minutes(shift.start,shift.end)))}</td>
+   <td>${reportEscape(job.name)}</td>
+   <td>${reportEscape(fmt.money(shiftPay(shift)))}</td>
+  </tr>`;
+ }).join('');
+ const report=window.open('','_blank');
+ if(!report)return alert('Дозволь спливаючі вікна для створення звіту');
+ report.document.write(`<!doctype html><html lang="uk"><head><meta charset="utf-8"><title>Звіт — ${reportEscape(monthLabel)}</title>
+ <style>
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;margin:36px;color:#111}
+  h1{margin:0 0 6px;font-size:28px}p{color:#666;margin:0 0 24px}
+  .summary{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:20px 0}
+  .box{border:1px solid #ddd;border-radius:12px;padding:14px}.box small{display:block;color:#777}.box b{font-size:20px}
+  table{width:100%;border-collapse:collapse;margin-top:20px}th,td{padding:10px;border-bottom:1px solid #ddd;text-align:left;font-size:13px}
+  th{background:#f5f5f5}@media print{body{margin:18px}.no-print{display:none}}
+ </style></head><body>
+ <h1>Місячний звіт</h1><p>${reportEscape(profile.name)} · ${reportEscape(monthLabel)}</p>
+ <div class="summary">
+  <div class="box"><small>Змін</small><b>${shifts.length}</b></div>
+  <div class="box"><small>Годин</small><b>${reportEscape(fmt.duration(totalMinutes))}</b></div>
+  <div class="box"><small>Зароблено</small><b>${reportEscape(fmt.money(totalPay))}</b></div>
+ </div>
+ <table><thead><tr><th>Дата</th><th>Час</th><th>Тривалість</th><th>Робота</th><th>Оплата</th></tr></thead>
+ <tbody>${rows||'<tr><td colspan="5">Немає змін за цей місяць</td></tr>'}</tbody></table>
+ <p class="no-print" style="margin-top:24px">У меню друку вибери «Зберегти як PDF».</p>
+ <script>setTimeout(()=>window.print(),350)<\/script></body></html>`);
+ report.document.close();
+}
+
+function backupPayload(){return {backupSchema:2,appVersion:'v15.6 Data Export',exportedAt:new Date().toISOString(),profiles:storage.exportStore()}}
 function renderBackupStatus(){const raw=storage.lastBackup();$('lastBackupText').textContent=raw?`Остання копія: ${new Date(raw).toLocaleString('uk-UA')}`:'Копію ще не створювали'}
 function downloadBackup(){const blob=new Blob([JSON.stringify(backupPayload(),null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`moya-robota-profiles-${new Date().toISOString().slice(0,10)}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);storage.saveLastBackup(new Date().toISOString());renderBackupStatus();toast('Резервну копію всіх профілів створено')}
 function validateBackup(p){
@@ -1045,7 +1158,7 @@ bind('endReminderHours','change',e=>saveReminderSetting('endReminderHours',Numbe
 
 bind('profilePageEdit','click',()=>openProfileEditor(storage.activeProfileId()));
 bind('languageRow','click',()=>toast('Додаткові мови з’являться в одному з наступних оновлень'));
-bind('aboutAppRow','click',()=>alert('Моя робота\nВерсія: v15.5 Navigation Architecture Fix'));
+bind('aboutAppRow','click',()=>alert('Моя робота\nВерсія: v15.6 Data Export'));
 bind('profileHeaderButton','click',openProfiles);
 bind('openProfilesButton','click',openProfiles);
 bind('closeProfilesButton','click',()=>$('profilesDialog').close());
@@ -1055,6 +1168,9 @@ bind('cancelProfileEdit','click',()=>{$('profileEditDialog').close();editingProf
 bind('saveProfileEdit','click',saveProfileEditor);
 bind('deleteCurrentProfileButton','click',deleteEditingProfile);
 
+bind('exportShiftsCsvButton','click',exportShiftsCsv);
+bind('exportTasksCsvButton','click',exportTasksCsv);
+bind('printMonthlyReportButton','click',printMonthlyReport);
 bind('createBackupButton','click',downloadBackup);
 bind('restoreBackupButton','click',()=>$('backupFileInput').click());
 bind('backupFileInput','change',async event=>{const file=event.target.files?.[0];event.target.value='';if(!file)return;try{const p=JSON.parse(await file.text());validateBackup(p);showRestorePreview(p)}catch(e){alert(`Не вдалося відкрити копію: ${e.message}`)}});
