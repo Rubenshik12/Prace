@@ -1,17 +1,17 @@
-const CACHE='moya-robota-v13-core-profiles-20260803-14';
+const CACHE='moya-robota-v13-1-ui-redesign-20260803-15';
 const ASSETS=[
  './',
  './index.html',
- './styles.css?v=v13-core-profiles-20260803-14',
- './manifest.webmanifest?v=v13-core-profiles-20260803-14',
+ './styles.css?v=v13-1-ui-redesign-20260803-15',
+ './manifest.webmanifest?v=v13-1-ui-redesign-20260803-15',
  './icon-192.png',
  './icon-512.png',
- './src/app.js?v=v13-core-profiles-20260803-14',
- './src/state.js?v=v13-core-profiles-20260803-14',
- './src/storage.js?v=v13-core-profiles-20260803-14',
- './src/payroll.js?v=v13-core-profiles-20260803-14',
- './src/format.js?v=v13-core-profiles-20260803-14',
- './src/ui.js?v=v13-core-profiles-20260803-14'
+ './src/app.js?v=v13-1-ui-redesign-20260803-15',
+ './src/state.js?v=v13-1-ui-redesign-20260803-15',
+ './src/storage.js?v=v13-1-ui-redesign-20260803-15',
+ './src/payroll.js?v=v13-1-ui-redesign-20260803-15',
+ './src/format.js?v=v13-1-ui-redesign-20260803-15',
+ './src/ui.js?v=v13-1-ui-redesign-20260803-15'
 ];
 self.addEventListener('install',event=>{
  self.skipWaiting();

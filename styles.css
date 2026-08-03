@@ -1593,3 +1593,44 @@ main,.view{
 .profileActiveMark{color:var(--blue);font-weight:950}
 .profileCreateButton{width:100%;margin-top:14px}
 #deleteCurrentProfileButton[hidden]{display:none!important}
+
+/* v13.1 — redesigned light theme */
+:root{
+ --light-bg:#F4F2ED;--light-surface:#FCFBF8;--light-surface-2:#F0EEE8;
+ --light-text:#171A20;--light-muted:#757A83;--light-line:rgba(24,30,42,.08);
+ --light-shadow:0 10px 30px rgba(38,43,55,.07),0 2px 8px rgba(38,43,55,.04);
+ --light-blue:#4A67E8;--light-blue-soft:#E9EDFF;--light-green:#2FAE74;
+ --light-green-soft:#E6F5EE;--light-red:#E05C67;--light-red-soft:#FCEBED;--light-purple:#8B6FE8;
+}
+[data-theme="light"]{
+ --bg:var(--light-bg);--surface:var(--light-surface);--surface2:var(--light-surface-2);
+ --text:var(--light-text);--muted:var(--light-muted);--line:var(--light-line);
+ --shadow:var(--light-shadow);--blue:var(--light-blue);--blueSoft:var(--light-blue-soft);
+ --green:var(--light-green);--greenSoft:var(--light-green-soft);--red:var(--light-red);
+ --redSoft:var(--light-red-soft);--purple:var(--light-purple);
+}
+[data-theme="light"] body{background:radial-gradient(circle at 18% 0%,rgba(74,103,232,.08),transparent 28%),linear-gradient(180deg,#F8F6F1 0%,#F4F2ED 54%,#F2F0EB 100%)}
+[data-theme="light"] .card{background:rgba(252,251,248,.94);border-color:rgba(24,30,42,.06);box-shadow:var(--light-shadow)}
+[data-theme="light"] .hero,[data-theme="light"] .statHero,[data-theme="light"] .shiftSummaryHero,[data-theme="light"] .dayDetailsHero{background:radial-gradient(circle at 86% 8%,rgba(74,103,232,.11),transparent 34%),rgba(252,251,248,.96)!important}
+[data-theme="light"] input,[data-theme="light"] select,[data-theme="light"] textarea{background:#F7F5F0!important;border-color:rgba(24,30,42,.08)!important;color:var(--light-text)!important}
+[data-theme="light"] .bottomNav{background:rgba(252,251,248,.95)!important;border-top-color:rgba(24,30,42,.07)!important;box-shadow:0 -8px 24px rgba(38,43,55,.06)!important}
+[data-theme="light"] .nav.active{background:var(--light-blue-soft)!important;color:var(--light-blue)!important}
+[data-theme="light"] .day.smartDay{background:#F6F4EF!important;border-color:rgba(24,30,42,.06)!important}
+[data-theme="light"] .day.smartDay.workedDay{background:#EEF7F2!important}
+[data-theme="light"] .day.smartDay.today{background:#EEF1FF!important}
+[data-theme="light"] .premiumPlan,[data-theme="light"] .swipePlan .premiumPlan{background:#FCFBF8!important}
+[data-theme="light"] .workTasksBlock{background:#FCFBF8!important;border-color:rgba(47,174,116,.18)!important;box-shadow:var(--light-shadow)}
+[data-theme="light"] .switch{background:#D8DCE7!important}
+[data-theme="light"] .switch.active{background:var(--light-blue)!important}
+[data-theme="light"] .switch::after{background:#fff!important;box-shadow:0 2px 6px rgba(20,24,35,.18)}
+
+.profileView{padding-top:4px}
+.profilePageHero{display:grid;grid-template-columns:58px minmax(0,1fr) auto;align-items:center;gap:14px;padding:16px;margin-bottom:14px}
+.profilePageAvatar{width:58px;height:58px;border-radius:19px;display:grid;place-items:center;background:var(--blueSoft);color:var(--blue);font-size:22px;font-weight:950}
+.profilePageIdentity{min-width:0}.profilePageIdentity h2{margin:3px 0 0;font-size:23px;letter-spacing:-.04em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.profilePageIdentity p{margin:5px 0 0;color:var(--muted);font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.profilePageEdit{border:0;border-radius:13px;background:var(--blueSoft);color:var(--blue);height:40px;padding:0 12px;font-weight:850}
+.profileMenuCard{padding:3px 12px}.profileMenuRow{width:100%;display:grid;grid-template-columns:42px minmax(0,1fr) 18px;gap:11px;align-items:center;padding:12px 0;border:0;border-bottom:1px solid var(--line);background:transparent;color:var(--text);text-align:left}
+.profileMenuRow:last-child{border-bottom:0}.profileMenuIcon{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;background:var(--surface2);font-size:17px}
+.profileMenuRow b,.profileMenuRow small{display:block}.profileMenuRow small{color:var(--muted);font-size:10px;margin-top:4px}.profileMenuChevron{color:var(--muted);font-size:22px}
+.prepIcon svg{stroke-width:1.7!important}
