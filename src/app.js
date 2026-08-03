@@ -1,9 +1,9 @@
 
-import {storage} from './storage.js?v=v12-4-bottom-nav-stable-20260803-13';
-import {state} from './state.js?v=v12-4-bottom-nav-stable-20260803-13';
-import {fmt} from './format.js?v=v12-4-bottom-nav-stable-20260803-13';
-import {minutes,pay,summary,daySummary} from './payroll.js?v=v12-4-bottom-nav-stable-20260803-13';
-import {template} from './ui.js?v=v12-4-bottom-nav-stable-20260803-13';
+import {storage} from './storage.js?v=v13-core-profiles-20260803-14';
+import {state} from './state.js?v=v13-core-profiles-20260803-14';
+import {fmt} from './format.js?v=v13-core-profiles-20260803-14';
+import {minutes,pay,summary,daySummary} from './payroll.js?v=v13-core-profiles-20260803-14';
+import {template} from './ui.js?v=v13-core-profiles-20260803-14';
 
 state.shifts=Array.isArray(state.shifts)?state.shifts:[];
 state.plans=Array.isArray(state.plans)?state.plans:[];
@@ -17,6 +17,7 @@ if(state.active&&!state.active.sessionId){
 document.getElementById('app').innerHTML=template();
 const $=id=>document.getElementById(id);
 let pendingRestorePayload=null;
+let editingProfileId=null;
 let timerId=null,editingId=null,editingPlanId=null,planFilter='today',planCategory='all',selectedDay=null,selectedShiftId=null,previousViewId='homeView',previousScrollY=0,calendarPressTimer=null;
 const monthNames=['Січень','Лютий','Березень','Квітень','Травень','Червень','Липень','Серпень','Вересень','Жовтень','Листопад','Грудень'];
 
@@ -28,10 +29,15 @@ function greeting(){const h=new Date().getHours();return h<12?'Доброго р
 
 function render(){
  const data=monthData();
- $('greeting').textContent=greeting();
+ const profile=storage.activeProfile();
+ $('greeting').textContent=`${greeting().replace(' 👋','')}, ${profile.name} 👋`;
+ $('profileHeaderInitial').textContent=(profile.name||'М').trim().charAt(0).toUpperCase();
+ $('currentProfileAvatar').textContent=(profile.name||'М').trim().charAt(0).toUpperCase();
+ $('currentProfileName').textContent=profile.name;
+ $('currentProfileMeta').textContent=[profile.job,`${state.rate} ${profile.currency||'Kč'}/год`].filter(Boolean).join(' · ');
  $('calendarMonthLabel').textContent=fmt.month(state.month);
  $('homeMonthLabel').textContent=fmt.month(state.month);
- $('homeRateValue').textContent=`${state.rate} Kč`;
+ $('homeRateValue').textContent=`${state.rate} ${profile.currency||'Kč'}`;
  $('settingsRate').value=state.rate;
  $('goalAmount').value=Number(state.settings.goalAmount||0);
  $('todayTitle').textContent=new Date().toLocaleDateString('uk-UA',{weekday:'long',day:'numeric',month:'long'});
@@ -633,13 +639,123 @@ function renderDailyBars(days){
 }
 
 
-function backupPayload(){return {backupSchema:1,appVersion:'v12.0 Backup & Restore',exportedAt:new Date().toISOString(),data:{shifts:state.shifts,active:state.active,rate:state.rate,theme:state.theme,plans:state.plans,settings:state.settings,dayNotes:state.dayNotes,workTasks:state.workTasks}}}
+
+function profileInitial(name){return (name||'М').trim().charAt(0).toUpperCase()}
+function renderProfilesList(){
+ const node=$('profilesList');
+ const profiles=storage.profiles();
+ const activeId=storage.activeProfileId();
+ node.innerHTML='';
+ profiles.forEach(profile=>{
+  const item=document.createElement('button');
+  item.className=`profileListItem ${profile.id===activeId?'active':''}`;
+  item.innerHTML=`
+   <span class="profileListAvatar">${profileInitial(profile.name)}</span>
+   <span class="profileListText"><b>${profile.name}</b><small>${[profile.job,`${profile.rate} ${profile.currency||'Kč'}/год`,`${profile.shiftCount} змін`].filter(Boolean).join(' · ')}</small></span>
+   <span class="profileActiveMark">${profile.id===activeId?'✓':'›'}</span>`;
+  item.onclick=()=>{
+   if(profile.id===activeId){$('profilesDialog').close();return}
+   storage.switchProfile(profile.id);
+   state.loadProfile();
+   applyTheme();
+   $('profilesDialog').close();
+   openView('homeView',{resetScroll:true});
+   render();
+   toast(`Профіль «${profile.name}» активний`);
+  };
+  node.appendChild(item);
+ });
+}
+function openProfiles(){
+ renderProfilesList();
+ $('profilesDialog').showModal();
+}
+function openProfileEditor(id=null){
+ editingProfileId=id;
+ const profile=id?storage.profiles().find(p=>p.id===id):null;
+ $('profileEditTitle').textContent=profile?'Редагувати профіль':'Новий профіль';
+ $('profileNameInput').value=profile?.name||'';
+ $('profileJobInput').value=profile?.job||'';
+ $('profileRateInput').value=profile?.rate??180;
+ $('profileCurrencyInput').value=profile?.currency||'Kč';
+ $('deleteCurrentProfileButton').hidden=!profile||storage.profiles().length<=1;
+ $('profileEditDialog').showModal();
+}
+function saveProfileEditor(){
+ const name=$('profileNameInput').value.trim();
+ if(!name)return alert('Введи ім’я або назву профілю');
+ const data={
+  name,
+  job:$('profileJobInput').value.trim(),
+  rate:Number($('profileRateInput').value||0),
+  currency:$('profileCurrencyInput').value
+ };
+ if(editingProfileId){
+  storage.updateProfile(editingProfileId,data);
+  if(editingProfileId===storage.activeProfileId())state.loadProfile();
+ }else{
+  storage.createProfile(data);
+  state.loadProfile();
+ }
+ editingProfileId=null;
+ $('profileEditDialog').close();
+ applyTheme();
+ render();
+ toast('Профіль збережено');
+}
+function deleteEditingProfile(){
+ if(!editingProfileId)return;
+ const profile=storage.profiles().find(p=>p.id===editingProfileId);
+ if(!profile)return;
+ if(!confirm(`Видалити профіль «${profile.name}» і всі його дані?`))return;
+ try{
+  storage.deleteProfile(editingProfileId);
+  state.loadProfile();
+  editingProfileId=null;
+  $('profileEditDialog').close();
+  applyTheme();
+  render();
+  toast('Профіль видалено');
+ }catch(error){alert(error.message)}
+}
+
+function backupPayload(){return {backupSchema:2,appVersion:'v13.0 Core Profiles',exportedAt:new Date().toISOString(),profiles:storage.exportStore()}}
 function renderBackupStatus(){const raw=storage.lastBackup();$('lastBackupText').textContent=raw?`Остання копія: ${new Date(raw).toLocaleString('uk-UA')}`:'Копію ще не створювали'}
-function downloadBackup(){const blob=new Blob([JSON.stringify(backupPayload(),null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`moya-robota-backup-${new Date().toISOString().slice(0,10)}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);storage.saveLastBackup(new Date().toISOString());renderBackupStatus();toast('Резервну копію створено')}
-function validateBackup(p){if(!p||p.backupSchema!==1||!p.data)throw new Error('Несумісний файл');for(const k of ['shifts','plans','workTasks'])if(!Array.isArray(p.data[k]))throw new Error(`Некоректне поле ${k}`);return true}
-function showRestorePreview(p){pendingRestorePayload=p;const d=p.data;$('restorePreview').innerHTML=`<div class="restorePreviewRow"><span>Зміни</span><strong>${d.shifts.length}</strong></div><div class="restorePreviewRow"><span>Плани</span><strong>${d.plans.length}</strong></div><div class="restorePreviewRow"><span>Робочі завдання</span><strong>${d.workTasks.length}</strong></div><div class="restorePreviewRow"><span>Нотатки</span><strong>${Object.keys(d.dayNotes||{}).length}</strong></div>`;$('restorePreviewDialog').showModal()}
-function applyRestore(p){const d=p.data;state.shifts=d.shifts;state.active=d.active||null;state.rate=Number(d.rate||180);state.theme=d.theme==='light'?'light':'dark';state.plans=d.plans;state.settings=d.settings||{};state.dayNotes=d.dayNotes||{};state.workTasks=d.workTasks;save();applyTheme();render();$('restorePreviewDialog').close();pendingRestorePayload=null;toast('Дані відновлено')}
-function clearAllAppData(){if(!confirm('Видалити всі дані?'))return;if(!confirm('Останнє підтвердження: дію неможливо скасувати.'))return;storage.clearAll();location.reload()}
+function downloadBackup(){const blob=new Blob([JSON.stringify(backupPayload(),null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`moya-robota-profiles-${new Date().toISOString().slice(0,10)}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);storage.saveLastBackup(new Date().toISOString());renderBackupStatus();toast('Резервну копію всіх профілів створено')}
+function validateBackup(p){
+ if(!p||typeof p!=='object')throw new Error('Порожній файл');
+ if(p.backupSchema===2){
+  if(!p.profiles||!Array.isArray(p.profiles.profiles)||!p.profiles.profiles.length)throw new Error('Некоректні профілі');
+  return true;
+ }
+ if(p.backupSchema===1&&p.data)return true;
+ throw new Error('Несумісний файл');
+}
+function showRestorePreview(p){
+ pendingRestorePayload=p;
+ if(p.backupSchema===2){
+  const profiles=p.profiles.profiles;
+  const shifts=profiles.reduce((n,x)=>n+(x.data?.shifts?.length||0),0);
+  const plans=profiles.reduce((n,x)=>n+(x.data?.plans?.length||0),0);
+  $('restorePreview').innerHTML=`<div class="restorePreviewRow"><span>Профілі</span><strong>${profiles.length}</strong></div><div class="restorePreviewRow"><span>Зміни</span><strong>${shifts}</strong></div><div class="restorePreviewRow"><span>Плани</span><strong>${plans}</strong></div>`;
+ }else{
+  const d=p.data;$('restorePreview').innerHTML=`<div class="restorePreviewRow"><span>Стара копія</span><strong>1 профіль</strong></div><div class="restorePreviewRow"><span>Зміни</span><strong>${d.shifts?.length||0}</strong></div><div class="restorePreviewRow"><span>Плани</span><strong>${d.plans?.length||0}</strong></div>`;
+ }
+ $('restorePreviewDialog').showModal();
+}
+function applyRestore(p){
+ if(p.backupSchema===2){
+  storage.importStore(p.profiles);
+ }else{
+  const d=p.data;
+  const id=storage.createProfile({name:'Відновлений профіль',rate:Number(d.rate||180),currency:'Kč'});
+  storage.switchProfile(id);
+  state.loadProfile();
+  state.shifts=d.shifts||[];state.active=d.active||null;state.rate=Number(d.rate||180);state.theme=d.theme==='dark'?'dark':'light';state.plans=d.plans||[];state.settings=d.settings||{};state.dayNotes=d.dayNotes||{};state.workTasks=d.workTasks||[];state.save();
+ }
+ state.loadProfile();applyTheme();render();$('restorePreviewDialog').close();pendingRestorePayload=null;toast('Дані відновлено');
+}
+function clearAllAppData(){if(!confirm('Видалити всі профілі та їхні дані?'))return;if(!confirm('Останнє підтвердження: дію неможливо скасувати.'))return;storage.clearAll();location.reload()}
 
 function renderSettings(){
  const pairs=[['overtimeSwitch','overtime'],['weekendSwitch','weekend'],['holidaySwitch','holiday'],['tipsSwitch','tips'],['paySplitSwitch','paySplit']];
@@ -719,6 +835,16 @@ function openDay(dateKey){
 
 const bind=(id,event,handler)=>{const node=$(id);if(node)node.addEventListener(event,handler)};
 bind('quickWorkTaskForm','submit',event=>{event.preventDefault();addQuickWorkTask()});
+
+
+bind('profileHeaderButton','click',openProfiles);
+bind('openProfilesButton','click',openProfiles);
+bind('closeProfilesButton','click',()=>$('profilesDialog').close());
+bind('newProfileButton','click',()=>{$('profilesDialog').close();openProfileEditor()});
+bind('editCurrentProfileButton','click',()=>openProfileEditor(storage.activeProfileId()));
+bind('cancelProfileEdit','click',()=>{$('profileEditDialog').close();editingProfileId=null});
+bind('saveProfileEdit','click',saveProfileEditor);
+bind('deleteCurrentProfileButton','click',deleteEditingProfile);
 
 bind('createBackupButton','click',downloadBackup);
 bind('restoreBackupButton','click',()=>$('backupFileInput').click());

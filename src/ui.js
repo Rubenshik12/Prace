@@ -1,7 +1,11 @@
 
 export function template(){
  return `<div class="shell">
- <header class="hero"><div class="heroRow"><div><div class="greeting" id="greeting"></div><h1>Моя робота</h1><p>Час • зарплата • плани</p><div class="appVersion">v12.4 Bottom Nav Stable</div></div><div class="heroButtons"><button class="iconButton" id="themeButton">◐</button><button class="iconButton" data-open="settingsView">⚙︎</button></div></div></header>
+ <header class="hero"><div class="heroRow"><div><div class="greeting" id="greeting"></div><h1>Моя робота</h1><p>Час • зарплата • плани</p><div class="appVersion">v13.0 Core Profiles</div></div><div class="heroButtons">
+      <button class="profileHeaderButton" id="profileHeaderButton" aria-label="Профілі"><span id="profileHeaderInitial">М</span></button>
+      <button class="iconButton" id="themeButton">◐</button>
+      <button class="iconButton" data-open="settingsView">⚙︎</button>
+     </div></div></header>
  <main>
   <section class="view active" id="homeView">
   <section class="card dayHero" id="dayHero">
@@ -331,6 +335,15 @@ export function template(){
      </section>
 
      <section class="view" id="settingsView">
+ <div class="sectionTitle"><h2>Профіль</h2></div>
+ <div class="card currentProfileCard">
+  <button class="currentProfileMain" id="openProfilesButton">
+   <span class="profileAvatar" id="currentProfileAvatar">М</span>
+   <span class="profileIdentity"><b id="currentProfileName">Мій профіль</b><small id="currentProfileMeta">180 Kč/год</small></span>
+   <span class="profileChevron">›</span>
+  </button>
+  <button class="profileEditButton" id="editCurrentProfileButton">Редагувати профіль</button>
+ </div>
  <div class="sectionTitle"><h2>Налаштування</h2></div>
  <div class="card settingsCard">
   <div class="setting"><div><b>Базова ставка</b><div class="hint">Для нових змін</div></div><input id="settingsRate" type="number"></div>
@@ -385,7 +398,23 @@ export function template(){
  <dialog id="monthDialog"><div class="modal"><h3>Вибрати місяць</h3><label>Місяць</label><select id="monthSelect"></select><label>Рік</label><select id="yearSelect"></select><div class="modalActions"><button id="cancelMonth">Скасувати</button><button class="save" id="saveMonth">Готово</button></div></div></dialog>
  <dialog id="rateDialog"><div class="modal"><h3>Базова ставка</h3><label>Kč за годину</label><input id="rateInput" type="number"><div class="modalActions"><button id="cancelRate">Скасувати</button><button class="save" id="saveRate">Зберегти</button></div></div></dialog>
  <dialog id="startDialog"><div class="modal"><h3>Час приходу</h3><label>Дата</label><input id="startDate" type="date"><label>Час</label><input id="startTime" type="time"><div class="modalActions"><button id="cancelStart">Скасувати</button><button class="save" id="saveStart">Почати</button></div></div></dialog>
- <dialog id="restorePreviewDialog"><div class="modal"><h3>Відновлення даних</h3><div class="restorePreview" id="restorePreview"></div><div class="modalActions"><button id="cancelRestoreButton">Скасувати</button><button class="save" id="confirmRestoreButton">Відновити</button></div></div></dialog>
+ <dialog id="profilesDialog"><div class="modal profileModal">
+      <div class="profileModalHeader"><div><div class="eyebrow">Окремі дані й ставка</div><h3>Профілі</h3></div><button class="dialogClose" id="closeProfilesButton">×</button></div>
+      <div class="profilesList" id="profilesList"></div>
+      <button class="primary profileCreateButton" id="newProfileButton">＋ Новий профіль</button>
+     </div></dialog>
+
+     <dialog id="profileEditDialog"><div class="modal">
+      <h3 id="profileEditTitle">Новий профіль</h3>
+      <label>Ім’я або назва роботи</label><input id="profileNameInput" type="text" placeholder="Наприклад: Данило або Ресторан">
+      <label>Посада</label><input id="profileJobInput" type="text" placeholder="Наприклад: Кухар">
+      <label>Ставка за годину</label><input id="profileRateInput" type="number" min="0">
+      <label>Валюта</label><select id="profileCurrencyInput"><option value="Kč">Kč</option><option value="€">€</option><option value="$">$</option><option value="₴">₴</option><option value="£">£</option></select>
+      <div class="modalActions"><button id="cancelProfileEdit">Скасувати</button><button class="save" id="saveProfileEdit">Зберегти</button></div>
+      <button class="dangerLink" id="deleteCurrentProfileButton">Видалити профіль</button>
+     </div></dialog>
+
+     <dialog id="restorePreviewDialog"><div class="modal"><h3>Відновлення даних</h3><div class="restorePreview" id="restorePreview"></div><div class="modalActions"><button id="cancelRestoreButton">Скасувати</button><button class="save" id="confirmRestoreButton">Відновити</button></div></div></dialog>
  <dialog id="shiftDialog"><div class="modal"><h3 id="shiftTitle">Нова зміна</h3><label>Дата</label><input id="shiftDate" type="date"><label>Прийшов</label><input id="shiftStart" type="time"><label>Пішов</label><input id="shiftEnd" type="time"><label>Ставка</label><input id="shiftRate" type="number"><div id="holidayField"><label class="inlineCheck"><input id="shiftHoliday" type="checkbox"> Святковий день</label></div><div id="tipsField"><label>Чайові</label><input id="shiftTips" type="number" value="0"></div><label>Примітка</label><input id="shiftNote" type="text" placeholder="Необов’язково">
     <div class="archivedTasksBox" id="archivedTasksBox">
      <div class="label">Завдання зміни</div>

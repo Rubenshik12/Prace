@@ -1,7 +1,28 @@
+import {storage} from './storage.js?v=v13-core-profiles-20260803-14';
 
-import {storage} from './storage.js?v=v12-4-bottom-nav-stable-20260803-13';
 export const state={
- shifts:storage.shifts(),active:storage.active(),rate:storage.rate(),theme:storage.theme(),
- plans:storage.plans(),settings:storage.settings(),dayNotes:storage.dayNotes(),workTasks:storage.workTasks(),month:new Date().toISOString().slice(0,7),
- save(){storage.saveShifts(this.shifts);storage.saveActive(this.active);storage.saveRate(this.rate);storage.saveTheme(this.theme);storage.savePlans(this.plans);storage.saveSettings(this.settings);storage.saveDayNotes(this.dayNotes);storage.saveWorkTasks(this.workTasks)}
+ month:new Date().toISOString().slice(0,7),
+ loadProfile(){
+  this.shifts=storage.shifts();
+  this.active=storage.active();
+  this.rate=storage.rate();
+  this.theme=storage.theme();
+  this.plans=storage.plans();
+  this.settings=storage.settings();
+  this.dayNotes=storage.dayNotes();
+  this.workTasks=storage.workTasks();
+  this.profile=storage.activeProfile();
+  return this;
+ },
+ save(){
+  storage.saveShifts(this.shifts);
+  storage.saveActive(this.active);
+  storage.saveRate(this.rate);
+  storage.saveTheme(this.theme);
+  storage.savePlans(this.plans);
+  storage.saveSettings(this.settings);
+  storage.saveDayNotes(this.dayNotes);
+  storage.saveWorkTasks(this.workTasks);
+ }
 };
+state.loadProfile();
