@@ -1,9 +1,9 @@
 
-import {storage} from './storage.js?v=v12-3-ui-polish-20260803-12';
-import {state} from './state.js?v=v12-3-ui-polish-20260803-12';
-import {fmt} from './format.js?v=v12-3-ui-polish-20260803-12';
-import {minutes,pay,summary,daySummary} from './payroll.js?v=v12-3-ui-polish-20260803-12';
-import {template} from './ui.js?v=v12-3-ui-polish-20260803-12';
+import {storage} from './storage.js?v=v12-4-bottom-nav-stable-20260803-13';
+import {state} from './state.js?v=v12-4-bottom-nav-stable-20260803-13';
+import {fmt} from './format.js?v=v12-4-bottom-nav-stable-20260803-13';
+import {minutes,pay,summary,daySummary} from './payroll.js?v=v12-4-bottom-nav-stable-20260803-13';
+import {template} from './ui.js?v=v12-4-bottom-nav-stable-20260803-13';
 
 state.shifts=Array.isArray(state.shifts)?state.shifts:[];
 state.plans=Array.isArray(state.plans)?state.plans:[];

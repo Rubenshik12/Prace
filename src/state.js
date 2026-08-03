@@ -1,5 +1,5 @@
 
-import {storage} from './storage.js?v=v12-3-ui-polish-20260803-12';
+import {storage} from './storage.js?v=v12-4-bottom-nav-stable-20260803-13';
 export const state={
  shifts:storage.shifts(),active:storage.active(),rate:storage.rate(),theme:storage.theme(),
  plans:storage.plans(),settings:storage.settings(),dayNotes:storage.dayNotes(),workTasks:storage.workTasks(),month:new Date().toISOString().slice(0,7),
