@@ -2083,7 +2083,11 @@ main,
  }
 }
 
-/* v16.3 — compact bottom navigation */
+/* v16.4 — safe area only in installed PWA */
+:root{
+ --app-bottom-safe:0px;
+}
+
 .shell>main{
  padding-bottom:0!important;
  scroll-padding-bottom:0!important;
@@ -2104,11 +2108,15 @@ main,
  margin-bottom:0!important;
 }
 
+/* In Safari / ChatGPT embedded browser there is already browser chrome below,
+   so do not add iPhone safe-area a second time. */
 .bottomNav{
- min-height:calc(64px + env(safe-area-inset-bottom,0px))!important;
- height:auto!important;
- padding:3px 8px calc(3px + env(safe-area-inset-bottom,0px))!important;
+ min-height:64px!important;
+ height:64px!important;
+ max-height:64px!important;
+ padding:3px 8px!important;
  align-items:flex-start!important;
+ box-sizing:border-box!important;
 }
 
 .bottomNav .nav{
@@ -2126,4 +2134,36 @@ main,
 .bottomNav .navLabel{
  margin-top:2px!important;
  line-height:1!important;
+}
+
+/* Only installed Home Screen PWA needs the physical home-indicator inset. */
+@media (display-mode:standalone){
+ :root{
+  --app-bottom-safe:env(safe-area-inset-bottom,0px);
+ }
+
+ .bottomNav{
+  min-height:calc(64px + var(--app-bottom-safe))!important;
+  height:calc(64px + var(--app-bottom-safe))!important;
+  max-height:calc(64px + var(--app-bottom-safe))!important;
+  padding:3px 8px calc(3px + var(--app-bottom-safe))!important;
+ }
+}
+
+/* v16.5 — remove inherited shell reservation above navigation */
+.shell{
+ padding:0!important;
+ padding-top:0!important;
+ padding-right:0!important;
+ padding-bottom:0!important;
+ padding-left:0!important;
+}
+
+.appFrame{
+ gap:0!important;
+ row-gap:0!important;
+}
+
+.bottomNav{
+ margin-top:0!important;
 }

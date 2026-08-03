@@ -1,17 +1,17 @@
-const CACHE='moya-robota-v16-3-compact-bottom-navigation-20260803-32';
+const CACHE='moya-robota-v16-5-shell-padding-fix-20260803-34';
 const ASSETS=[
  './',
  './index.html',
- './styles.css?v=v16-3-compact-bottom-navigation-20260803-32',
- './manifest.webmanifest?v=v16-3-compact-bottom-navigation-20260803-32',
+ './styles.css?v=v16-5-shell-padding-fix-20260803-34',
+ './manifest.webmanifest?v=v16-5-shell-padding-fix-20260803-34',
  './icon-192.png',
  './icon-512.png',
- './src/app.js?v=v16-3-compact-bottom-navigation-20260803-32',
- './src/state.js?v=v16-3-compact-bottom-navigation-20260803-32',
- './src/storage.js?v=v16-3-compact-bottom-navigation-20260803-32',
- './src/payroll.js?v=v16-3-compact-bottom-navigation-20260803-32',
- './src/format.js?v=v16-3-compact-bottom-navigation-20260803-32',
- './src/ui.js?v=v16-3-compact-bottom-navigation-20260803-32'
+ './src/app.js?v=v16-5-shell-padding-fix-20260803-34',
+ './src/state.js?v=v16-5-shell-padding-fix-20260803-34',
+ './src/storage.js?v=v16-5-shell-padding-fix-20260803-34',
+ './src/payroll.js?v=v16-5-shell-padding-fix-20260803-34',
+ './src/format.js?v=v16-5-shell-padding-fix-20260803-34',
+ './src/ui.js?v=v16-5-shell-padding-fix-20260803-34'
 ];
 self.addEventListener('install',event=>{
  self.skipWaiting();
