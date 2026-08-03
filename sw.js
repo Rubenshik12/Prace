@@ -1,17 +1,17 @@
-const CACHE='moya-robota-v15-2-fixed-navigation-20260803-21';
+const CACHE='moya-robota-v15-3-job-filters-20260803-22';
 const ASSETS=[
  './',
  './index.html',
- './styles.css?v=v15-2-fixed-navigation-20260803-21',
- './manifest.webmanifest?v=v15-2-fixed-navigation-20260803-21',
+ './styles.css?v=v15-3-job-filters-20260803-22',
+ './manifest.webmanifest?v=v15-3-job-filters-20260803-22',
  './icon-192.png',
  './icon-512.png',
- './src/app.js?v=v15-2-fixed-navigation-20260803-21',
- './src/state.js?v=v15-2-fixed-navigation-20260803-21',
- './src/storage.js?v=v15-2-fixed-navigation-20260803-21',
- './src/payroll.js?v=v15-2-fixed-navigation-20260803-21',
- './src/format.js?v=v15-2-fixed-navigation-20260803-21',
- './src/ui.js?v=v15-2-fixed-navigation-20260803-21'
+ './src/app.js?v=v15-3-job-filters-20260803-22',
+ './src/state.js?v=v15-3-job-filters-20260803-22',
+ './src/storage.js?v=v15-3-job-filters-20260803-22',
+ './src/payroll.js?v=v15-3-job-filters-20260803-22',
+ './src/format.js?v=v15-3-job-filters-20260803-22',
+ './src/ui.js?v=v15-3-job-filters-20260803-22'
 ];
 self.addEventListener('install',event=>{
  self.skipWaiting();
