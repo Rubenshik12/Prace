@@ -21,7 +21,12 @@ const defaultSettings=()=>({
  overtime:false,overtimeAfter:8,overtimePercent:25,
  weekend:false,weekendPercent:25,
  holiday:false,holidayPercent:100,
- tips:false,paySplit:true,goalAmount:0
+ tips:false,paySplit:true,goalAmount:0,
+ startReminder:false,startReminderTime:'08:00',
+ endReminder:false,endReminderHours:10,
+ unfinishedShiftReminder:true,
+ lastStartReminderDate:'',
+ lastEndReminderSession:''
 });
 const uid=()=>crypto.randomUUID();
 

@@ -1,9 +1,9 @@
 
-import {storage} from './storage.js?v=v15-3-job-filters-20260803-22';
-import {state} from './state.js?v=v15-3-job-filters-20260803-22';
-import {fmt} from './format.js?v=v15-3-job-filters-20260803-22';
-import {minutes,pay,summary,daySummary} from './payroll.js?v=v15-3-job-filters-20260803-22';
-import {template} from './ui.js?v=v15-3-job-filters-20260803-22';
+import {storage} from './storage.js?v=v15-4-reminders-keyboard-fix-20260803-23';
+import {state} from './state.js?v=v15-4-reminders-keyboard-fix-20260803-23';
+import {fmt} from './format.js?v=v15-4-reminders-keyboard-fix-20260803-23';
+import {minutes,pay,summary,daySummary} from './payroll.js?v=v15-4-reminders-keyboard-fix-20260803-23';
+import {template} from './ui.js?v=v15-4-reminders-keyboard-fix-20260803-23';
 
 state.shifts=Array.isArray(state.shifts)?state.shifts:[];
 state.plans=Array.isArray(state.plans)?state.plans:[];
@@ -41,8 +41,135 @@ function fillJobFilter(id,value){const select=$(id);if(!select)return;select.inn
 function renderJobFilters(){fillJobFilter('calendarJobFilter',state.calendarJobFilter);fillJobFilter('statsJobFilter',state.statsJobFilter);fillJobFilter('plansJobFilter',state.plansJobFilter)}
 
 
+
+function notificationPermissionLabel(){
+ if(!('Notification' in window))return 'Не підтримується';
+ if(Notification.permission==='granted')return 'Дозволено';
+ if(Notification.permission==='denied')return 'Заборонено в системі';
+ return 'Потрібен дозвіл';
+}
+async function requestNotificationPermission(){
+ if(!('Notification' in window))return alert('Цей браузер не підтримує сповіщення');
+ const result=await Notification.requestPermission();
+ $('notificationPermissionText').textContent=notificationPermissionLabel();
+ if(result==='granted'){
+  notifyUser('Моя робота','Сповіщення увімкнено');
+  toast('Сповіщення увімкнено');
+ }else if(result==='denied'){
+  alert('Сповіщення заборонено. Дозвіл можна змінити в налаштуваннях iPhone для застосунку.');
+ }
+}
+async function notifyUser(title,body){
+ if(!('Notification' in window)||Notification.permission!=='granted')return false;
+ try{
+  const reg=await navigator.serviceWorker?.ready;
+  if(reg)await reg.showNotification(title,{body,icon:'./icon-192.png',badge:'./icon-192.png',tag:`moya-robota-${title}`,renotify:false});
+  else new Notification(title,{body,icon:'./icon-192.png'});
+  return true;
+ }catch(error){
+  try{new Notification(title,{body})}catch{}
+  return false;
+ }
+}
+function reminderDateKey(){return new Date().toISOString().slice(0,10)}
+function checkReminders(){
+ const settings=state.settings||{};
+ const now=new Date();
+ const today=reminderDateKey();
+
+ if(settings.startReminder&&!state.active&&settings.startReminderTime&&settings.lastStartReminderDate!==today){
+  const [hours,minutes]=settings.startReminderTime.split(':').map(Number);
+  const reminderAt=new Date(now);reminderAt.setHours(hours,minutes,0,0);
+  const diff=now-reminderAt;
+  if(diff>=0&&diff<60*60*1000){
+   notifyUser('Час почати зміну',`Активна робота: ${activeJob().name}`);
+   settings.lastStartReminderDate=today;
+   storage.saveSettings(settings);
+  }
+ }
+
+ if(state.active&&settings.endReminder){
+  const elapsed=(Date.now()-new Date(state.active.start).getTime())/3600000;
+  const session=state.active.sessionId||state.active.start;
+  if(elapsed>=Number(settings.endReminderHours||10)&&settings.lastEndReminderSession!==session){
+   notifyUser('Зміна ще триває',`Ти працюєш уже ${Math.floor(elapsed)} год. Не забудь завершити зміну.`);
+   settings.lastEndReminderSession=session;
+   storage.saveSettings(settings);
+  }
+ }
+
+ if(state.active&&settings.unfinishedShiftReminder){
+  const elapsed=(Date.now()-new Date(state.active.start).getTime())/3600000;
+  if(elapsed>=16){
+   document.body.classList.add('unfinished-shift-warning');
+  }else{
+   document.body.classList.remove('unfinished-shift-warning');
+  }
+ }else{
+  document.body.classList.remove('unfinished-shift-warning');
+ }
+}
+function renderReminderSettings(){
+ $('notificationPermissionText').textContent=notificationPermissionLabel();
+ const s=state.settings||{};
+ $('startReminderToggle').classList.toggle('active',!!s.startReminder);
+ $('endReminderToggle').classList.toggle('active',!!s.endReminder);
+ $('unfinishedShiftToggle').classList.toggle('active',s.unfinishedShiftReminder!==false);
+ $('startReminderTime').value=s.startReminderTime||'08:00';
+ $('endReminderHours').value=String(s.endReminderHours||10);
+ $('startReminderTimeRow').hidden=!s.startReminder;
+ $('endReminderHoursRow').hidden=!s.endReminder;
+}
+function saveReminderSetting(key,value){
+ state.settings[key]=value;
+ storage.saveSettings(state.settings);
+ renderReminderSettings();
+}
+function setupVisualViewportFix(){
+ const nav=document.querySelector('.bottomNav');
+ if(!nav)return;
+ let restoreTimer=0;
+ const isEditable=element=>element&&(
+  element.matches?.('input,textarea,select,[contenteditable="true"]')
+ );
+ const update=()=>{
+  const vv=window.visualViewport;
+  const keyboardOpen=!!vv&&window.innerHeight-vv.height>150;
+  const editing=isEditable(document.activeElement);
+  document.documentElement.classList.toggle('keyboard-open',keyboardOpen||editing);
+  if(!(keyboardOpen||editing)){
+   nav.style.removeProperty('bottom');
+   nav.style.removeProperty('transform');
+   document.documentElement.style.setProperty('--visual-bottom','0px');
+  }
+ };
+ document.addEventListener('focusin',event=>{
+  if(isEditable(event.target)){
+   document.documentElement.classList.add('keyboard-open');
+   clearTimeout(restoreTimer);
+  }
+ });
+ document.addEventListener('focusout',()=>{
+  clearTimeout(restoreTimer);
+  restoreTimer=setTimeout(()=>{
+   document.documentElement.classList.remove('keyboard-open');
+   nav.style.removeProperty('bottom');
+   nav.style.removeProperty('transform');
+   window.scrollBy(0,0);
+   update();
+  },320);
+ });
+ window.visualViewport?.addEventListener('resize',update);
+ window.visualViewport?.addEventListener('scroll',update);
+ window.addEventListener('orientationchange',()=>setTimeout(update,500));
+ window.addEventListener('pageshow',()=>setTimeout(update,50));
+ update();
+}
+
 function render(){
  renderJobFilters();
+ renderReminderSettings();
+ checkReminders();
  const data=monthData();
  const profile=storage.activeProfile();
  const job=activeJob();
@@ -751,7 +878,7 @@ function deleteEditingProfile(){
  }catch(error){alert(error.message)}
 }
 
-function backupPayload(){return {backupSchema:2,appVersion:'v15.3 Job Filters',exportedAt:new Date().toISOString(),profiles:storage.exportStore()}}
+function backupPayload(){return {backupSchema:2,appVersion:'v15.4 Reminders & Keyboard Fix',exportedAt:new Date().toISOString(),profiles:storage.exportStore()}}
 function renderBackupStatus(){const raw=storage.lastBackup();$('lastBackupText').textContent=raw?`Остання копія: ${new Date(raw).toLocaleString('uk-UA')}`:'Копію ще не створювали'}
 function downloadBackup(){const blob=new Blob([JSON.stringify(backupPayload(),null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`moya-robota-profiles-${new Date().toISOString().slice(0,10)}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);storage.saveLastBackup(new Date().toISOString());renderBackupStatus();toast('Резервну копію всіх профілів створено')}
 function validateBackup(p){
@@ -878,9 +1005,16 @@ bind('archiveJobButton','click',archiveEditingJob);
 bind('calendarJobFilter','change',e=>{state.calendarJobFilter=e.target.value;render()});
 bind('statsJobFilter','change',e=>{state.statsJobFilter=e.target.value;render()});
 bind('plansJobFilter','change',e=>{state.plansJobFilter=e.target.value;render()});
+bind('requestNotificationsButton','click',requestNotificationPermission);
+bind('startReminderToggle','click',()=>saveReminderSetting('startReminder',!state.settings.startReminder));
+bind('endReminderToggle','click',()=>saveReminderSetting('endReminder',!state.settings.endReminder));
+bind('unfinishedShiftToggle','click',()=>saveReminderSetting('unfinishedShiftReminder',state.settings.unfinishedShiftReminder===false));
+bind('startReminderTime','change',e=>saveReminderSetting('startReminderTime',e.target.value));
+bind('endReminderHours','change',e=>saveReminderSetting('endReminderHours',Number(e.target.value)));
+
 bind('profilePageEdit','click',()=>openProfileEditor(storage.activeProfileId()));
 bind('languageRow','click',()=>toast('Додаткові мови з’являться в одному з наступних оновлень'));
-bind('aboutAppRow','click',()=>alert('Моя робота\nВерсія: v15.3 Job Filters'));
+bind('aboutAppRow','click',()=>alert('Моя робота\nВерсія: v15.4 Reminders & Keyboard Fix'));
 bind('profileHeaderButton','click',openProfiles);
 bind('openProfilesButton','click',openProfiles);
 bind('closeProfilesButton','click',()=>$('profilesDialog').close());
@@ -1081,3 +1215,6 @@ bind('addPlanForDay','click',()=>{$('dayDialog').close();openPlanDialog(selected
 ['overtimeAfter','overtimePercent','weekendPercent','holidayPercent'].forEach(id=>bind(id,'input',event=>{state.settings[id]=Number(event.target.value||0);save();render()}));
 
 applyTheme();render();if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js');
+
+setupVisualViewportFix();
+setInterval(checkReminders,60000);

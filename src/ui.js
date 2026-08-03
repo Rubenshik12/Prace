@@ -16,7 +16,7 @@ export function template(){
        </div>
       </div>
       <button class="activeJobChip" id="activeJobChip"><span class="activeJobDot" id="activeJobDot"></span><span><small>Активна робота</small><b id="activeJobChipName">Основна робота</b></span><span class="activeJobChevron">›</span></button>
-      <div class="appVersion finalVersion">v15.3 Job Filters</div>
+      <div class="appVersion finalVersion">v15.4 Reminders & Keyboard Fix</div>
      </header>
  <main>
   <section class="view active finalHome" id="homeView">
@@ -356,7 +356,45 @@ export function template(){
   <div class="setting"><div><b>Дві виплати</b><div class="hint">1–15 та 16–кінець</div></div><button class="switch" id="paySplitSwitch"></button></div>
  </div>
 
- <div class="sectionTitle"><h2>Застосунок</h2></div>
+ 
+ <div class="sectionTitle"><h2>Нагадування</h2></div>
+ <div class="card reminderSettingsCard">
+  <div class="settingRow">
+   <div><b>Дозволити сповіщення</b><small id="notificationPermissionText">Не перевірено</small></div>
+   <button class="smallButton" id="requestNotificationsButton">Увімкнути</button>
+  </div>
+
+  <div class="settingRow">
+   <div><b>Нагадати почати зміну</b><small>У вибраний час, якщо зміна не почата</small></div>
+   <button class="switch" id="startReminderToggle"></button>
+  </div>
+  <div class="settingInline" id="startReminderTimeRow">
+   <label for="startReminderTime">Час</label>
+   <input id="startReminderTime" type="time" value="08:00">
+  </div>
+
+  <div class="settingRow">
+   <div><b>Нагадати завершити зміну</b><small>Після заданої тривалості активної зміни</small></div>
+   <button class="switch" id="endReminderToggle"></button>
+  </div>
+  <div class="settingInline" id="endReminderHoursRow">
+   <label for="endReminderHours">Через</label>
+   <select id="endReminderHours">
+    <option value="8">8 годин</option>
+    <option value="9">9 годин</option>
+    <option value="10">10 годин</option>
+    <option value="11">11 годин</option>
+    <option value="12">12 годин</option>
+   </select>
+  </div>
+
+  <div class="settingRow">
+   <div><b>Незавершена зміна</b><small>Попереджати, якщо зміна триває занадто довго</small></div>
+   <button class="switch" id="unfinishedShiftToggle"></button>
+  </div>
+ </div>
+
+<div class="sectionTitle"><h2>Застосунок</h2></div>
  <div class="card profileMenuCard">
   <button class="profileMenuRow" id="languageRow"><span class="profileMenuIcon">🌐</span><span><b>Мова</b><small>Українська</small></span><span class="profileMenuChevron">›</span></button>
   <button class="profileMenuRow" id="aboutAppRow"><span class="profileMenuIcon">ℹ</span><span><b>Про застосунок</b><small>Моя робота · v15.2 Fixed Navigation</small></span><span class="profileMenuChevron">›</span></button>
