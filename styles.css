@@ -1791,3 +1791,104 @@ main,.view{
 .dashboardTodayGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:11px}.dashboardTodayCard{padding:15px;min-height:105px}.dashboardTodayCard span,.dashboardTodayCard small{display:block;color:var(--muted);font-size:10px}.dashboardTodayCard strong{display:block;font-size:23px;margin:12px 0 7px}
 .dashboardMonthCard{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:16px;margin-top:11px}.dashboardMonthCard strong{display:block;font-size:15px;margin-top:6px}.dashboardMonthCard button{border:0;background:var(--blueSoft);color:var(--blue);height:40px;padding:0 12px;border-radius:13px;font-weight:850}.taskBookIcon svg{stroke-width:1.75!important}
 @media(max-width:390px){.dashboardShiftMain{grid-template-columns:1fr 138px 1fr}.dashboardRingWrap{width:138px;height:138px}.dashboardRingContent strong{font-size:21px}.dashboardSideMetric strong{font-size:15px}.dashboardGoalCard{grid-template-columns:1fr}}
+
+/* v14.1 Dashboard Polish */
+.dashboardGreeting{
+ margin-top:8px!important;
+ align-items:center!important;
+}
+.dashboardGreeting h2{
+ font-size:27px!important;
+ line-height:1.08!important;
+}
+.dashboardGreeting p{
+ font-size:13px!important;
+}
+.dashboardShiftCard{
+ padding:16px!important;
+ border-radius:22px!important;
+}
+.dashboardShiftMain{
+ grid-template-columns:minmax(62px,1fr) 146px minmax(74px,1fr)!important;
+ gap:8px!important;
+ margin:14px 0 16px!important;
+}
+.dashboardRingWrap{
+ width:146px!important;
+ height:146px!important;
+}
+.dashboardRingContent strong{
+ font-size:21px!important;
+}
+.dashboardSideMetric strong{
+ font-size:16px!important;
+}
+.dashboardActions{
+ display:flex!important;
+ flex-direction:column!important;
+ gap:9px!important;
+}
+.dashboardActions button{
+ width:100%!important;
+ min-height:48px!important;
+ border-radius:15px!important;
+ font-size:14px!important;
+}
+.dashboardPrimaryAction{
+ grid-column:auto!important;
+}
+.dashboardSecondaryAction{
+ min-height:44px!important;
+ background:transparent!important;
+}
+.dashboardCancelAction{
+ min-height:36px!important;
+ font-size:12px!important;
+}
+.dashboardActions button[hidden]{
+ display:none!important;
+}
+.profilePageHero{
+ grid-template-columns:54px minmax(0,1fr) auto!important;
+ gap:12px!important;
+ padding:15px!important;
+}
+.profilePageAvatar{
+ width:54px!important;
+ height:54px!important;
+ border-radius:17px!important;
+}
+.profilePageIdentity h2{
+ font-size:20px!important;
+}
+.profilePageEdit{
+ height:38px!important;
+ padding:0 11px!important;
+ font-size:11px!important;
+}
+.profileView>.sectionTitle:first-of-type{
+ margin-top:16px!important;
+}
+@media(max-width:390px){
+ .dashboardShiftMain{
+  grid-template-columns:minmax(54px,1fr) 132px minmax(66px,1fr)!important;
+ }
+ .dashboardRingWrap{
+  width:132px!important;
+  height:132px!important;
+ }
+ .dashboardSideMetric span{
+  font-size:8px!important;
+ }
+ .dashboardSideMetric strong{
+  font-size:14px!important;
+ }
+ .dashboardRingContent strong{
+  font-size:19px!important;
+ }
+}
+
+/* v14.1 final cleanup */
+.smartDashboard{padding-top:18px!important}
+.dashboardShiftCard{margin-top:0!important}
+#legacyHomeCompatibility{display:none!important}
