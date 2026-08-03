@@ -1,8 +1,8 @@
 
-import {state} from './state.js?v=v11-4-navigation-fix-20260803-5';
-import {fmt} from './format.js?v=v11-4-navigation-fix-20260803-5';
-import {minutes,pay,summary,daySummary} from './payroll.js?v=v11-4-navigation-fix-20260803-5';
-import {template} from './ui.js?v=v11-4-navigation-fix-20260803-5';
+import {state} from './state.js?v=v11-5-smart-calendar-20260803-6';
+import {fmt} from './format.js?v=v11-5-smart-calendar-20260803-6';
+import {minutes,pay,summary,daySummary} from './payroll.js?v=v11-5-smart-calendar-20260803-6';
+import {template} from './ui.js?v=v11-5-smart-calendar-20260803-6';
 
 state.shifts=Array.isArray(state.shifts)?state.shifts:[];
 state.plans=Array.isArray(state.plans)?state.plans:[];
@@ -15,7 +15,7 @@ if(state.active&&!state.active.sessionId){
 }
 document.getElementById('app').innerHTML=template();
 const $=id=>document.getElementById(id);
-let timerId=null,editingId=null,editingPlanId=null,planFilter='today',planCategory='all',selectedDay=null,selectedShiftId=null,previousViewId='homeView',previousScrollY=0;
+let timerId=null,editingId=null,editingPlanId=null,planFilter='today',planCategory='all',selectedDay=null,selectedShiftId=null,previousViewId='homeView',previousScrollY=0,calendarPressTimer=null;
 const monthNames=['Січень','Лютий','Березень','Квітень','Травень','Червень','Липень','Серпень','Вересень','Жовтень','Листопад','Грудень'];
 
 function applyTheme(){document.documentElement.dataset.theme=state.theme;$('settingsTheme').value=state.theme}
@@ -38,7 +38,7 @@ function render(){
  $('totalHomeValue').textContent=fmt.money(data.total);
  $('calendarShiftCount').textContent=data.selected.length;
  $('calendarHours').textContent=fmt.duration(data.mins);
- $('calendarPay').textContent=fmt.money(data.total);
+ $('calendarPay').textContent=fmt.money(data.total);$('calendarAverage').textContent=fmt.duration(data.selected.length?data.mins/data.selected.length:0);
  const goal=Number(state.settings.goalAmount||0);
  const progress=goal>0?Math.min(100,data.total/goal*100):0;
  $('goalFill').style.width=`${progress}%`;
@@ -282,18 +282,51 @@ function renderPlans(){
 }
 function renderCalendar(items){
  const node=$('calendarGrid');node.innerHTML='';
- const [y,m]=state.month.split('-').map(Number),offset=(new Date(y,m-1,1).getDay()+6)%7;
+ const [y,m]=state.month.split('-').map(Number);
+ const offset=(new Date(y,m-1,1).getDay()+6)%7;
  for(let i=0;i<offset;i++){const blank=document.createElement('div');blank.className='day blank';node.appendChild(blank)}
  const days=new Date(y,m,0).getDate(),today=new Date();
+ const daily=Array.from({length:days},(_,idx)=>{
+  const dateKey=`${y}-${String(m).padStart(2,'0')}-${String(idx+1).padStart(2,'0')}`;
+  return {dateKey,info:daySummary(state.shifts,dateKey,state.rate,state.settings)};
+ });
+ const bestPay=Math.max(0,...daily.map(d=>d.info.pay));
  for(let i=1;i<=days;i++){
   const dateKey=`${y}-${String(m).padStart(2,'0')}-${String(i).padStart(2,'0')}`;
-  const info=daySummary(state.shifts,dateKey,state.rate,state.settings);
-  const planned=state.plans.some(p=>p.date===dateKey&&!p.done);
-  const day=document.createElement('button');day.className='day';day.textContent=i;
-  if(info.items.length){day.classList.add('worked');const amount=document.createElement('span');amount.className='dayAmount';amount.textContent=Math.round(info.pay);day.appendChild(amount)}
-  if(planned)day.classList.add('planned');if(state.dayNotes?.[dateKey])day.classList.add('hasNote');
+  const info=daily[i-1].info;
+  const plans=state.plans.filter(p=>p.date===dateKey);
+  const workTasks=info.items.flatMap(s=>Array.isArray(s.workTasks)?s.workTasks:[]);
+  const hasAllTasks=workTasks.length>0&&workTasks.every(t=>t.done);
+  const isBest=bestPay>0&&info.pay===bestPay;
+  const day=document.createElement('button');
+  day.className='day smartDay';
+  day.innerHTML=`<span class="dayNumber">${i}</span><span class="dayIndicators"></span>`;
+  const indicators=day.querySelector('.dayIndicators');
+  const addIndicator=type=>{const dot=document.createElement('i');dot.className=`dayIndicator ${type}`;indicators.appendChild(dot)};
+  if(info.items.length)addIndicator('shift');
+  if(plans.length)addIndicator('plan');
+  if(hasAllTasks){addIndicator('complete');day.classList.add('completeDay')}
+  if(isBest){addIndicator('best');day.classList.add('bestDay')}
+  if(state.dayNotes?.[dateKey])addIndicator('note');
+  if(info.items.length){
+   const amount=document.createElement('span');
+   amount.className='dayAmount smartAmount';
+   amount.textContent=Math.round(info.pay);
+   day.appendChild(amount);
+  }
   if(today.getFullYear()===y&&today.getMonth()===m-1&&today.getDate()===i)day.classList.add('today');
-  day.onclick=()=>openDay(dateKey);
+  let longPressed=false;
+  const startPress=()=>{
+   longPressed=false;
+   clearTimeout(calendarPressTimer);
+   calendarPressTimer=setTimeout(()=>{longPressed=true;openCalendarQuick(dateKey)},520);
+  };
+  const cancelPress=()=>clearTimeout(calendarPressTimer);
+  day.addEventListener('touchstart',startPress,{passive:true});
+  day.addEventListener('touchend',cancelPress,{passive:true});
+  day.addEventListener('touchmove',cancelPress,{passive:true});
+  day.oncontextmenu=e=>{e.preventDefault();openCalendarQuick(dateKey)};
+  day.onclick=()=>{if(!longPressed)openDayDetails(dateKey)};
   node.appendChild(day);
  }
 }
@@ -588,7 +621,7 @@ function renderDailyBars(days){
   item.className=`barItem ${d.date===best.date?'best':''}`;
   const h=Math.max(3,d.pay/max*100);
   item.innerHTML=`<div class="barValue" style="height:${h}%"></div><span class="barLabel">${new Date(d.date+'T12:00').getDate()}</span>`;
-  item.onclick=()=>openDay(d.date);
+  item.onclick=()=>openDayDetails(d.date);
   node.appendChild(item);
  });
 }
@@ -604,6 +637,42 @@ function renderSettings(){
  $('weekendOptions').hidden=!state.settings.weekend;
  $('holidayOptions').hidden=!state.settings.holiday;
 }
+
+function openCalendarQuick(dateKey){
+ selectedDay=dateKey;
+ $('calendarQuickTitle').textContent=new Date(dateKey+'T12:00').toLocaleDateString('uk-UA',{weekday:'long',day:'numeric',month:'long'});
+ $('calendarQuickDialog').showModal();
+ if(navigator.vibrate)navigator.vibrate(25);
+}
+function renderDayTaskRows(node,tasks,emptyText){
+ node.innerHTML='';
+ if(!tasks.length){node.innerHTML=`<div class="empty">${emptyText}</div>`;return}
+ tasks.forEach(task=>{
+  const row=document.createElement('div');
+  row.className=`detailsTaskRow ${task.done?'done':''}`;
+  row.innerHTML=`<div class="detailsTaskIcon">${task.done?'✓':'○'}</div><div class="detailsTaskText">${task.text}</div>`;
+  node.appendChild(row);
+ });
+}
+function openDayDetails(dateKey){
+ selectedDay=dateKey;
+ const info=daySummary(state.shifts,dateKey,state.rate,state.settings);
+ const plans=state.plans.filter(p=>p.date===dateKey);
+ const workTasks=info.items.flatMap(s=>Array.isArray(s.workTasks)?s.workTasks:[]);
+ const doneTasks=workTasks.filter(t=>t.done).length;
+ $('dayDetailsDate').textContent=new Date(dateKey+'T12:00').toLocaleDateString('uk-UA',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+ $('dayDetailsPay').textContent=fmt.money(info.pay);
+ $('dayDetailsHours').textContent=`${fmt.duration(info.minutes)} год`;
+ $('dayDetailsShiftCount').textContent=info.items.length;
+ $('dayDetailsPlanCount').textContent=plans.length;
+ $('dayDetailsTaskCount').textContent=`${doneTasks}/${workTasks.length}`;
+ renderShiftList($('dayDetailsShifts'),info.items);
+ renderDayTaskRows($('dayDetailsPlans'),plans,'Планів цього дня немає');
+ renderDayTaskRows($('dayDetailsWorkTasks'),workTasks,'Робочих завдань цього дня немає');
+ $('dayDetailsNote').value=state.dayNotes?.[dateKey]||'';
+ showView('dayDetailsView');
+}
+
 function openDay(dateKey){
  selectedDay=dateKey;
  const info=daySummary(state.shifts,dateKey,state.rate,state.settings);
@@ -635,6 +704,30 @@ function openDay(dateKey){
 
 const bind=(id,event,handler)=>{const node=$(id);if(node)node.addEventListener(event,handler)};
 bind('quickWorkTaskForm','submit',event=>{event.preventDefault();addQuickWorkTask()});
+
+bind('dayDetailsBack','click',()=>{
+ const target=previousViewId==='dayDetailsView'?'calendarView':previousViewId;
+ openView(target);
+ requestAnimationFrame(()=>window.scrollTo({top:previousScrollY,left:0,behavior:'instant'}));
+});
+bind('dayDetailsQuick','click',()=>openCalendarQuick(selectedDay));
+bind('dayDetailsSaveNote','click',()=>{
+ if(!selectedDay)return;
+ const value=$('dayDetailsNote').value.trim();
+ if(value)state.dayNotes[selectedDay]=value;else delete state.dayNotes[selectedDay];
+ save();render();toast('Нотатку збережено');
+});
+bind('closeCalendarQuick','click',()=>$('calendarQuickDialog').close());
+bind('quickAddShiftForDay','click',()=>{
+ $('calendarQuickDialog').close();openShift();if(selectedDay)$('shiftDate').value=selectedDay;
+});
+bind('quickAddPlanForDay','click',()=>{
+ $('calendarQuickDialog').close();openPlanDialog(selectedDay||new Date().toISOString().slice(0,10));
+});
+bind('quickAddNoteForDay','click',()=>{
+ $('calendarQuickDialog').close();openDayDetails(selectedDay);
+ setTimeout(()=>$('dayDetailsNote').focus(),180);
+});
 
 bind('shiftDetailsBack','click',()=>{
  const target=previousViewId==='shiftDetailsView'?'homeView':previousViewId;

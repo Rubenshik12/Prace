@@ -1,7 +1,7 @@
 
 export function template(){
  return `<div class="shell">
- <header class="hero"><div class="heroRow"><div><div class="greeting" id="greeting"></div><h1>Моя робота</h1><p>Час • зарплата • плани</p><div class="appVersion">v11.4 Navigation Fix</div></div><div class="heroButtons"><button class="iconButton" id="themeButton">◐</button><button class="iconButton" data-open="settingsView">⚙︎</button></div></div></header>
+ <header class="hero"><div class="heroRow"><div><div class="greeting" id="greeting"></div><h1>Моя робота</h1><p>Час • зарплата • плани</p><div class="appVersion">v11.5 Smart Calendar</div></div><div class="heroButtons"><button class="iconButton" id="themeButton">◐</button><button class="iconButton" data-open="settingsView">⚙︎</button></div></div></header>
  <main>
   <section class="view active" id="homeView">
   <section class="card dayHero" id="dayHero">
@@ -114,14 +114,21 @@ export function template(){
  <div class="calendarSummary">
       <div class="card calendarStat"><span>Змін</span><strong id="calendarShiftCount">0</strong></div>
       <div class="card calendarStat"><span>Годин</span><strong id="calendarHours">0:00</strong></div>
-      <div class="card calendarStat"><span>Зароблено</span><strong id="calendarPay">0 Kč</strong></div>
+      <div class="card calendarStat"><span>Зароблено</span><strong id="calendarPay">0 Kč</strong></div><div class="card calendarStat"><span>Середня зміна</span><strong id="calendarAverage">0:00</strong></div>
     </div>
     <div class="card calendarMonthBar">
   <button class="calendarArrow" id="calendarPrevMonth">‹</button>
   <button class="calendarMonthTitle" id="calendarMonthButton"><span class="label">Місяць</span><strong id="calendarMonthLabel"></strong></button>
   <button class="calendarArrow" id="calendarNextMonth">›</button>
  </div>
- <div class="card calendar"><div class="calendarHead"><div>Пн</div><div>Вт</div><div>Ср</div><div>Чт</div><div>Пт</div><div>Сб</div><div>Нд</div></div><div class="calendarGrid" id="calendarGrid"></div></div></section>
+ <div class="calendarLegend">
+      <span><i class="legendDot workedDot"></i>Зміна</span>
+      <span><i class="legendDot planDot"></i>Плани</span>
+      <span><i class="legendDot doneDot"></i>Завдання виконані</span>
+      <span><i class="legendDot bestDot"></i>Найкращий день</span>
+      <span><i class="legendDot noteDot"></i>Нотатка</span>
+     </div>
+     <div class="card calendar"><div class="calendarHead"><div>Пн</div><div>Вт</div><div>Ср</div><div>Чт</div><div>Пт</div><div>Сб</div><div>Нд</div></div><div class="calendarGrid" id="calendarGrid"></div></div></section>
   <section class="view" id="statsView">
  <div class="statsHeader">
   <div>
@@ -253,7 +260,42 @@ export function template(){
  <div class="card plans premiumPlans" id="plansList"></div>
 </section>
 
-<section class="view" id="shiftDetailsView">
+<section class="view" id="dayDetailsView">
+      <div class="detailsTopBar">
+       <button class="detailsBackButton" id="dayDetailsBack">‹</button>
+       <div><div class="eyebrow">Деталі дня</div><h2 id="dayDetailsDate">День</h2></div>
+       <button class="detailsMoreButton" id="dayDetailsQuick">＋ Додати</button>
+      </div>
+
+      <div class="card dayDetailsHero">
+       <div class="dayDetailsMain">
+        <div><span>Зароблено</span><strong id="dayDetailsPay">0 Kč</strong></div>
+        <div><span>Відпрацьовано</span><strong id="dayDetailsHours">0:00</strong></div>
+       </div>
+       <div class="dayDetailsSub">
+        <div><span>Змін</span><strong id="dayDetailsShiftCount">0</strong></div>
+        <div><span>Планів</span><strong id="dayDetailsPlanCount">0</strong></div>
+        <div><span>Робочих завдань</span><strong id="dayDetailsTaskCount">0/0</strong></div>
+       </div>
+      </div>
+
+      <div class="sectionTitle"><h2>Зміни</h2></div>
+      <div class="card list" id="dayDetailsShifts"></div>
+
+      <div class="sectionTitle"><h2>Плани</h2></div>
+      <div class="card detailsTasksList" id="dayDetailsPlans"></div>
+
+      <div class="sectionTitle"><h2>Робочі завдання</h2></div>
+      <div class="card detailsTasksList" id="dayDetailsWorkTasks"></div>
+
+      <div class="sectionTitle"><h2>Нотатка</h2></div>
+      <div class="card dayDetailsNoteBox">
+       <textarea id="dayDetailsNote" rows="4" placeholder="Нотатка про цей день…"></textarea>
+       <button class="editChip" id="dayDetailsSaveNote">Зберегти нотатку</button>
+      </div>
+     </section>
+
+     <section class="view" id="shiftDetailsView">
       <div class="detailsTopBar">
        <button class="detailsBackButton" id="shiftDetailsBack">‹</button>
        <div>
@@ -349,7 +391,14 @@ export function template(){
     </select>
     <div class="modalActions"><button id="deletePlanDialog">Видалити</button><button class="save" id="savePlan">Зберегти</button></div>
     <button class="dangerLink" id="cancelPlan">Закрити</button></div></dialog>
- <dialog id="dayDialog"><div class="modal"><h3 id="dayDialogTitle">День</h3><div id="dayDialogSummary" class="daySummary"></div><div id="dayPlansSummary" class="dayPlansSummary"></div>
+ <dialog id="calendarQuickDialog"><div class="modal">
+      <h3 id="calendarQuickTitle">Швидкі дії</h3>
+      <button class="calendarQuickAction" id="quickAddShiftForDay">＋ Додати зміну</button>
+      <button class="calendarQuickAction" id="quickAddPlanForDay">✓ Додати план</button>
+      <button class="calendarQuickAction" id="quickAddNoteForDay">📝 Нотатка дня</button>
+      <button class="dangerLink" id="closeCalendarQuick">Закрити</button>
+     </div></dialog>
+     <dialog id="dayDialog"><div class="modal"><h3 id="dayDialogTitle">День</h3><div id="dayDialogSummary" class="daySummary"></div><div id="dayPlansSummary" class="dayPlansSummary"></div>
     <div class="dayNoteBox">
       <label>Нотатка дня</label>
       <textarea id="dayNote" rows="3" placeholder="Наприклад: важкий день, заміна колеги…"></textarea>
