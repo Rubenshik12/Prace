@@ -1,4 +1,4 @@
-import {storage} from './storage.js?v=v16-1-bottom-content-spacing-20260803-30';
+import {storage} from './storage.js?v=v16-2-bottom-strip-fix-20260803-31';
 
 export const state={
  month:new Date().toISOString().slice(0,7),
