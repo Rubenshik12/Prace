@@ -1899,94 +1899,116 @@ main,.view{
 
 
 
-/* v15.9 — single canonical app layout */
-:root{
- --nav-content-height:74px;
- --nav-safe-bottom:env(safe-area-inset-bottom,0px);
- --nav-total-height:calc(var(--nav-content-height) + var(--nav-safe-bottom));
-}
 
+/* v16.0 — single document app shell */
 html,
 body{
  width:100%;
  height:100%;
- min-height:100%;
+ min-height:0;
  margin:0;
  padding:0;
- overflow:hidden!important;
- overscroll-behavior:none;
- background:var(--bg)!important;
+ overflow:hidden;
+ background:var(--bg);
 }
 
 body{
- position:fixed!important;
- inset:0!important;
+ position:static!important;
+ inset:auto!important;
+ padding:0!important;
+}
+
+#app{
+ width:100%;
+ height:100%;
+ min-height:0;
+ overflow:hidden;
+ background:var(--bg);
+}
+
+.appFrame{
+ width:100%;
+ height:100%;
+ min-height:0;
+ display:grid;
+ grid-template-rows:minmax(0,1fr) auto;
+ overflow:hidden;
+ background:var(--bg);
 }
 
 .shell{
- position:absolute!important;
- inset:0 0 var(--nav-total-height) 0!important;
- width:auto!important;
- height:auto!important;
+ position:static!important;
+ inset:auto!important;
+ width:100%!important;
+ max-width:760px;
+ height:100%!important;
  min-height:0!important;
- display:flex!important;
- flex-direction:column!important;
+ margin:0 auto;
+ display:grid!important;
+ grid-template-rows:auto minmax(0,1fr);
  overflow:hidden!important;
- background:var(--bg)!important;
+ background:var(--bg);
  transform:none!important;
  -webkit-transform:none!important;
 }
 
 .shell>.hero{
  position:relative!important;
- flex:0 0 auto!important;
- width:100%!important;
- z-index:2!important;
+ flex:none!important;
+ width:100%;
+ min-width:0;
+ grid-row:1;
+ z-index:2;
 }
 
 .shell>main{
  position:relative!important;
- flex:1 1 auto!important;
- min-height:0!important;
- width:100%!important;
+ grid-row:2;
+ width:100%;
  height:auto!important;
+ min-height:0!important;
+ padding:14px 14px 28px!important;
+ margin:0!important;
  overflow-x:hidden!important;
  overflow-y:auto!important;
- -webkit-overflow-scrolling:touch!important;
+ -webkit-overflow-scrolling:touch;
  overscroll-behavior-y:contain;
- background:var(--bg)!important;
- padding-bottom:24px!important;
- box-sizing:border-box!important;
+ box-sizing:border-box;
+ background:var(--bg);
 }
 
 .shell>main>.view{
+ width:100%;
  min-height:0!important;
  height:auto!important;
- background:var(--bg)!important;
  padding-bottom:24px!important;
- box-sizing:border-box!important;
+ margin:0;
+ box-sizing:border-box;
+ background:var(--bg);
 }
 
 .bottomNav{
- position:absolute!important;
- left:0!important;
- right:0!important;
- bottom:0!important;
+ position:static!important;
+ inset:auto!important;
  top:auto!important;
+ right:auto!important;
+ bottom:auto!important;
+ left:auto!important;
  width:100%!important;
- height:var(--nav-total-height)!important;
- min-height:var(--nav-total-height)!important;
- max-height:var(--nav-total-height)!important;
+ height:auto!important;
+ min-height:calc(74px + env(safe-area-inset-bottom,0px))!important;
+ max-height:none!important;
  margin:0!important;
- padding:7px 8px calc(7px + var(--nav-safe-bottom))!important;
- box-sizing:border-box!important;
- z-index:10000!important;
+ padding:7px 8px calc(7px + env(safe-area-inset-bottom,0px))!important;
+ box-sizing:border-box;
+ z-index:10!important;
  display:flex!important;
- opacity:1!important;
- visibility:visible!important;
+ flex:0 0 auto;
  transform:none!important;
  -webkit-transform:none!important;
- background:var(--bg)!important;
+ opacity:1!important;
+ visibility:visible!important;
+ background:var(--bg);
 }
 
 [data-theme="dark"] .bottomNav{
@@ -2012,17 +2034,12 @@ html.keyboard-open .bottomNav{
  display:none!important;
 }
 
-html.keyboard-open .shell{
- inset:0!important;
-}
-
-html:not(.keyboard-open) .shell{
- inset:0 0 var(--nav-total-height) 0!important;
+html.keyboard-open .appFrame{
+ grid-template-rows:minmax(0,1fr);
 }
 
 html:not(.keyboard-open) .bottomNav{
  display:flex!important;
- bottom:0!important;
 }
 
 dialog,
@@ -2033,6 +2050,8 @@ dialog[open]{
 
 html,
 body,
+#app,
+.appFrame,
 .shell,
 .shell>main,
 .view{
@@ -2048,10 +2067,18 @@ body,
  height:auto!important;
 }
 
+/* Remove stale inherited page-level spacing. */
+main,
+.view{
+ margin-bottom:0!important;
+}
+
+/* Compact browser and PWA use the actual document viewport instead of vh math. */
 @supports(height:100dvh){
  html,
- body{
+ body,
+ #app,
+ .appFrame{
   height:100dvh;
-  min-height:100dvh;
  }
 }
