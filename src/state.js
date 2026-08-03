@@ -1,4 +1,4 @@
-import {storage} from './storage.js?v=v13-1-ui-redesign-20260803-15';
+import {storage} from './storage.js?v=v13-2-light-header-icons-20260803-16';
 
 export const state={
  month:new Date().toISOString().slice(0,7),

@@ -1,7 +1,7 @@
 
 export function template(){
  return `<div class="shell">
- <header class="hero"><div class="heroRow"><div><div class="greeting" id="greeting"></div><h1>Моя робота</h1><p>Час • зарплата • плани</p><div class="appVersion">v13.1 UI Redesign</div></div><div class="heroButtons">
+ <header class="hero"><div class="heroRow"><div><div class="greeting" id="greeting"></div><h1>Моя робота</h1><p>Час • зарплата • плани</p><div class="appVersion">v13.2 Light Header & Icons</div></div><div class="heroButtons">
       <button class="profileHeaderButton" id="profileHeaderButton" aria-label="Профілі"><span id="profileHeaderInitial">М</span></button>
       <button class="iconButton" id="themeButton">◐</button>
       <button class="iconButton" data-open="settingsView">⚙︎</button>
@@ -397,7 +397,18 @@ export function template(){
    <span class="navLabel">Статистика</span>
   </button>
   <button class="nav" data-view="plansView" aria-label="Плани">
-   <span class="navIcon prepIcon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 17.5h16"/><path d="M5.5 14.5h11.5"/><path d="M6 6.5c3.7 0 7.4 2.4 10.8 6.1"/><path d="M17.2 12.6 20 9.8"/><path d="M8 14.5v3"/><path d="M12 14.5v3"/></svg></span>
+   <span class="navIcon prepIcon">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+     <path d="M4 18.5h16"/>
+     <path d="M5.5 15.5h13"/>
+     <path d="M6.3 13.8 14.8 5.3"/>
+     <path d="M14.8 5.3 18.4 8.9"/>
+     <path d="M18.4 8.9 16.9 10.4"/>
+     <path d="M6.3 13.8c2.8.8 5.7.2 8.1-1.8"/>
+     <circle cx="10" cy="15.5" r="1"/>
+     <circle cx="14" cy="15.5" r="1"/>
+    </svg>
+   </span>
    <span class="navLabel">Плани</span>
   </button>
   <button class="nav" data-view="settingsView" aria-label="Профіль">
