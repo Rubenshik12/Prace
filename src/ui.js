@@ -16,7 +16,7 @@ export function template(){
        </div>
       </div>
       <button class="activeJobChip" id="activeJobChip"><span class="activeJobDot" id="activeJobDot"></span><span><small>Активна робота</small><b id="activeJobChipName">Основна робота</b></span><span class="activeJobChevron">›</span></button>
-      <div class="appVersion finalVersion">v16.7 Scroll & Plans Fix</div>
+      <div class="appVersion finalVersion">v16.8 Real Scroll End Fix</div>
      </header>
  <main>
   <section class="view active finalHome" id="homeView">
@@ -397,7 +397,7 @@ export function template(){
 <div class="sectionTitle"><h2>Застосунок</h2></div>
  <div class="card profileMenuCard">
   <button class="profileMenuRow" id="languageRow"><span class="profileMenuIcon">🌐</span><span><b>Мова</b><small>Українська</small></span><span class="profileMenuChevron">›</span></button>
-  <button class="profileMenuRow" id="aboutAppRow"><span class="profileMenuIcon">ℹ</span><span><b>Про застосунок</b><small>Моя робота · v16.7 Scroll & Plans Fix</small></span><span class="profileMenuChevron">›</span></button>
+  <button class="profileMenuRow" id="aboutAppRow"><span class="profileMenuIcon">ℹ</span><span><b>Про застосунок</b><small>Моя робота · v16.8 Real Scroll End Fix</small></span><span class="profileMenuChevron">›</span></button>
  </div>
  
  <div class="sectionTitle"><h2>Експорт</h2></div>
@@ -437,7 +437,7 @@ export function template(){
   <span id="currentProfileMeta"></span>
  </div>
 
-</main></div>
+<div class="mainScrollEnd" aria-hidden="true"></div></main></div>
  <nav class="bottomNav" aria-label="Основна навігація">
   <button class="nav active" data-view="homeView" aria-label="Головна">
    <span class="navIcon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 10.5 12 3.8l8.5 6.7v9.2a1.8 1.8 0 0 1-1.8 1.8h-4.2v-6.3h-5v6.3H5.3a1.8 1.8 0 0 1-1.8-1.8z"/></svg></span>

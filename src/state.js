@@ -1,4 +1,4 @@
-import {storage} from './storage.js?v=v16-7-scroll-plans-fix-20260804-02-34';
+import {storage} from './storage.js?v=v16-8-real-scroll-end-fix-20260804-03-34';
 
 export const state={
  month:new Date().toISOString().slice(0,7),
