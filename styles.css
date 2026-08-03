@@ -903,3 +903,49 @@ html,body,.shell,main,.view{
 .swipePlan.open .premiumPlan{
  transform:translateX(-88px);
 }
+
+/* v11.2 — швидкі робочі завдання */
+.workTasksBlock{
+ margin-top:16px;padding:15px;border-radius:19px;
+ background:color-mix(in srgb,var(--surface) 78%,transparent);
+ border:1px solid color-mix(in srgb,var(--green) 20%,var(--line));
+}
+.workTasksHead{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.workTasksHead span{display:block;font-size:14px;font-weight:900}
+.workTasksHead small{display:block;margin-top:3px;color:var(--muted);font-size:10px}
+.workTasksHead strong{color:var(--green);font-size:14px}
+.quickWorkTaskForm{display:grid;grid-template-columns:minmax(0,1fr) 48px;gap:8px;margin-top:12px}
+.quickWorkTaskForm input{
+ width:100%;min-width:0;height:48px;border:1px solid var(--line);border-radius:15px;
+ background:var(--surface);color:var(--text);padding:0 13px;font-size:16px
+}
+.quickWorkTaskForm button{
+ height:48px;border:0;border-radius:15px;background:var(--green);color:#fff;
+ font-size:24px;font-weight:900
+}
+.workTasksList{margin-top:8px}
+.workTaskRow{
+ display:grid;grid-template-columns:32px minmax(0,1fr) 34px;align-items:center;
+ gap:9px;min-height:45px;border-bottom:1px solid var(--line)
+}
+.workTaskRow:last-child{border-bottom:0}
+.workTaskCheck{
+ width:27px;height:27px;border:2px solid var(--line);border-radius:9px;
+ background:transparent;color:#fff;font-weight:900
+}
+.workTaskCheck.done{background:var(--green);border-color:var(--green)}
+.workTaskText{min-width:0;font-size:14px;font-weight:750;overflow-wrap:anywhere}
+.workTaskText.done{color:var(--muted);text-decoration:line-through}
+.workTaskDelete{
+ width:32px;height:32px;border:0;border-radius:10px;background:transparent;
+ color:var(--muted);font-size:18px
+}
+.workTasksEmpty{color:var(--muted);font-size:12px;text-align:center;padding:13px 5px 4px}
+.archivedTasksBox{
+ margin-top:15px;padding:14px;border-radius:16px;background:var(--surface2);
+ border:1px solid var(--line)
+}
+.archivedTaskRow{display:flex;align-items:flex-start;gap:9px;padding:8px 0;border-bottom:1px solid var(--line);font-size:13px}
+.archivedTaskRow:last-child{border-bottom:0}
+.archivedTaskIcon{width:20px;flex:0 0 20px;color:var(--green);font-weight:900}
+.archivedTaskRow.open .archivedTaskIcon{color:var(--muted)}

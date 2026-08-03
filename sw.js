@@ -1,17 +1,17 @@
-const CACHE='moya-robota-v11-1-statistics-swipe-20260803-2';
+const CACHE='moya-robota-v11-2-work-mode-20260803-3';
 const ASSETS=[
  './',
  './index.html',
- './styles.css?v=v11-1-statistics-swipe-20260803-2',
- './manifest.webmanifest?v=v11-1-statistics-swipe-20260803-2',
+ './styles.css?v=v11-2-work-mode-20260803-3',
+ './manifest.webmanifest?v=v11-2-work-mode-20260803-3',
  './icon-192.png',
  './icon-512.png',
- './src/app.js?v=v11-1-statistics-swipe-20260803-2',
- './src/state.js?v=v11-1-statistics-swipe-20260803-2',
- './src/storage.js?v=v11-1-statistics-swipe-20260803-2',
- './src/payroll.js?v=v11-1-statistics-swipe-20260803-2',
- './src/format.js?v=v11-1-statistics-swipe-20260803-2',
- './src/ui.js?v=v11-1-statistics-swipe-20260803-2'
+ './src/app.js?v=v11-2-work-mode-20260803-3',
+ './src/state.js?v=v11-2-work-mode-20260803-3',
+ './src/storage.js?v=v11-2-work-mode-20260803-3',
+ './src/payroll.js?v=v11-2-work-mode-20260803-3',
+ './src/format.js?v=v11-2-work-mode-20260803-3',
+ './src/ui.js?v=v11-2-work-mode-20260803-3'
 ];
 self.addEventListener('install',event=>{
  self.skipWaiting();
