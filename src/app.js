@@ -1,9 +1,9 @@
 
-import {storage} from './storage.js?v=v13-2-light-header-icons-20260803-16';
-import {state} from './state.js?v=v13-2-light-header-icons-20260803-16';
-import {fmt} from './format.js?v=v13-2-light-header-icons-20260803-16';
-import {minutes,pay,summary,daySummary} from './payroll.js?v=v13-2-light-header-icons-20260803-16';
-import {template} from './ui.js?v=v13-2-light-header-icons-20260803-16';
+import {storage} from './storage.js?v=v14-smart-dashboard-20260803-17';
+import {state} from './state.js?v=v14-smart-dashboard-20260803-17';
+import {fmt} from './format.js?v=v14-smart-dashboard-20260803-17';
+import {minutes,pay,summary,daySummary} from './payroll.js?v=v14-smart-dashboard-20260803-17';
+import {template} from './ui.js?v=v14-smart-dashboard-20260803-17';
 
 state.shifts=Array.isArray(state.shifts)?state.shifts:[];
 state.plans=Array.isArray(state.plans)?state.plans:[];

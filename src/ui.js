@@ -1,116 +1,66 @@
 
 export function template(){
  return `<div class="shell">
- <header class="hero"><div class="heroRow"><div><div class="greeting" id="greeting"></div><h1>Моя робота</h1><p>Час • зарплата • плани</p><div class="appVersion">v13.2 Light Header & Icons</div></div><div class="heroButtons">
+ <header class="hero"><div class="heroRow"><div><div class="greeting" id="greeting"></div><h1>Моя робота</h1><p>Час • зарплата • плани</p><div class="appVersion">v14.0 Smart Dashboard</div></div><div class="heroButtons">
       <button class="profileHeaderButton" id="profileHeaderButton" aria-label="Профілі"><span id="profileHeaderInitial">М</span></button>
       <button class="iconButton" id="themeButton">◐</button>
       <button class="iconButton" data-open="settingsView">⚙︎</button>
      </div></div></header>
  <main>
-  <section class="view active" id="homeView">
-  <section class="card dayHero" id="dayHero">
-    <div class="dayHeroTop">
-      <div>
-        <div class="eyebrow">Мій день</div>
-        <h2 id="todayTitle">Сьогодні</h2>
-        <p id="todaySubtitle">Все важливе в одному місці</p>
-      </div>
-      <div class="dayStatus" id="dayStatus">Не на роботі</div>
-    </div>
+  <section class="view active smartDashboard" id="homeView">
+ <div class="dashboardGreeting">
+  <div><div class="eyebrow">Мій день</div><h2 id="dashboardGreetingTitle">Привіт 👋</h2><p id="dashboardDate">Сьогодні</p></div>
+  <button class="profileHeaderButton" id="profileHeaderButton" aria-label="Профілі"><span id="profileHeaderInitial">М</span></button>
+ </div>
 
-    <div class="workMode inactive" id="workMode">
-      <div class="workModeLabel" id="workModeLabel">Зміна не почата</div>
-      <div class="workTimer" id="timer">0:00:00</div>
-      <div class="workMoney">Зароблено зараз <strong id="livePay">0 Kč</strong></div>
-
-      <button class="primary start" id="startButton">Я прийшов зараз</button>
-      <button class="secondary" id="manualStartButton">Вказати час приходу</button>
-      <div class="workTasksBlock" id="workTasksBlock">
-       <div class="workTasksHead">
-        <div><span>Робочі завдання</span><small>Поточна зміна</small></div>
-        <strong id="workTasksCounter">0/0</strong>
-       </div>
-       <form class="quickWorkTaskForm" id="quickWorkTaskForm">
-        <input id="quickWorkTaskInput" type="text" autocomplete="off" enterkeyhint="done" placeholder="Що потрібно зробити?">
-        <button id="quickWorkTaskAdd" type="submit" aria-label="Додати завдання">＋</button>
-       </form>
-       <div class="workTasksList" id="workTasksList"></div>
-      </div>
-      <button class="primary stop" id="stopButton">Закінчити зміну</button>
-      <button class="secondary" id="editStartButton">Змінити час приходу</button>
-      <button class="dangerLink" id="cancelButton">Скасувати помилковий старт</button>
-    </div>
-
-    <div class="dayOverview" id="dayOverview">
-      <div class="overviewItem">
-        <span>Зароблено сьогодні</span>
-        <strong id="todayPayValue">0 Kč</strong>
-      </div>
-      <div class="overviewItem">
-        <span>Планів залишилось</span>
-        <strong id="todayPlansValue">0</strong>
-      </div>
-    </div>
-  </section>
-
-  <div class="quickActions">
-    <button class="quickAction" id="quickShift">
-      <span>＋</span>
-      <b>Нова зміна</b>
-    </button>
-    <button class="quickAction" id="quickPlan">
-      <span>✓</span>
-      <b>Новий план</b>
-    </button>
-    <button class="quickAction" data-open-view="calendarView">
-      <span>▦</span>
-      <b>Календар</b>
-    </button>
-    <button class="quickAction" data-open-view="statsView">
-      <span>⌁</span>
-      <b>Статистика</b>
-    </button>
+ <div class="card dashboardShiftCard">
+  <div class="dashboardShiftTop"><span class="dashboardStatus" id="dashboardStatus">Не на роботі</span><button class="dashboardMore" data-open="settingsView">•••</button></div>
+  <div class="dashboardShiftMain">
+   <div class="dashboardSideMetric"><span>Початок</span><strong id="dashboardStartTime">—</strong></div>
+   <div class="dashboardRingWrap">
+    <svg class="dashboardRing" viewBox="0 0 120 120"><circle class="dashboardRingTrack" cx="60" cy="60" r="50"/><circle class="dashboardRingProgress" id="dashboardRingProgress" cx="60" cy="60" r="50"/></svg>
+    <div class="dashboardRingContent"><strong id="timer">0:00:00</strong><span id="dashboardRingLabel">зміна не почата</span></div>
+   </div>
+   <div class="dashboardSideMetric dashboardPayMetric"><span>Зароблено</span><strong id="currentEarnings">0 Kč</strong></div>
   </div>
-
-  <div class="sectionTitle">
-    <h2>Поточний місяць</h2>
-    <button class="textAction" id="homeMonthButton"><span id="homeMonthLabel"></span> ›</button>
+  <div class="dashboardActions">
+   <button class="start primary dashboardPrimaryAction" id="startNow">Почати зміну</button>
+   <button class="dashboardSecondaryAction" id="manualStart">Вказати час приходу</button>
+   <button class="stop dashboardPrimaryAction" id="stopNow">Завершити зміну</button>
+   <button class="dashboardSecondaryAction" id="editStart">Змінити час приходу</button>
+   <button class="dashboardCancelAction" id="cancelStart">Скасувати помилковий старт</button>
   </div>
+ </div>
 
-  <div class="homeMetrics">
-    <div class="card compactMetric">
-      <span>Змін</span>
-      <strong id="countValue">0</strong>
-    </div>
-    <div class="card compactMetric">
-      <span>Годин</span>
-      <strong id="hoursValue">0:00</strong>
-    </div>
-    <div class="card compactMetric wideMetric">
-      <span>Зароблено</span>
-      <strong id="totalHomeValue">0 Kč</strong>
-      <div class="goalTrack" id="goalTrack">
-        <div class="goalFill" id="goalFill"></div>
-      </div>
-      <small id="goalText">Фінансова ціль вимкнена</small>
-    </div>
-    <div class="card compactMetric">
-      <span>Ставка</span>
-      <strong id="homeRateValue">0 Kč</strong>
-    </div>
-  </div>
+ <div class="card dashboardGoalCard">
+  <div><span class="eyebrow">Ціль дня</span><strong id="dashboardGoalTitle">10 год</strong><small id="dashboardGoalSubtitle">Ще 10:00</small></div>
+  <div class="dashboardGoalVisual"><span id="dashboardGoalPercent">0%</span><div class="dashboardGoalTrack"><i id="dashboardGoalFill"></i></div></div>
+ </div>
 
-  <div class="sectionTitle">
-    <h2>Сьогоднішні плани</h2>
-    <button class="textAction" data-open-view="plansView">Показати всі ›</button>
-  </div>
-  <div class="card plans homePlans" id="homePlansList"></div>
+ <div class="card dashboardNextTaskCard" data-open-view="plansView">
+  <div class="dashboardTaskIcon">✓</div>
+  <div class="dashboardTaskContent"><span class="eyebrow">Наступне завдання</span><strong id="dashboardNextTask">Завдань немає</strong><small id="dashboardTaskMeta">Додай перше завдання</small></div>
+  <span class="dashboardChevron">›</span>
+ </div>
 
-  <div class="sectionTitle">
-    <h2>Останні зміни</h2>
-    <button class="textAction" data-open-view="statsView">Показати всі ›</button>
-  </div>
-  <div class="card list" id="recentList"></div>
+ <div class="dashboardTodayGrid">
+  <div class="card dashboardTodayCard"><span>Сьогодні</span><strong id="todayWorked">0:00</strong><small>відпрацьовано</small></div>
+  <div class="card dashboardTodayCard"><span>Зароблено</span><strong id="todayPay">0 Kč</strong><small>за сьогодні</small></div>
+ </div>
+
+ <div class="card dashboardMonthCard"><div><span class="eyebrow">Поточний місяць</span><strong id="dashboardMonthSummary">0 змін · 0:00 · 0 Kč</strong></div><button data-open-view="calendarView">Календар ›</button></div>
+
+ <div class="quickWorkTasks" id="quickWorkTasksBlock" hidden>
+  <div class="sectionTitle"><h2>Швидкі завдання</h2></div>
+  <form id="quickWorkTaskForm" class="quickWorkTaskForm"><input id="quickWorkTaskInput" type="text" placeholder="Що потрібно зробити?" autocomplete="off"><button type="submit">＋</button></form>
+  <div id="quickWorkTaskList" class="quickWorkTaskList"></div>
+ </div>
+
+ <div hidden>
+  <span id="homeShiftCount">0</span><span id="homeHours">0:00</span><span id="homeMonthPay">0 Kč</span><span id="homeRateValue">0 Kč</span>
+  <div id="todayPlans"></div><div id="recentShifts"></div>
+ </div>
+<div id="legacyHomeCompatibility" hidden aria-hidden="true"><button id="cancelButton" type="button"></button><span id="countValue"></span><span id="dayStatus"></span><button id="editStartButton" type="button"></button><span id="goalFill"></span><span id="goalText"></span><span id="homeMonthLabel"></span><div id="homePlansList"></div><span id="hoursValue"></span><span id="livePay"></span><button id="manualStartButton" type="button"></button><div id="recentList"></div><button id="startButton" type="button"></button><button id="stopButton" type="button"></button><span id="todayPayValue"></span><span id="todayPlansValue"></span><span id="todaySubtitle"></span><span id="todayTitle"></span><span id="totalHomeValue"></span><div id="workMode"></div><span id="workModeLabel"></span><div id="workTasksBlock"></div><span id="workTasksCounter"></span><div id="workTasksList"></div></div>
 </section>
 
 <section class="view" id="calendarView">
@@ -220,7 +170,7 @@ export function template(){
  <div class="plansHeader">
   <div>
    <div class="eyebrow">Організуй свій день</div>
-   <h2>Плани</h2>
+   <h2>Завдання</h2>
   </div>
   <button class="smallButton" id="addPlanButton">＋ Додати</button>
  </div>
@@ -240,7 +190,7 @@ export function template(){
   </div>
   <div class="plansProgressText">
    <span class="label">На сьогодні</span>
-   <strong id="plansProgressTitle">Планів немає</strong>
+   <strong id="plansProgressTitle">Завдань немає</strong>
    <p id="plansProgressSubtitle">Додай перший план</p>
   </div>
  </div>
@@ -279,7 +229,7 @@ export function template(){
       <div class="sectionTitle"><h2>Зміни</h2></div>
       <div class="card list" id="dayDetailsShifts"></div>
 
-      <div class="sectionTitle"><h2>Плани</h2></div>
+      <div class="sectionTitle"><h2>Завдання</h2></div>
       <div class="card detailsTasksList" id="dayDetailsPlans"></div>
 
       <div class="sectionTitle"><h2>Робочі завдання</h2></div>
@@ -396,20 +346,9 @@ export function template(){
    <span class="navIcon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V11M12 20V4M19 20v-7"/></svg></span>
    <span class="navLabel">Статистика</span>
   </button>
-  <button class="nav" data-view="plansView" aria-label="Плани">
-   <span class="navIcon prepIcon">
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-     <path d="M4 18.5h16"/>
-     <path d="M5.5 15.5h13"/>
-     <path d="M6.3 13.8 14.8 5.3"/>
-     <path d="M14.8 5.3 18.4 8.9"/>
-     <path d="M18.4 8.9 16.9 10.4"/>
-     <path d="M6.3 13.8c2.8.8 5.7.2 8.1-1.8"/>
-     <circle cx="10" cy="15.5" r="1"/>
-     <circle cx="14" cy="15.5" r="1"/>
-    </svg>
-   </span>
-   <span class="navLabel">Плани</span>
+  <button class="nav" data-view="plansView" aria-label="Завдання">
+   <span class="navIcon taskBookIcon"><svg viewBox="0 0 24 24"><path d="M6.5 3.5h10.5a2 2 0 0 1 2 2v15H6.5a2 2 0 0 1-2-2v-13a2 2 0 0 1 2-2Z"/><path d="M8 3.5v17"/><path d="M10.5 8.5h5.5M10.5 12h5.5M10.5 15.5h3.5"/><path d="M12 6.2c.8-1.4 2.2-1.7 3.1-.8.9-.9 2.3-.6 3.1.8"/></svg></span>
+   <span class="navLabel">Завдання</span>
   </button>
   <button class="nav" data-view="settingsView" aria-label="Профіль">
    <span class="navIcon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M4.8 20c.7-4.1 3.1-6.3 7.2-6.3s6.5 2.2 7.2 6.3"/></svg></span>
@@ -442,7 +381,7 @@ export function template(){
      <div id="archivedTasksList"></div>
     </div>
     <div class="modalActions"><button id="deleteShift">Видалити</button><button class="save" id="saveShift">Зберегти</button></div></div></dialog>
- <dialog id="planDialog"><div class="modal"><h3 id="planDialogTitle">Новий план</h3>
+ <dialog id="planDialog"><div class="modal"><h3 id="planDialogTitle">Нове завдання</h3>
     <label>Дата</label><input id="planDate" type="date">
     <label>Час</label><input id="planTime" type="time">
     <label>Завдання</label><input id="planText" type="text" placeholder="Що потрібно зробити?">
