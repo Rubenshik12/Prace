@@ -1,8 +1,8 @@
 
-import {state} from './state.js?v=v11-5-smart-calendar-20260803-6';
-import {fmt} from './format.js?v=v11-5-smart-calendar-20260803-6';
-import {minutes,pay,summary,daySummary} from './payroll.js?v=v11-5-smart-calendar-20260803-6';
-import {template} from './ui.js?v=v11-5-smart-calendar-20260803-6';
+import {state} from './state.js?v=v11-6-calendar-polish-20260803-7';
+import {fmt} from './format.js?v=v11-6-calendar-polish-20260803-7';
+import {minutes,pay,summary,daySummary} from './payroll.js?v=v11-6-calendar-polish-20260803-7';
+import {template} from './ui.js?v=v11-6-calendar-polish-20260803-7';
 
 state.shifts=Array.isArray(state.shifts)?state.shifts:[];
 state.plans=Array.isArray(state.plans)?state.plans:[];
@@ -300,20 +300,27 @@ function renderCalendar(items){
   const isBest=bestPay>0&&info.pay===bestPay;
   const day=document.createElement('button');
   day.className='day smartDay';
-  day.innerHTML=`<span class="dayNumber">${i}</span><span class="dayIndicators"></span>`;
+  day.innerHTML=`<span class="dayBestStar" aria-hidden="true"></span><span class="dayNumber">${i}</span><span class="dayIndicators"></span>`;
   const indicators=day.querySelector('.dayIndicators');
-  const addIndicator=type=>{const dot=document.createElement('i');dot.className=`dayIndicator ${type}`;indicators.appendChild(dot)};
-  if(info.items.length)addIndicator('shift');
-  if(plans.length)addIndicator('plan');
-  if(hasAllTasks){addIndicator('complete');day.classList.add('completeDay')}
-  if(isBest){addIndicator('best');day.classList.add('bestDay')}
-  if(state.dayNotes?.[dateKey])addIndicator('note');
+  const addIndicator=type=>{
+   const dot=document.createElement('i');
+   dot.className=`dayIndicator ${type}`;
+   indicators.appendChild(dot);
+  };
   if(info.items.length){
-   const amount=document.createElement('span');
-   amount.className='dayAmount smartAmount';
-   amount.textContent=Math.round(info.pay);
-   day.appendChild(amount);
+   addIndicator('shift');
+   day.classList.add('workedDay');
   }
+  if(plans.length)addIndicator('plan');
+  if(hasAllTasks){
+   addIndicator('complete');
+   day.classList.add('completeDay');
+  }
+  if(isBest){
+   day.classList.add('bestDay');
+   day.querySelector('.dayBestStar').textContent='★';
+  }
+  if(state.dayNotes?.[dateKey])addIndicator('note');
   if(today.getFullYear()===y&&today.getMonth()===m-1&&today.getDate()===i)day.classList.add('today');
   let longPressed=false;
   const startPress=()=>{

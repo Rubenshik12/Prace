@@ -1,5 +1,5 @@
 
-import {storage} from './storage.js?v=v11-5-smart-calendar-20260803-6';
+import {storage} from './storage.js?v=v11-6-calendar-polish-20260803-7';
 export const state={
  shifts:storage.shifts(),active:storage.active(),rate:storage.rate(),theme:storage.theme(),
  plans:storage.plans(),settings:storage.settings(),dayNotes:storage.dayNotes(),workTasks:storage.workTasks(),month:new Date().toISOString().slice(0,7),
