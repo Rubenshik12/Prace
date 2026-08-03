@@ -1,10 +1,10 @@
 
-import {storage} from './storage.js?v=v16-8-real-scroll-end-fix-20260804-03';
-import {state} from './state.js?v=v16-8-real-scroll-end-fix-20260804-03';
-import {fmt} from './format.js?v=v16-8-real-scroll-end-fix-20260804-03';
-import {minutes,pay,summary,daySummary} from './payroll.js?v=v16-8-real-scroll-end-fix-20260804-03';
-import {buildWidgetState,saveWidgetState,readWidgetState,widgetStateApi} from './widget-state.js?v=v16-8-real-scroll-end-fix-20260804-03';
-import {template} from './ui.js?v=v16-8-real-scroll-end-fix-20260804-03';
+import {storage} from './storage.js?v=v16-9-statistics-chart-fix-20260804-04';
+import {state} from './state.js?v=v16-9-statistics-chart-fix-20260804-04';
+import {fmt} from './format.js?v=v16-9-statistics-chart-fix-20260804-04';
+import {minutes,pay,summary,daySummary} from './payroll.js?v=v16-9-statistics-chart-fix-20260804-04';
+import {buildWidgetState,saveWidgetState,readWidgetState,widgetStateApi} from './widget-state.js?v=v16-9-statistics-chart-fix-20260804-04';
+import {template} from './ui.js?v=v16-9-statistics-chart-fix-20260804-04';
 
 state.shifts=Array.isArray(state.shifts)?state.shifts:[];
 state.plans=Array.isArray(state.plans)?state.plans:[];
@@ -789,15 +789,22 @@ function renderCumulativeChart(days){
 }
 function renderDailyBars(days){
  const node=$('dailyBarChart');node.innerHTML='';
- if(!days.length){node.innerHTML='<div class="empty">Немає даних за цей місяць</div>';$('dailyChartTitle').textContent='Найкращий день: —';return}
+ node.classList.toggle('singleDay',days.length===1);
+ if(!days.length){
+  node.innerHTML='<div class="chartEmptyState"><b>Ще немає даних</b><span>Після першої завершеної зміни тут з’явиться графік</span></div>';
+  $('dailyChartTitle').textContent='Найкращий день: —';
+  return;
+ }
  const max=Math.max(...days.map(d=>d.pay),1);
  const best=[...days].sort((a,b)=>b.pay-a.pay)[0];
  $('dailyChartTitle').textContent=`Найкращий день: ${fmt.money(best.pay)}`;
  days.forEach(d=>{
   const item=document.createElement('button');
+  item.type='button';
   item.className=`barItem ${d.date===best.date?'best':''}`;
-  const h=Math.max(3,d.pay/max*100);
-  item.innerHTML=`<div class="barValue" style="height:${h}%"></div><span class="barLabel">${new Date(d.date+'T12:00').getDate()}</span>`;
+  item.setAttribute('aria-label',`${new Date(d.date+'T12:00').toLocaleDateString('uk-UA')}: ${fmt.money(d.pay)}`);
+  const h=Math.max(10,d.pay/max*100);
+  item.innerHTML=`<span class="barAmount">${fmt.money(d.pay)}</span><div class="barTrack"><div class="barValue" style="height:${h}%"></div></div><span class="barLabel">${new Date(d.date+'T12:00').getDate()}</span>`;
   item.onclick=()=>openDayDetails(d.date);
   node.appendChild(item);
  });
@@ -1002,7 +1009,7 @@ function printMonthlyReport(){
  report.document.close();
 }
 
-function backupPayload(){return {backupSchema:2,appVersion:'v16.8 Real Scroll End Fix',exportedAt:new Date().toISOString(),profiles:storage.exportStore()}}
+function backupPayload(){return {backupSchema:2,appVersion:'v16.9 Statistics Chart Fix',exportedAt:new Date().toISOString(),profiles:storage.exportStore()}}
 function renderBackupStatus(){const raw=storage.lastBackup();$('lastBackupText').textContent=raw?`Остання копія: ${new Date(raw).toLocaleString('uk-UA')}`:'Копію ще не створювали'}
 function downloadBackup(){const blob=new Blob([JSON.stringify(backupPayload(),null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`moya-robota-profiles-${new Date().toISOString().slice(0,10)}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);storage.saveLastBackup(new Date().toISOString());renderBackupStatus();toast('Резервну копію всіх профілів створено')}
 function validateBackup(p){
@@ -1138,7 +1145,7 @@ bind('endReminderHours','change',e=>saveReminderSetting('endReminderHours',Numbe
 
 bind('profilePageEdit','click',()=>openProfileEditor(storage.activeProfileId()));
 bind('languageRow','click',()=>toast('Додаткові мови з’являться в одному з наступних оновлень'));
-bind('aboutAppRow','click',()=>alert('Моя робота\nВерсія: v16.8 Real Scroll End Fix'));
+bind('aboutAppRow','click',()=>alert('Моя робота\nВерсія: v16.9 Statistics Chart Fix'));
 bind('profileHeaderButton','click',openProfiles);
 bind('openProfilesButton','click',openProfiles);
 bind('closeProfilesButton','click',()=>$('profilesDialog').close());
