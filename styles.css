@@ -1634,3 +1634,148 @@ main,.view{
 .profileMenuRow:last-child{border-bottom:0}.profileMenuIcon{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;background:var(--surface2);font-size:17px}
 .profileMenuRow b,.profileMenuRow small{display:block}.profileMenuRow small{color:var(--muted);font-size:10px;margin-top:4px}.profileMenuChevron{color:var(--muted);font-size:22px}
 .prepIcon svg{stroke-width:1.7!important}
+
+/* v13.2 — світлий верхній блок */
+[data-theme="light"] .appHeader,
+[data-theme="light"] .topHero,
+[data-theme="light"] header.hero{
+ background:
+  linear-gradient(145deg,#FFFFFF 0%,#F4F6FF 62%,#EDEFFF 100%)!important;
+ border-bottom:1px solid rgba(74,103,232,.10)!important;
+ box-shadow:0 14px 30px rgba(54,66,110,.08)!important;
+}
+
+[data-theme="light"] .appHeader *,
+[data-theme="light"] .topHero *,
+[data-theme="light"] header.hero *{
+ text-shadow:none!important;
+}
+
+[data-theme="light"] .greeting{
+ color:#6E7582!important;
+ opacity:1!important;
+}
+
+[data-theme="light"] .appHeader h1,
+[data-theme="light"] .topHero h1,
+[data-theme="light"] header.hero h1{
+ color:#171A20!important;
+ opacity:1!important;
+}
+
+[data-theme="light"] .subtitle,
+[data-theme="light"] .appVersion{
+ color:#7C8392!important;
+ opacity:1!important;
+}
+
+[data-theme="light"] .profileHeaderButton{
+ background:#EEF1FF!important;
+ color:#4A67E8!important;
+ border-color:rgba(74,103,232,.24)!important;
+ box-shadow:0 6px 16px rgba(74,103,232,.10)!important;
+}
+
+[data-theme="light"] .iconButton{
+ background:#FFFFFF!important;
+ color:#4B5565!important;
+ border-color:rgba(24,30,42,.08)!important;
+ box-shadow:0 6px 16px rgba(38,43,55,.07)!important;
+}
+
+/* якщо верхній блок використовує темний фон у базовій темі — примусово прибираємо його */
+[data-theme="light"] .headerGradient,
+[data-theme="light"] .heroHeader{
+ background:transparent!important;
+}
+
+/* v13.2 — більші та читабельніші нижні іконки */
+body .bottomNav{
+ min-height:84px!important;
+ padding-top:8px!important;
+}
+
+body .bottomNav .nav{
+ height:64px!important;
+ min-height:64px!important;
+ max-height:64px!important;
+ gap:4px!important;
+}
+
+body .bottomNav .navIcon{
+ flex-basis:28px!important;
+ width:28px!important;
+ min-width:28px!important;
+ max-width:28px!important;
+ height:28px!important;
+ min-height:28px!important;
+ max-height:28px!important;
+ border-radius:10px!important;
+}
+
+body .bottomNav .navIcon svg{
+ width:24px!important;
+ min-width:24px!important;
+ max-width:24px!important;
+ height:24px!important;
+ min-height:24px!important;
+ max-height:24px!important;
+ stroke-width:1.9!important;
+}
+
+body .bottomNav .navLabel{
+ height:13px!important;
+ min-height:13px!important;
+ max-height:13px!important;
+ line-height:13px!important;
+ font-size:8.5px!important;
+ letter-spacing:-.015em!important;
+}
+
+body .bottomNav .prepIcon svg{
+ width:26px!important;
+ min-width:26px!important;
+ max-width:26px!important;
+ height:26px!important;
+ min-height:26px!important;
+ max-height:26px!important;
+ stroke-width:1.85!important;
+}
+
+body .bottomNav .nav.active .navIcon{
+ background:color-mix(in srgb,var(--blue) 14%,transparent)!important;
+}
+
+main,.view{
+ padding-bottom:calc(104px + env(safe-area-inset-bottom))!important;
+}
+
+@media(max-width:390px){
+ body .bottomNav .navIcon{
+  width:27px!important;
+  min-width:27px!important;
+  max-width:27px!important;
+  height:27px!important;
+  min-height:27px!important;
+  max-height:27px!important;
+ }
+ body .bottomNav .navIcon svg{
+  width:23px!important;
+  min-width:23px!important;
+  max-width:23px!important;
+  height:23px!important;
+  min-height:23px!important;
+  max-height:23px!important;
+ }
+ body .bottomNav .prepIcon svg{
+  width:25px!important;
+  min-width:25px!important;
+  max-width:25px!important;
+  height:25px!important;
+  min-height:25px!important;
+  max-height:25px!important;
+ }
+ body .bottomNav .navLabel{
+  font-size:8px!important;
+ }
+}

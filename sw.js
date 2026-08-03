@@ -1,17 +1,17 @@
-const CACHE='moya-robota-v13-1-ui-redesign-20260803-15';
+const CACHE='moya-robota-v13-2-light-header-icons-20260803-16';
 const ASSETS=[
  './',
  './index.html',
- './styles.css?v=v13-1-ui-redesign-20260803-15',
- './manifest.webmanifest?v=v13-1-ui-redesign-20260803-15',
+ './styles.css?v=v13-2-light-header-icons-20260803-16',
+ './manifest.webmanifest?v=v13-2-light-header-icons-20260803-16',
  './icon-192.png',
  './icon-512.png',
- './src/app.js?v=v13-1-ui-redesign-20260803-15',
- './src/state.js?v=v13-1-ui-redesign-20260803-15',
- './src/storage.js?v=v13-1-ui-redesign-20260803-15',
- './src/payroll.js?v=v13-1-ui-redesign-20260803-15',
- './src/format.js?v=v13-1-ui-redesign-20260803-15',
- './src/ui.js?v=v13-1-ui-redesign-20260803-15'
+ './src/app.js?v=v13-2-light-header-icons-20260803-16',
+ './src/state.js?v=v13-2-light-header-icons-20260803-16',
+ './src/storage.js?v=v13-2-light-header-icons-20260803-16',
+ './src/payroll.js?v=v13-2-light-header-icons-20260803-16',
+ './src/format.js?v=v13-2-light-header-icons-20260803-16',
+ './src/ui.js?v=v13-2-light-header-icons-20260803-16'
 ];
 self.addEventListener('install',event=>{
  self.skipWaiting();
