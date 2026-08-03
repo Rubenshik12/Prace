@@ -1,17 +1,17 @@
-const CACHE='moya-robota-v15-8-visual-viewport-20260803-27';
+const CACHE='moya-robota-v15-9-navigation-cleanup-20260803-28';
 const ASSETS=[
  './',
  './index.html',
- './styles.css?v=v15-8-visual-viewport-20260803-27',
- './manifest.webmanifest?v=v15-8-visual-viewport-20260803-27',
+ './styles.css?v=v15-9-navigation-cleanup-20260803-28',
+ './manifest.webmanifest?v=v15-9-navigation-cleanup-20260803-28',
  './icon-192.png',
  './icon-512.png',
- './src/app.js?v=v15-8-visual-viewport-20260803-27',
- './src/state.js?v=v15-8-visual-viewport-20260803-27',
- './src/storage.js?v=v15-8-visual-viewport-20260803-27',
- './src/payroll.js?v=v15-8-visual-viewport-20260803-27',
- './src/format.js?v=v15-8-visual-viewport-20260803-27',
- './src/ui.js?v=v15-8-visual-viewport-20260803-27'
+ './src/app.js?v=v15-9-navigation-cleanup-20260803-28',
+ './src/state.js?v=v15-9-navigation-cleanup-20260803-28',
+ './src/storage.js?v=v15-9-navigation-cleanup-20260803-28',
+ './src/payroll.js?v=v15-9-navigation-cleanup-20260803-28',
+ './src/format.js?v=v15-9-navigation-cleanup-20260803-28',
+ './src/ui.js?v=v15-9-navigation-cleanup-20260803-28'
 ];
 self.addEventListener('install',event=>{
  self.skipWaiting();

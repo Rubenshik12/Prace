@@ -1838,99 +1838,9 @@ main,.view{
  .finalSummaryCard strong{font-size:21px}
 }
 .activeJobChip{width:100%;display:grid;grid-template-columns:10px minmax(0,1fr) 18px;align-items:center;gap:10px;margin-top:9px;padding:9px 11px;border:1px solid rgba(255,255,255,.12);border-radius:14px;background:rgba(255,255,255,.08);color:inherit;text-align:left}.activeJobDot{width:10px;height:10px;border-radius:50%;display:block}.activeJobChip small,.activeJobChip b{display:block}.activeJobChip small{font-size:8px;color:#C7D3E5}.activeJobChip b{font-size:12px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.activeJobChevron{font-size:20px;opacity:.7}[data-theme="light"] .activeJobChip{background:#F7F8FF;border-color:rgba(74,103,232,.12);color:#171A20}[data-theme="light"] .activeJobChip small{color:#747C8B}.jobsCard{padding:5px 12px}.jobRow{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:8px;border-bottom:1px solid var(--line)}.jobRow:last-child{border-bottom:0}.jobSelectButton{display:grid;grid-template-columns:44px minmax(0,1fr) 18px;align-items:center;gap:11px;padding:11px 0;border:0;background:transparent;color:var(--text);text-align:left;min-width:0}.jobAvatar{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;color:#fff;font-weight:950}.jobText{min-width:0}.jobText b,.jobText small{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.jobText b{font-size:14px}.jobText small{font-size:9px;color:var(--muted);margin-top:4px}.jobActiveMark{color:var(--blue);font-weight:950;font-size:18px}.jobEditButton{border:0;background:var(--surface2);color:var(--blue);border-radius:11px;padding:8px;font-size:9px;font-weight:850}.jobRow.active .jobText b{color:var(--blue)}
-/* v15.2 — fixed bottom navigation */
-:root{
- --bottom-nav-height:74px;
- --bottom-nav-safe:env(safe-area-inset-bottom,0px);
-}
 
-html,body{
- min-height:100%;
-}
-
-body{
- padding-bottom:0!important;
-}
-
-main{
- padding-bottom:calc(var(--bottom-nav-height) + var(--bottom-nav-safe) + 22px)!important;
-}
-
-.view{
- padding-bottom:calc(var(--bottom-nav-height) + var(--bottom-nav-safe) + 22px)!important;
-}
-
-.bottomNav{
- position:fixed!important;
- left:0!important;
- right:0!important;
- bottom:0!important;
- width:100%!important;
- min-height:var(--bottom-nav-height)!important;
- height:calc(var(--bottom-nav-height) + var(--bottom-nav-safe))!important;
- padding:7px 8px calc(7px + var(--bottom-nav-safe))!important;
- margin:0!important;
- border-radius:0!important;
- transform:none!important;
- z-index:9999!important;
- box-sizing:border-box!important;
- overflow:visible!important;
-}
-
-.bottomNav::before{
- content:"";
- position:absolute;
- inset:0;
- background:inherit;
- pointer-events:none;
- z-index:-1;
-}
-
-.bottomNav .nav{
- min-height:58px!important;
- height:58px!important;
- align-self:flex-start!important;
-}
-
-.bottomNav .nav.active{
- border-radius:18px!important;
-}
-
-[data-theme="dark"] .bottomNav{
- background:rgba(14,27,45,.97)!important;
- border-top:1px solid rgba(113,145,190,.18)!important;
- box-shadow:0 -10px 30px rgba(0,0,0,.24)!important;
- backdrop-filter:blur(18px)!important;
- -webkit-backdrop-filter:blur(18px)!important;
-}
-
-[data-theme="light"] .bottomNav{
- background:rgba(252,251,248,.97)!important;
- border-top:1px solid rgba(24,30,42,.08)!important;
- box-shadow:0 -10px 28px rgba(38,43,55,.09)!important;
- backdrop-filter:blur(18px)!important;
- -webkit-backdrop-filter:blur(18px)!important;
-}
-
-dialog[open]{
- z-index:12000!important;
-}
-
-@supports (-webkit-touch-callout:none){
- body{
-  min-height:-webkit-fill-available;
- }
- .bottomNav{
-  transform:translateZ(0)!important;
-  -webkit-transform:translateZ(0)!important;
- }
-}
-
-/* keep last cards fully visible above the fixed bar */
-.view>*:last-child{
- margin-bottom:10px!important;
-}
 .jobFilterBar{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:10px;margin:4px 0 12px;padding:10px 12px;border-radius:16px;background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow)}.jobFilterBar label{color:var(--muted);font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:.06em}.jobFilterBar select{width:100%;min-height:40px;border-radius:12px;padding:0 12px;background:var(--surface2);border:1px solid var(--line);color:var(--text);font-weight:850}.shiftJobMini{display:flex;align-items:center;gap:6px;margin-top:4px;font-size:9px;color:var(--muted);font-weight:800}.shiftJobMini i{width:7px;height:7px;border-radius:50%;flex:0 0 7px}.shiftJobBadge{--job-color:#4A67E8;display:inline-flex;align-items:center;gap:7px;margin:0 0 10px;padding:7px 10px;border-radius:999px;background:color-mix(in srgb,var(--job-color) 16%,var(--surface));border:1px solid color-mix(in srgb,var(--job-color) 34%,transparent);color:var(--text);font-size:10px;font-weight:900}.shiftJobBadge::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--job-color)}
+
 /* v15.4 — reminders */
 .reminderSettingsCard{padding:4px 14px}
 .reminderSettingsCard .settingRow{
@@ -1960,204 +1870,6 @@ dialog[open]{
  border-color:color-mix(in srgb,var(--red) 55%,var(--line))!important;
 }
 
-/* v15.4 — robust iPhone keyboard/select navigation fix */
-html{
- --visual-bottom:0px;
-}
-.bottomNav{
- bottom:0!important;
- transform:translate3d(0,0,0)!important;
- -webkit-transform:translate3d(0,0,0)!important;
- will-change:transform;
-}
-
-/* Hide the bar only while the keyboard/native picker is active.
-   It returns to bottom:0 after focus closes. */
-html.keyboard-open .bottomNav{
- opacity:0!important;
- visibility:hidden!important;
- pointer-events:none!important;
- transform:translate3d(0,100%,0)!important;
- -webkit-transform:translate3d(0,100%,0)!important;
- transition:none!important;
-}
-
-html:not(.keyboard-open) .bottomNav{
- opacity:1!important;
- visibility:visible!important;
- pointer-events:auto!important;
- bottom:0!important;
- transform:translate3d(0,0,0)!important;
- -webkit-transform:translate3d(0,0,0)!important;
-}
-
-@media (display-mode:standalone){
- .bottomNav{
-  position:fixed!important;
-  bottom:0!important;
- }
-}
-
-@supports(height:100dvh){
- html,body{min-height:100dvh}
-}
-
-/* v15.5 — navigation architecture fix */
-:root{
- --app-nav-height:74px;
- --app-safe-bottom:env(safe-area-inset-bottom,0px);
- --app-nav-total:calc(var(--app-nav-height) + var(--app-safe-bottom));
- --keyboard-height:0px;
-}
-
-html{
- width:100%;
- height:100%;
- min-height:100%;
- overflow:hidden!important;
- overscroll-behavior:none;
-}
-
-body{
- position:fixed!important;
- inset:0!important;
- width:100%!important;
- height:100%!important;
- min-height:0!important;
- margin:0!important;
- padding:0!important;
- overflow:hidden!important;
- overscroll-behavior:none;
- -webkit-overflow-scrolling:auto;
-}
-
-.shell{
- position:fixed!important;
- inset:0 0 var(--app-nav-total) 0!important;
- width:100%!important;
- height:auto!important;
- min-height:0!important;
- display:flex!important;
- flex-direction:column!important;
- overflow:hidden!important;
- transform:none!important;
- -webkit-transform:none!important;
- contain:layout paint;
-}
-
-.shell>.hero{
- flex:0 0 auto!important;
- position:relative!important;
- inset:auto!important;
- z-index:5!important;
-}
-
-.shell>main{
- position:relative!important;
- flex:1 1 auto!important;
- min-height:0!important;
- width:100%!important;
- height:auto!important;
- padding-bottom:22px!important;
- overflow-x:hidden!important;
- overflow-y:auto!important;
- overscroll-behavior-y:contain;
- -webkit-overflow-scrolling:touch;
- scroll-behavior:auto;
-}
-
-.shell>main>.view{
- min-height:auto!important;
- padding-bottom:24px!important;
-}
-
-.bottomNav{
- position:fixed!important;
- left:0!important;
- right:0!important;
- top:auto!important;
- bottom:0!important;
- width:100%!important;
- height:var(--app-nav-total)!important;
- min-height:var(--app-nav-total)!important;
- max-height:var(--app-nav-total)!important;
- margin:0!important;
- padding:7px 8px calc(7px + var(--app-safe-bottom))!important;
- z-index:10000!important;
- transform:translate3d(0,0,0)!important;
- -webkit-transform:translate3d(0,0,0)!important;
- will-change:auto!important;
- contain:layout paint;
-}
-
-.bottomNav .nav{
- height:58px!important;
- min-height:58px!important;
- max-height:58px!important;
-}
-
-/* While the keyboard is open, hide the bar instead of allowing iOS to move it.
-   The shell remains fixed and main keeps its own scroll position. */
-html.keyboard-open .bottomNav{
- display:none!important;
- opacity:0!important;
- visibility:hidden!important;
- transform:none!important;
-}
-
-html.keyboard-open .shell{
- bottom:0!important;
-}
-
-html:not(.keyboard-open) .bottomNav{
- display:flex!important;
- opacity:1!important;
- visibility:visible!important;
- left:0!important;
- right:0!important;
- bottom:0!important;
- transform:translate3d(0,0,0)!important;
- -webkit-transform:translate3d(0,0,0)!important;
-}
-
-html:not(.keyboard-open) .shell{
- inset:0 0 var(--app-nav-total) 0!important;
-}
-
-/* Native select/date/time pickers sometimes leave the layout viewport shifted.
-   These rules keep the app attached to the physical viewport. */
-@supports(height:100dvh){
- html,body{
-  height:100dvh!important;
- }
-}
-
-@media(display-mode:standalone){
- html,body{
-  height:100dvh!important;
- }
- .shell{
-  position:fixed!important;
- }
- .bottomNav{
-  position:fixed!important;
-  bottom:0!important;
- }
-}
-
-dialog{
- position:fixed!important;
- z-index:20000!important;
-}
-
-dialog[open]{
- position:fixed!important;
-}
-
-/* Old page-level bottom padding is no longer needed because main ends above nav. */
-main,.view{
- margin-bottom:0!important;
-}
 
 /* v15.6 — data export */
 .exportCard{padding:3px 13px}
@@ -2185,89 +1897,78 @@ main,.view{
  font-size:18px;font-weight:900;
 }
 
-/* v15.7 — final fullscreen layout stabilization */
+
+
+/* v15.9 — single canonical app layout */
 :root{
- --nav-bar-height:74px;
- --safe-bottom:env(safe-area-inset-bottom,0px);
- --nav-total-height:calc(var(--nav-bar-height) + var(--safe-bottom));
- --app-bg-dark:#07111f;
- --app-bg-light:#f7f5ef;
+ --nav-content-height:74px;
+ --nav-safe-bottom:env(safe-area-inset-bottom,0px);
+ --nav-total-height:calc(var(--nav-content-height) + var(--nav-safe-bottom));
 }
 
-html,body{
- width:100%!important;
- height:100%!important;
- min-height:100%!important;
- margin:0!important;
- padding:0!important;
+html,
+body{
+ width:100%;
+ height:100%;
+ min-height:100%;
+ margin:0;
+ padding:0;
  overflow:hidden!important;
- background:var(--app-bg-dark)!important;
-}
-
-[data-theme="light"] html,
-[data-theme="light"] body,
-html[data-theme="light"],
-body[data-theme="light"]{
- background:var(--app-bg-light)!important;
+ overscroll-behavior:none;
+ background:var(--bg)!important;
 }
 
 body{
  position:fixed!important;
  inset:0!important;
- overscroll-behavior:none!important;
- -webkit-overflow-scrolling:auto!important;
 }
 
 .shell{
- position:fixed!important;
+ position:absolute!important;
  inset:0 0 var(--nav-total-height) 0!important;
- display:grid!important;
- grid-template-rows:auto minmax(0,1fr)!important;
- width:100%!important;
+ width:auto!important;
  height:auto!important;
  min-height:0!important;
+ display:flex!important;
+ flex-direction:column!important;
  overflow:hidden!important;
  background:var(--bg)!important;
+ transform:none!important;
+ -webkit-transform:none!important;
 }
 
 .shell>.hero{
  position:relative!important;
- grid-row:1!important;
+ flex:0 0 auto!important;
  width:100%!important;
- flex:none!important;
  z-index:2!important;
 }
 
 .shell>main{
  position:relative!important;
- grid-row:2!important;
- width:100%!important;
+ flex:1 1 auto!important;
  min-height:0!important;
- height:100%!important;
+ width:100%!important;
+ height:auto!important;
  overflow-x:hidden!important;
  overflow-y:auto!important;
  -webkit-overflow-scrolling:touch!important;
- overscroll-behavior-y:contain!important;
+ overscroll-behavior-y:contain;
  background:var(--bg)!important;
- padding-bottom:28px!important;
+ padding-bottom:24px!important;
+ box-sizing:border-box!important;
 }
 
-.shell>main::after{
- content:"";
- display:block;
- height:24px;
- width:100%;
- background:transparent;
-}
-
-.view{
- min-height:100%!important;
+.shell>main>.view{
+ min-height:0!important;
+ height:auto!important;
  background:var(--bg)!important;
+ padding-bottom:24px!important;
  box-sizing:border-box!important;
 }
 
 .bottomNav{
- position:fixed!important;
+ position:absolute!important;
  left:0!important;
  right:0!important;
  bottom:0!important;
@@ -2277,23 +1978,34 @@ body{
  min-height:var(--nav-total-height)!important;
  max-height:var(--nav-total-height)!important;
  margin:0!important;
- padding:7px 8px calc(7px + var(--safe-bottom))!important;
+ padding:7px 8px calc(7px + var(--nav-safe-bottom))!important;
  box-sizing:border-box!important;
- z-index:99999!important;
- transform:none!important;
- -webkit-transform:none!important;
+ z-index:10000!important;
  display:flex!important;
  opacity:1!important;
  visibility:visible!important;
+ transform:none!important;
+ -webkit-transform:none!important;
  background:var(--bg)!important;
 }
 
 [data-theme="dark"] .bottomNav{
  background:#0e1b2d!important;
+ border-top:1px solid rgba(113,145,190,.18)!important;
+ box-shadow:0 -8px 24px rgba(0,0,0,.22)!important;
 }
 
 [data-theme="light"] .bottomNav{
  background:#fbfaf6!important;
+ border-top:1px solid rgba(24,30,42,.08)!important;
+ box-shadow:0 -8px 22px rgba(38,43,55,.08)!important;
+}
+
+.bottomNav .nav{
+ height:58px!important;
+ min-height:58px!important;
+ max-height:58px!important;
+ align-self:flex-start!important;
 }
 
 html.keyboard-open .bottomNav{
@@ -2311,128 +2023,22 @@ html:not(.keyboard-open) .shell{
 html:not(.keyboard-open) .bottomNav{
  display:flex!important;
  bottom:0!important;
- transform:none!important;
- -webkit-transform:none!important;
-}
-
-@supports(height:100dvh){
- html,body{
-  height:100dvh!important;
-  min-height:100dvh!important;
- }
-}
-
-@media(display-mode:standalone){
- html,body{
-  height:100dvh!important;
-  min-height:100dvh!important;
- }
 }
 
 dialog,
 dialog[open]{
  position:fixed!important;
- z-index:200000!important;
+ z-index:20000!important;
 }
 
-/* Prevent any stale white canvas from older styles */
-body::before{
- content:"";
- position:fixed;
- inset:0;
- background:var(--bg);
- z-index:-2;
- pointer-events:none;
+html,
+body,
+.shell,
+.shell>main,
+.view{
+ background-color:var(--bg)!important;
 }
 
-/* v15.8 — exact visible viewport height */
-:root{
- --app-visible-height:100vh;
- --app-viewport-top:0px;
- --nav-bar-height:74px;
- --safe-bottom:env(safe-area-inset-bottom,0px);
- --nav-total-height:calc(var(--nav-bar-height) + var(--safe-bottom));
-}
-
-html,body{
- width:100%!important;
- height:var(--app-visible-height)!important;
- min-height:var(--app-visible-height)!important;
- max-height:var(--app-visible-height)!important;
- overflow:hidden!important;
- background:var(--bg)!important;
-}
-
-body{
- position:fixed!important;
- top:var(--app-viewport-top)!important;
- right:0!important;
- bottom:auto!important;
- left:0!important;
-}
-
-.shell{
- position:fixed!important;
- top:var(--app-viewport-top)!important;
- left:0!important;
- right:0!important;
- bottom:auto!important;
- width:100%!important;
- height:calc(var(--app-visible-height) - var(--nav-total-height))!important;
- max-height:calc(var(--app-visible-height) - var(--nav-total-height))!important;
- min-height:0!important;
- display:grid!important;
- grid-template-rows:auto minmax(0,1fr)!important;
- overflow:hidden!important;
- background:var(--bg)!important;
-}
-
-.shell>main{
- min-height:0!important;
- height:100%!important;
- max-height:100%!important;
- overflow-y:auto!important;
- overflow-x:hidden!important;
- background:var(--bg)!important;
- padding-bottom:28px!important;
- box-sizing:border-box!important;
-}
-
-.bottomNav{
- position:fixed!important;
- top:calc(var(--app-viewport-top) + var(--app-visible-height) - var(--nav-total-height))!important;
- bottom:auto!important;
- left:0!important;
- right:0!important;
- height:var(--nav-total-height)!important;
- min-height:var(--nav-total-height)!important;
- max-height:var(--nav-total-height)!important;
- transform:none!important;
- -webkit-transform:none!important;
- margin:0!important;
- z-index:999999!important;
-}
-
-html.keyboard-open .bottomNav{
- display:none!important;
-}
-
-html.keyboard-open .shell{
- height:var(--app-visible-height)!important;
- max-height:var(--app-visible-height)!important;
-}
-
-/* Ensure every visible layer uses app background */
-html,body,.shell,.shell>main,.view{
- background:var(--bg)!important;
-}
-
-body::before{
- background:var(--bg)!important;
-}
-
-/* Remove stale large minimum heights from older iterations */
-.view,
 .finalHome,
 .profileView,
 #calendarView,
@@ -2440,4 +2046,12 @@ body::before{
 #plansView{
  min-height:0!important;
  height:auto!important;
+}
+
+@supports(height:100dvh){
+ html,
+ body{
+  height:100dvh;
+  min-height:100dvh;
+ }
 }
