@@ -1304,3 +1304,12 @@ html,body,.shell,main,.view{
   max-height:3.5px!important;
  }
 }
+
+.backupCard{padding:14px}.backupStatus{display:flex;justify-content:space-between;align-items:center;padding:4px 2px 12px}
+.backupBadge{padding:7px 10px;border-radius:999px;background:var(--blueSoft);color:var(--blue);font-size:10px;font-weight:900}
+.backupAction{width:100%;display:grid;grid-template-columns:42px 1fr;gap:12px;align-items:center;text-align:left;border:1px solid var(--line);border-radius:16px;background:var(--surface2);color:var(--text);padding:13px;margin-top:9px}
+.backupAction>span{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;background:var(--surface);font-size:19px}
+.backupAction b,.backupAction small{display:block}.backupAction small{color:var(--muted);font-size:10px;margin-top:4px}
+.dangerBackup{border-color:color-mix(in srgb,var(--red) 25%,var(--line));background:color-mix(in srgb,var(--red) 7%,var(--surface2))}
+.restorePreview{background:var(--surface2);border:1px solid var(--line);border-radius:16px;padding:14px;margin:12px 0}
+.restorePreviewRow{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--line)}.restorePreviewRow:last-child{border-bottom:0}

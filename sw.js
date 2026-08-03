@@ -1,17 +1,17 @@
-const CACHE='moya-robota-v11-7-calendar-stable-20260803-8';
+const CACHE='moya-robota-v12-backup-restore-20260803-9';
 const ASSETS=[
  './',
  './index.html',
- './styles.css?v=v11-7-calendar-stable-20260803-8',
- './manifest.webmanifest?v=v11-7-calendar-stable-20260803-8',
+ './styles.css?v=v12-backup-restore-20260803-9',
+ './manifest.webmanifest?v=v12-backup-restore-20260803-9',
  './icon-192.png',
  './icon-512.png',
- './src/app.js?v=v11-7-calendar-stable-20260803-8',
- './src/state.js?v=v11-7-calendar-stable-20260803-8',
- './src/storage.js?v=v11-7-calendar-stable-20260803-8',
- './src/payroll.js?v=v11-7-calendar-stable-20260803-8',
- './src/format.js?v=v11-7-calendar-stable-20260803-8',
- './src/ui.js?v=v11-7-calendar-stable-20260803-8'
+ './src/app.js?v=v12-backup-restore-20260803-9',
+ './src/state.js?v=v12-backup-restore-20260803-9',
+ './src/storage.js?v=v12-backup-restore-20260803-9',
+ './src/payroll.js?v=v12-backup-restore-20260803-9',
+ './src/format.js?v=v12-backup-restore-20260803-9',
+ './src/ui.js?v=v12-backup-restore-20260803-9'
 ];
 self.addEventListener('install',event=>{
  self.skipWaiting();
