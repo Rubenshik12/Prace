@@ -2133,3 +2133,17 @@ main,
 .bottomNav{
  margin-top:0!important;
 }
+
+/* v16.7 — internal scroller stability */
+.shell>main{
+ overscroll-behavior-y:contain!important;
+ scroll-padding-bottom:16px!important;
+}
+
+.shell>main>.view{
+ padding-bottom:16px!important;
+}
+
+#plansView.active{
+ display:block!important;
+}

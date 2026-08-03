@@ -1,19 +1,19 @@
-const CACHE='moya-robota-v16-6-optimization-widget-20260804-01';
+const CACHE='moya-robota-v16-7-scroll-plans-fix-20260804-02';
 const ASSETS=[
  './',
  './index.html',
- './styles.css?v=v16-6-optimization-widget-20260804-01',
- './manifest.webmanifest?v=v16-6-optimization-widget-20260804-01',
+ './styles.css?v=v16-7-scroll-plans-fix-20260804-02',
+ './manifest.webmanifest?v=v16-7-scroll-plans-fix-20260804-02',
  './icon-192.png',
  './icon-512.png',
  './widget-state-schema.json',
- './src/app.js?v=v16-6-optimization-widget-20260804-01',
- './src/state.js?v=v16-6-optimization-widget-20260804-01',
- './src/storage.js?v=v16-6-optimization-widget-20260804-01',
- './src/payroll.js?v=v16-6-optimization-widget-20260804-01',
- './src/format.js?v=v16-6-optimization-widget-20260804-01',
- './src/ui.js?v=v16-6-optimization-widget-20260804-01',
- './src/widget-state.js?v=v16-6-optimization-widget-20260804-01'
+ './src/app.js?v=v16-7-scroll-plans-fix-20260804-02',
+ './src/state.js?v=v16-7-scroll-plans-fix-20260804-02',
+ './src/storage.js?v=v16-7-scroll-plans-fix-20260804-02',
+ './src/payroll.js?v=v16-7-scroll-plans-fix-20260804-02',
+ './src/format.js?v=v16-7-scroll-plans-fix-20260804-02',
+ './src/ui.js?v=v16-7-scroll-plans-fix-20260804-02',
+ './src/widget-state.js?v=v16-7-scroll-plans-fix-20260804-02'
 ];
 
 self.addEventListener('install',event=>{
