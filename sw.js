@@ -1,17 +1,17 @@
-const CACHE='moya-robota-v12-1-navigation-20260803-10';
+const CACHE='moya-robota-v12-2-navigation-stable-20260803-11';
 const ASSETS=[
  './',
  './index.html',
- './styles.css?v=v12-1-navigation-20260803-10',
- './manifest.webmanifest?v=v12-1-navigation-20260803-10',
+ './styles.css?v=v12-2-navigation-stable-20260803-11',
+ './manifest.webmanifest?v=v12-2-navigation-stable-20260803-11',
  './icon-192.png',
  './icon-512.png',
- './src/app.js?v=v12-1-navigation-20260803-10',
- './src/state.js?v=v12-1-navigation-20260803-10',
- './src/storage.js?v=v12-1-navigation-20260803-10',
- './src/payroll.js?v=v12-1-navigation-20260803-10',
- './src/format.js?v=v12-1-navigation-20260803-10',
- './src/ui.js?v=v12-1-navigation-20260803-10'
+ './src/app.js?v=v12-2-navigation-stable-20260803-11',
+ './src/state.js?v=v12-2-navigation-stable-20260803-11',
+ './src/storage.js?v=v12-2-navigation-stable-20260803-11',
+ './src/payroll.js?v=v12-2-navigation-stable-20260803-11',
+ './src/format.js?v=v12-2-navigation-stable-20260803-11',
+ './src/ui.js?v=v12-2-navigation-stable-20260803-11'
 ];
 self.addEventListener('install',event=>{
  self.skipWaiting();
