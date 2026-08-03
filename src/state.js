@@ -1,4 +1,4 @@
-import {storage} from './storage.js?v=v15-6-data-export-20260803-25';
+import {storage} from './storage.js?v=v15-7-fullscreen-layout-20260803-26';
 
 export const state={
  month:new Date().toISOString().slice(0,7),

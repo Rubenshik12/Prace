@@ -16,7 +16,7 @@ export function template(){
        </div>
       </div>
       <button class="activeJobChip" id="activeJobChip"><span class="activeJobDot" id="activeJobDot"></span><span><small>Активна робота</small><b id="activeJobChipName">Основна робота</b></span><span class="activeJobChevron">›</span></button>
-      <div class="appVersion finalVersion">v15.6 Data Export</div>
+      <div class="appVersion finalVersion">v15.7 Fullscreen Layout Fix</div>
      </header>
  <main>
   <section class="view active finalHome" id="homeView">
@@ -397,7 +397,7 @@ export function template(){
 <div class="sectionTitle"><h2>Застосунок</h2></div>
  <div class="card profileMenuCard">
   <button class="profileMenuRow" id="languageRow"><span class="profileMenuIcon">🌐</span><span><b>Мова</b><small>Українська</small></span><span class="profileMenuChevron">›</span></button>
-  <button class="profileMenuRow" id="aboutAppRow"><span class="profileMenuIcon">ℹ</span><span><b>Про застосунок</b><small>Моя робота · v15.6 Data Export</small></span><span class="profileMenuChevron">›</span></button>
+  <button class="profileMenuRow" id="aboutAppRow"><span class="profileMenuIcon">ℹ</span><span><b>Про застосунок</b><small>Моя робота · v15.7 Fullscreen Layout Fix</small></span><span class="profileMenuChevron">›</span></button>
  </div>
  
  <div class="sectionTitle"><h2>Експорт</h2></div>

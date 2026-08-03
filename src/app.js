@@ -1,9 +1,9 @@
 
-import {storage} from './storage.js?v=v15-6-data-export-20260803-25';
-import {state} from './state.js?v=v15-6-data-export-20260803-25';
-import {fmt} from './format.js?v=v15-6-data-export-20260803-25';
-import {minutes,pay,summary,daySummary} from './payroll.js?v=v15-6-data-export-20260803-25';
-import {template} from './ui.js?v=v15-6-data-export-20260803-25';
+import {storage} from './storage.js?v=v15-7-fullscreen-layout-20260803-26';
+import {state} from './state.js?v=v15-7-fullscreen-layout-20260803-26';
+import {fmt} from './format.js?v=v15-7-fullscreen-layout-20260803-26';
+import {minutes,pay,summary,daySummary} from './payroll.js?v=v15-7-fullscreen-layout-20260803-26';
+import {template} from './ui.js?v=v15-7-fullscreen-layout-20260803-26';
 
 state.shifts=Array.isArray(state.shifts)?state.shifts:[];
 state.plans=Array.isArray(state.plans)?state.plans:[];
@@ -1022,7 +1022,7 @@ function printMonthlyReport(){
  report.document.close();
 }
 
-function backupPayload(){return {backupSchema:2,appVersion:'v15.6 Data Export',exportedAt:new Date().toISOString(),profiles:storage.exportStore()}}
+function backupPayload(){return {backupSchema:2,appVersion:'v15.7 Fullscreen Layout Fix',exportedAt:new Date().toISOString(),profiles:storage.exportStore()}}
 function renderBackupStatus(){const raw=storage.lastBackup();$('lastBackupText').textContent=raw?`Остання копія: ${new Date(raw).toLocaleString('uk-UA')}`:'Копію ще не створювали'}
 function downloadBackup(){const blob=new Blob([JSON.stringify(backupPayload(),null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`moya-robota-profiles-${new Date().toISOString().slice(0,10)}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);storage.saveLastBackup(new Date().toISOString());renderBackupStatus();toast('Резервну копію всіх профілів створено')}
 function validateBackup(p){
@@ -1158,7 +1158,7 @@ bind('endReminderHours','change',e=>saveReminderSetting('endReminderHours',Numbe
 
 bind('profilePageEdit','click',()=>openProfileEditor(storage.activeProfileId()));
 bind('languageRow','click',()=>toast('Додаткові мови з’являться в одному з наступних оновлень'));
-bind('aboutAppRow','click',()=>alert('Моя робота\nВерсія: v15.6 Data Export'));
+bind('aboutAppRow','click',()=>alert('Моя робота\nВерсія: v15.7 Fullscreen Layout Fix'));
 bind('profileHeaderButton','click',openProfiles);
 bind('openProfilesButton','click',openProfiles);
 bind('closeProfilesButton','click',()=>$('profilesDialog').close());
