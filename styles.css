@@ -1313,3 +1313,66 @@ html,body,.shell,main,.view{
 .dangerBackup{border-color:color-mix(in srgb,var(--red) 25%,var(--line));background:color-mix(in srgb,var(--red) 7%,var(--surface2))}
 .restorePreview{background:var(--surface2);border:1px solid var(--line);border-radius:16px;padding:14px;margin:12px 0}
 .restorePreviewRow{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--line)}.restorePreviewRow:last-child{border-bottom:0}
+
+/* v12.3 — нова нижня навігація */
+.bottomNav{
+ grid-template-columns:repeat(5,minmax(0,1fr))!important;
+ align-items:stretch;
+ padding:8px 6px max(8px,env(safe-area-inset-bottom))!important;
+ min-height:78px;
+}
+.nav{
+ min-width:0;min-height:58px;border:0;background:transparent;color:var(--muted);
+ display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+ border-radius:15px;font-size:9px;font-weight:800;padding:5px 2px;
+ transition:background .18s ease,color .18s ease,transform .18s ease
+}
+.navIcon{width:24px;height:24px;display:grid;place-items:center;border-radius:10px}
+.navIcon svg{
+ width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.9;
+ stroke-linecap:round;stroke-linejoin:round
+}
+.nav.active{color:var(--blue);background:color-mix(in srgb,var(--blue) 10%,transparent)}
+.nav.active .navIcon{background:color-mix(in srgb,var(--blue) 13%,transparent)}
+.nav:active{transform:scale(.96)}
+
+/* v12.3 — полірування статистики */
+#statsView{padding-top:2px}
+.statsHeader{margin:2px 2px 15px!important;align-items:center!important}
+.statsHeader h2{font-size:28px!important;margin-top:3px!important}
+.statsGrid{gap:10px!important}
+.statHero,.statCard,.analyticsCard,.goalAnalyticsCard,.comparisonCard,.chartCard{border-radius:20px!important}
+.statHero{min-height:120px!important;padding:17px!important}
+.statHero strong{font-size:36px!important;line-height:1!important}
+.statCard{min-height:104px!important;padding:15px!important}
+.statCard strong{font-size:23px!important;margin-top:11px!important}
+.chartCard{padding:17px!important;margin-top:11px!important}
+.chartHeader{align-items:center!important}
+.chartHeader strong{font-size:19px!important;line-height:1.15}
+.lineChartWrap{height:160px!important;margin-top:12px!important}
+.lineChart{overflow:hidden!important}
+.chartGridLine{stroke-opacity:.65}
+.chartLine{stroke-width:2.5!important}
+.barChart{height:154px!important;gap:6px!important;margin-top:14px!important;padding-bottom:22px!important}
+.barItem{min-width:24px!important;flex-basis:24px!important}
+.barValue{max-width:27px!important;border-radius:6px 6px 3px 3px!important}
+.analyticsGrid{gap:10px!important}
+.analyticsCard{min-height:104px!important;padding:14px!important}
+.analyticsCard strong{font-size:20px!important;margin-top:11px!important}
+.goalAnalyticsCard,.comparisonCard{margin-top:11px!important;padding:16px!important}
+.goalAnalyticsTop strong{font-size:19px!important}
+.comparisonRows{gap:7px!important}
+.comparisonRows div{min-height:72px;display:flex;flex-direction:column;justify-content:center;padding:10px 8px!important}
+.comparisonRows strong{font-size:15px!important}
+#statsView .sectionTitle{margin-top:18px;margin-bottom:9px}
+#statsView .sectionTitle h2{font-size:18px}
+#statsView #allList{border-radius:20px;overflow:hidden}
+@media(max-width:390px){
+ .bottomNav{padding-left:3px!important;padding-right:3px!important}
+ .nav{font-size:8.5px;gap:3px}
+ .navIcon{width:22px;height:22px}
+ .navIcon svg{width:20px;height:20px}
+ .statHero strong{font-size:32px!important}
+ .statCard strong{font-size:21px!important}
+ .analyticsCard strong{font-size:18px!important}
+}
