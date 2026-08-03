@@ -1048,3 +1048,47 @@ html,body,.shell,main,.view{
  .shiftSummaryTimes strong{font-size:22px}
  .shiftSummaryMain strong{font-size:21px}
 }
+
+/* v11.5 Smart Calendar */
+.calendarSummary{grid-template-columns:repeat(2,minmax(0,1fr))}
+.calendarLegend{
+ display:flex;gap:8px;overflow-x:auto;padding:0 2px 10px;scrollbar-width:none
+}
+.calendarLegend::-webkit-scrollbar{display:none}
+.calendarLegend span{
+ flex:0 0 auto;display:flex;align-items:center;gap:6px;color:var(--muted);
+ font-size:10px;font-weight:800;padding:7px 9px;border-radius:999px;background:var(--surface);
+ border:1px solid var(--line)
+}
+.legendDot{width:7px;height:7px;border-radius:50%;display:block}
+.workedDot{background:var(--green)}
+.planDot{background:var(--purple)}
+.doneDot{background:#22C55E}
+.bestDot{background:#F6B73C}
+.noteDot{background:#F97316}
+.day.smartDay{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:7px}
+.dayNumber{font-weight:900;line-height:1}
+.dayIndicators{
+ display:flex;gap:3px;align-items:center;justify-content:center;min-height:9px;margin-top:5px
+}
+.dayIndicator{width:5px;height:5px;border-radius:50%}
+.dayIndicator.shift{background:var(--green)}
+.dayIndicator.plan{background:var(--purple)}
+.dayIndicator.complete{background:#22C55E;box-shadow:0 0 0 1px var(--surface)}
+.dayIndicator.best{background:#F6B73C}
+.dayIndicator.note{background:#F97316}
+.day.smartDay.bestDay{outline:2px solid #F6B73C}
+.day.smartDay.completeDay{background:color-mix(in srgb,var(--green) 13%,var(--surface2))}
+.dayAmount.smartAmount{position:static;margin-top:4px;font-size:7px;max-width:100%}
+.dayDetailsHero{padding:17px;background:radial-gradient(circle at 86% 5%,color-mix(in srgb,var(--blue) 20%,transparent),transparent 35%),var(--surface)}
+.dayDetailsMain{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.dayDetailsMain>div,.dayDetailsSub>div{padding:13px;border-radius:16px;background:var(--surface2);border:1px solid var(--line)}
+.dayDetailsMain span,.dayDetailsSub span{display:block;color:var(--muted);font-size:10px;font-weight:850;text-transform:uppercase;letter-spacing:.05em}
+.dayDetailsMain strong{display:block;font-size:24px;margin-top:7px;letter-spacing:-.04em}
+.dayDetailsSub{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:10px}
+.dayDetailsSub strong{display:block;font-size:17px;margin-top:6px}
+.dayDetailsNoteBox{padding:14px}
+.dayDetailsNoteBox textarea{width:100%;resize:vertical;border:1px solid var(--line);border-radius:14px;background:var(--surface2);color:var(--text);padding:12px;font:inherit}
+.dayDetailsNoteBox .editChip{width:100%;margin-top:9px}
+.calendarQuickAction{width:100%;height:50px;border:1px solid var(--line);border-radius:15px;background:var(--surface2);color:var(--text);font-weight:850;margin-top:9px;text-align:left;padding:0 14px}
+@media(max-width:390px){.dayDetailsSub{grid-template-columns:1fr}.calendarSummary{grid-template-columns:repeat(2,1fr)}}

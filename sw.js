@@ -1,17 +1,17 @@
-const CACHE='moya-robota-v11-4-navigation-fix-20260803-5';
+const CACHE='moya-robota-v11-5-smart-calendar-20260803-6';
 const ASSETS=[
  './',
  './index.html',
- './styles.css?v=v11-4-navigation-fix-20260803-5',
- './manifest.webmanifest?v=v11-4-navigation-fix-20260803-5',
+ './styles.css?v=v11-5-smart-calendar-20260803-6',
+ './manifest.webmanifest?v=v11-5-smart-calendar-20260803-6',
  './icon-192.png',
  './icon-512.png',
- './src/app.js?v=v11-4-navigation-fix-20260803-5',
- './src/state.js?v=v11-4-navigation-fix-20260803-5',
- './src/storage.js?v=v11-4-navigation-fix-20260803-5',
- './src/payroll.js?v=v11-4-navigation-fix-20260803-5',
- './src/format.js?v=v11-4-navigation-fix-20260803-5',
- './src/ui.js?v=v11-4-navigation-fix-20260803-5'
+ './src/app.js?v=v11-5-smart-calendar-20260803-6',
+ './src/state.js?v=v11-5-smart-calendar-20260803-6',
+ './src/storage.js?v=v11-5-smart-calendar-20260803-6',
+ './src/payroll.js?v=v11-5-smart-calendar-20260803-6',
+ './src/format.js?v=v11-5-smart-calendar-20260803-6',
+ './src/ui.js?v=v11-5-smart-calendar-20260803-6'
 ];
 self.addEventListener('install',event=>{
  self.skipWaiting();
