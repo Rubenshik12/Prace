@@ -2158,3 +2158,29 @@ dialog[open]{
 main,.view{
  margin-bottom:0!important;
 }
+
+/* v15.6 — data export */
+.exportCard{padding:3px 13px}
+.exportAction{
+ width:100%;
+ display:grid;
+ grid-template-columns:42px minmax(0,1fr) 18px;
+ align-items:center;
+ gap:11px;
+ padding:12px 0;
+ border:0;
+ border-bottom:1px solid var(--line);
+ background:transparent;
+ color:var(--text);
+ text-align:left;
+}
+.exportAction:last-child{border-bottom:0}
+.exportAction b,.exportAction small{display:block}
+.exportAction b{font-size:13px}
+.exportAction small{font-size:9px;color:var(--muted);margin-top:4px}
+.exportIcon{
+ width:42px;height:42px;border-radius:14px;
+ display:grid;place-items:center;
+ background:var(--blueSoft);color:var(--blue);
+ font-size:18px;font-weight:900;
+}

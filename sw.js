@@ -1,17 +1,17 @@
-const CACHE='moya-robota-v15-5-navigation-architecture-20260803-24';
+const CACHE='moya-robota-v15-6-data-export-20260803-25';
 const ASSETS=[
  './',
  './index.html',
- './styles.css?v=v15-5-navigation-architecture-20260803-24',
- './manifest.webmanifest?v=v15-5-navigation-architecture-20260803-24',
+ './styles.css?v=v15-6-data-export-20260803-25',
+ './manifest.webmanifest?v=v15-6-data-export-20260803-25',
  './icon-192.png',
  './icon-512.png',
- './src/app.js?v=v15-5-navigation-architecture-20260803-24',
- './src/state.js?v=v15-5-navigation-architecture-20260803-24',
- './src/storage.js?v=v15-5-navigation-architecture-20260803-24',
- './src/payroll.js?v=v15-5-navigation-architecture-20260803-24',
- './src/format.js?v=v15-5-navigation-architecture-20260803-24',
- './src/ui.js?v=v15-5-navigation-architecture-20260803-24'
+ './src/app.js?v=v15-6-data-export-20260803-25',
+ './src/state.js?v=v15-6-data-export-20260803-25',
+ './src/storage.js?v=v15-6-data-export-20260803-25',
+ './src/payroll.js?v=v15-6-data-export-20260803-25',
+ './src/format.js?v=v15-6-data-export-20260803-25',
+ './src/ui.js?v=v15-6-data-export-20260803-25'
 ];
 self.addEventListener('install',event=>{
  self.skipWaiting();
