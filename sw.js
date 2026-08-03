@@ -1,17 +1,17 @@
-const CACHE='moya-robota-v13-2-light-header-icons-20260803-16';
+const CACHE='moya-robota-v14-smart-dashboard-20260803-17';
 const ASSETS=[
  './',
  './index.html',
- './styles.css?v=v13-2-light-header-icons-20260803-16',
- './manifest.webmanifest?v=v13-2-light-header-icons-20260803-16',
+ './styles.css?v=v14-smart-dashboard-20260803-17',
+ './manifest.webmanifest?v=v14-smart-dashboard-20260803-17',
  './icon-192.png',
  './icon-512.png',
- './src/app.js?v=v13-2-light-header-icons-20260803-16',
- './src/state.js?v=v13-2-light-header-icons-20260803-16',
- './src/storage.js?v=v13-2-light-header-icons-20260803-16',
- './src/payroll.js?v=v13-2-light-header-icons-20260803-16',
- './src/format.js?v=v13-2-light-header-icons-20260803-16',
- './src/ui.js?v=v13-2-light-header-icons-20260803-16'
+ './src/app.js?v=v14-smart-dashboard-20260803-17',
+ './src/state.js?v=v14-smart-dashboard-20260803-17',
+ './src/storage.js?v=v14-smart-dashboard-20260803-17',
+ './src/payroll.js?v=v14-smart-dashboard-20260803-17',
+ './src/format.js?v=v14-smart-dashboard-20260803-17',
+ './src/ui.js?v=v14-smart-dashboard-20260803-17'
 ];
 self.addEventListener('install',event=>{
  self.skipWaiting();
