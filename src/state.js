@@ -1,4 +1,4 @@
-import {storage} from './storage.js?v=v15-9-navigation-cleanup-20260803-28';
+import {storage} from './storage.js?v=v16-app-shell-rebuild-20260803-29';
 
 export const state={
  month:new Date().toISOString().slice(0,7),

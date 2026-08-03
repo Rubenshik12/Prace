@@ -1,6 +1,6 @@
 
 export function template(){
- return `<div class="shell">
+ return `<div class="appFrame"><div class="shell">
  <header class="hero finalTopBar">
       <div class="finalTopInner">
        <button class="profileCompactButton" id="profileHeaderButton" aria-label="Профілі">
@@ -16,7 +16,7 @@ export function template(){
        </div>
       </div>
       <button class="activeJobChip" id="activeJobChip"><span class="activeJobDot" id="activeJobDot"></span><span><small>Активна робота</small><b id="activeJobChipName">Основна робота</b></span><span class="activeJobChevron">›</span></button>
-      <div class="appVersion finalVersion">v15.9 Navigation Cleanup</div>
+      <div class="appVersion finalVersion">v16.0 App Shell Rebuild</div>
      </header>
  <main>
   <section class="view active finalHome" id="homeView">
@@ -397,7 +397,7 @@ export function template(){
 <div class="sectionTitle"><h2>Застосунок</h2></div>
  <div class="card profileMenuCard">
   <button class="profileMenuRow" id="languageRow"><span class="profileMenuIcon">🌐</span><span><b>Мова</b><small>Українська</small></span><span class="profileMenuChevron">›</span></button>
-  <button class="profileMenuRow" id="aboutAppRow"><span class="profileMenuIcon">ℹ</span><span><b>Про застосунок</b><small>Моя робота · v15.9 Navigation Cleanup</small></span><span class="profileMenuChevron">›</span></button>
+  <button class="profileMenuRow" id="aboutAppRow"><span class="profileMenuIcon">ℹ</span><span><b>Про застосунок</b><small>Моя робота · v16.0 App Shell Rebuild</small></span><span class="profileMenuChevron">›</span></button>
  </div>
  
  <div class="sectionTitle"><h2>Експорт</h2></div>
@@ -466,7 +466,7 @@ export function template(){
    <span class="navIcon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M4.8 20c.7-4.1 3.1-6.3 7.2-6.3s6.5 2.2 7.2 6.3"/></svg></span>
    <span class="navLabel">Профіль</span>
   </button>
- </nav>
+ </nav></div>
  <dialog id="monthDialog"><div class="modal"><h3>Вибрати місяць</h3><label>Місяць</label><select id="monthSelect"></select><label>Рік</label><select id="yearSelect"></select><div class="modalActions"><button id="cancelMonth">Скасувати</button><button class="save" id="saveMonth">Готово</button></div></div></dialog>
  <dialog id="rateDialog"><div class="modal"><h3>Базова ставка</h3><label>Kč за годину</label><input id="rateInput" type="number"><div class="modalActions"><button id="cancelRate">Скасувати</button><button class="save" id="saveRate">Зберегти</button></div></div></dialog>
  <dialog id="startDialog"><div class="modal"><h3>Час приходу</h3><label>Дата</label><input id="startDate" type="date"><label>Час</label><input id="startTime" type="time"><div class="modalActions"><button id="cancelStart">Скасувати</button><button class="save" id="saveStart">Почати</button></div></div></dialog>

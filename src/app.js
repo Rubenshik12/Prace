@@ -1,9 +1,9 @@
 
-import {storage} from './storage.js?v=v15-9-navigation-cleanup-20260803-28';
-import {state} from './state.js?v=v15-9-navigation-cleanup-20260803-28';
-import {fmt} from './format.js?v=v15-9-navigation-cleanup-20260803-28';
-import {minutes,pay,summary,daySummary} from './payroll.js?v=v15-9-navigation-cleanup-20260803-28';
-import {template} from './ui.js?v=v15-9-navigation-cleanup-20260803-28';
+import {storage} from './storage.js?v=v16-app-shell-rebuild-20260803-29';
+import {state} from './state.js?v=v16-app-shell-rebuild-20260803-29';
+import {fmt} from './format.js?v=v16-app-shell-rebuild-20260803-29';
+import {minutes,pay,summary,daySummary} from './payroll.js?v=v16-app-shell-rebuild-20260803-29';
+import {template} from './ui.js?v=v16-app-shell-rebuild-20260803-29';
 
 state.shifts=Array.isArray(state.shifts)?state.shifts:[];
 state.plans=Array.isArray(state.plans)?state.plans:[];
@@ -128,34 +128,27 @@ function saveReminderSetting(key,value){
 function setupVisualViewportFix(){
  const editable=element=>element&&element.matches?.('input,textarea,select,[contenteditable="true"]');
  let timer=0;
- const restore=()=>{
-  document.documentElement.classList.remove('keyboard-open');
-  window.scrollTo(0,0);
-  document.documentElement.scrollTop=0;
-  document.body.scrollTop=0;
- };
+
  document.addEventListener('focusin',event=>{
   if(editable(event.target)){
    clearTimeout(timer);
    document.documentElement.classList.add('keyboard-open');
   }
  });
+
  document.addEventListener('focusout',()=>{
   clearTimeout(timer);
-  timer=setTimeout(restore,350);
+  timer=setTimeout(()=>document.documentElement.classList.remove('keyboard-open'),250);
  });
+
  document.addEventListener('change',event=>{
   if(event.target?.matches?.('select,input[type="date"],input[type="time"],input[type="color"]')){
    clearTimeout(timer);
-   timer=setTimeout(restore,120);
+   timer=setTimeout(()=>document.documentElement.classList.remove('keyboard-open'),100);
   }
  });
- window.addEventListener('pageshow',()=>setTimeout(restore,50));
- window.addEventListener('orientationchange',()=>setTimeout(restore,500));
- document.addEventListener('visibilitychange',()=>{
-  if(document.visibilityState==='visible')setTimeout(restore,80);
- });
- restore();
+
+ window.addEventListener('pageshow',()=>document.documentElement.classList.remove('keyboard-open'));
 }
 function render(){
  renderJobFilters();
@@ -982,7 +975,7 @@ function printMonthlyReport(){
  report.document.close();
 }
 
-function backupPayload(){return {backupSchema:2,appVersion:'v15.9 Navigation Cleanup',exportedAt:new Date().toISOString(),profiles:storage.exportStore()}}
+function backupPayload(){return {backupSchema:2,appVersion:'v16.0 App Shell Rebuild',exportedAt:new Date().toISOString(),profiles:storage.exportStore()}}
 function renderBackupStatus(){const raw=storage.lastBackup();$('lastBackupText').textContent=raw?`Остання копія: ${new Date(raw).toLocaleString('uk-UA')}`:'Копію ще не створювали'}
 function downloadBackup(){const blob=new Blob([JSON.stringify(backupPayload(),null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`moya-robota-profiles-${new Date().toISOString().slice(0,10)}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);storage.saveLastBackup(new Date().toISOString());renderBackupStatus();toast('Резервну копію всіх профілів створено')}
 function validateBackup(p){
@@ -1118,7 +1111,7 @@ bind('endReminderHours','change',e=>saveReminderSetting('endReminderHours',Numbe
 
 bind('profilePageEdit','click',()=>openProfileEditor(storage.activeProfileId()));
 bind('languageRow','click',()=>toast('Додаткові мови з’являться в одному з наступних оновлень'));
-bind('aboutAppRow','click',()=>alert('Моя робота\nВерсія: v15.9 Navigation Cleanup'));
+bind('aboutAppRow','click',()=>alert('Моя робота\nВерсія: v16.0 App Shell Rebuild'));
 bind('profileHeaderButton','click',openProfiles);
 bind('openProfilesButton','click',openProfiles);
 bind('closeProfilesButton','click',()=>$('profilesDialog').close());
