@@ -1,17 +1,17 @@
-const CACHE='moya-robota-v15-6-data-export-20260803-25';
+const CACHE='moya-robota-v15-7-fullscreen-layout-20260803-26';
 const ASSETS=[
  './',
  './index.html',
- './styles.css?v=v15-6-data-export-20260803-25',
- './manifest.webmanifest?v=v15-6-data-export-20260803-25',
+ './styles.css?v=v15-7-fullscreen-layout-20260803-26',
+ './manifest.webmanifest?v=v15-7-fullscreen-layout-20260803-26',
  './icon-192.png',
  './icon-512.png',
- './src/app.js?v=v15-6-data-export-20260803-25',
- './src/state.js?v=v15-6-data-export-20260803-25',
- './src/storage.js?v=v15-6-data-export-20260803-25',
- './src/payroll.js?v=v15-6-data-export-20260803-25',
- './src/format.js?v=v15-6-data-export-20260803-25',
- './src/ui.js?v=v15-6-data-export-20260803-25'
+ './src/app.js?v=v15-7-fullscreen-layout-20260803-26',
+ './src/state.js?v=v15-7-fullscreen-layout-20260803-26',
+ './src/storage.js?v=v15-7-fullscreen-layout-20260803-26',
+ './src/payroll.js?v=v15-7-fullscreen-layout-20260803-26',
+ './src/format.js?v=v15-7-fullscreen-layout-20260803-26',
+ './src/ui.js?v=v15-7-fullscreen-layout-20260803-26'
 ];
 self.addEventListener('install',event=>{
  self.skipWaiting();
