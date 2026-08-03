@@ -1,4 +1,4 @@
-import {storage} from './storage.js?v=v15-1-multi-job-20260803-20';
+import {storage} from './storage.js?v=v15-2-fixed-navigation-20260803-21';
 
 export const state={
  month:new Date().toISOString().slice(0,7),

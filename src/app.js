@@ -1,9 +1,9 @@
 
-import {storage} from './storage.js?v=v15-1-multi-job-20260803-20';
-import {state} from './state.js?v=v15-1-multi-job-20260803-20';
-import {fmt} from './format.js?v=v15-1-multi-job-20260803-20';
-import {minutes,pay,summary,daySummary} from './payroll.js?v=v15-1-multi-job-20260803-20';
-import {template} from './ui.js?v=v15-1-multi-job-20260803-20';
+import {storage} from './storage.js?v=v15-2-fixed-navigation-20260803-21';
+import {state} from './state.js?v=v15-2-fixed-navigation-20260803-21';
+import {fmt} from './format.js?v=v15-2-fixed-navigation-20260803-21';
+import {minutes,pay,summary,daySummary} from './payroll.js?v=v15-2-fixed-navigation-20260803-21';
+import {template} from './ui.js?v=v15-2-fixed-navigation-20260803-21';
 
 state.shifts=Array.isArray(state.shifts)?state.shifts:[];
 state.plans=Array.isArray(state.plans)?state.plans:[];
@@ -737,7 +737,7 @@ function deleteEditingProfile(){
  }catch(error){alert(error.message)}
 }
 
-function backupPayload(){return {backupSchema:2,appVersion:'v15.1 Multi Job',exportedAt:new Date().toISOString(),profiles:storage.exportStore()}}
+function backupPayload(){return {backupSchema:2,appVersion:'v15.2 Fixed Navigation',exportedAt:new Date().toISOString(),profiles:storage.exportStore()}}
 function renderBackupStatus(){const raw=storage.lastBackup();$('lastBackupText').textContent=raw?`Остання копія: ${new Date(raw).toLocaleString('uk-UA')}`:'Копію ще не створювали'}
 function downloadBackup(){const blob=new Blob([JSON.stringify(backupPayload(),null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`moya-robota-profiles-${new Date().toISOString().slice(0,10)}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);storage.saveLastBackup(new Date().toISOString());renderBackupStatus();toast('Резервну копію всіх профілів створено')}
 function validateBackup(p){
@@ -863,7 +863,7 @@ bind('saveJobEdit','click',saveJobEditor);
 bind('archiveJobButton','click',archiveEditingJob);
 bind('profilePageEdit','click',()=>openProfileEditor(storage.activeProfileId()));
 bind('languageRow','click',()=>toast('Додаткові мови з’являться в одному з наступних оновлень'));
-bind('aboutAppRow','click',()=>alert('Моя робота\nВерсія: v15.1 Multi Job'));
+bind('aboutAppRow','click',()=>alert('Моя робота\nВерсія: v15.2 Fixed Navigation'));
 bind('profileHeaderButton','click',openProfiles);
 bind('openProfilesButton','click',openProfiles);
 bind('closeProfilesButton','click',()=>$('profilesDialog').close());
