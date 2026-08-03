@@ -1,9 +1,9 @@
 
-import {storage} from './storage.js?v=v12-backup-restore-20260803-9';
-import {state} from './state.js?v=v12-backup-restore-20260803-9';
-import {fmt} from './format.js?v=v12-backup-restore-20260803-9';
-import {minutes,pay,summary,daySummary} from './payroll.js?v=v12-backup-restore-20260803-9';
-import {template} from './ui.js?v=v12-backup-restore-20260803-9';
+import {storage} from './storage.js?v=v12-1-navigation-20260803-10';
+import {state} from './state.js?v=v12-1-navigation-20260803-10';
+import {fmt} from './format.js?v=v12-1-navigation-20260803-10';
+import {minutes,pay,summary,daySummary} from './payroll.js?v=v12-1-navigation-20260803-10';
+import {template} from './ui.js?v=v12-1-navigation-20260803-10';
 
 state.shifts=Array.isArray(state.shifts)?state.shifts:[];
 state.plans=Array.isArray(state.plans)?state.plans:[];
@@ -436,7 +436,7 @@ function deleteSelectedShift(){
   selectedShiftId=null;
   save();
   render();
-  openView(previousViewId==='shiftDetailsView'?'homeView':previousViewId);
+  openView(previousViewId==='shiftDetailsView'?'homeView':previousViewId,{resetScroll:true});
   toast('Зміну видалено');
  }
 }
@@ -846,7 +846,7 @@ bind('deleteShift','click',()=>{if(editingId&&confirm('Видалити цю з�
 
 bind('addPlanButton','click',()=>{
  if(state.active){
-  openView('homeView');
+  openView('homeView',{resetScroll:true});
   setTimeout(()=>{
    $('workTasksBlock').scrollIntoView({behavior:'smooth',block:'center'});
    $('quickWorkTaskInput').focus();
@@ -872,12 +872,24 @@ bind('themeButton','click',()=>{state.theme=state.theme==='dark'?'light':'dark';
 bind('goalAmount','input',event=>{state.settings.goalAmount=Number(event.target.value||0);save();render()});
 bind('homeMonthButton','click',openMonth);
 
-function openView(id){
+function scrollPageToTop(){
+ window.scrollTo({top:0,left:0,behavior:'instant'});
+ document.documentElement.scrollTop=0;
+ document.body.scrollTop=0;
+}
+function openView(id,{resetScroll=false}={}){
  document.querySelectorAll('.nav').forEach(node=>node.classList.toggle('active',node.dataset.view===id));
  document.querySelectorAll('.view').forEach(node=>node.classList.toggle('active',node.id===id));
+ if(resetScroll){
+  requestAnimationFrame(scrollPageToTop);
+ }
 }
-document.querySelectorAll('[data-view]').forEach(button=>button.addEventListener('click',()=>openView(button.dataset.view)));
-document.querySelectorAll('[data-open],[data-open-view]').forEach(button=>button.addEventListener('click',()=>openView(button.dataset.open||button.dataset.openView)));
+document.querySelectorAll('[data-view]').forEach(button=>button.addEventListener('click',()=>{
+ openView(button.dataset.view,{resetScroll:true});
+}));
+document.querySelectorAll('[data-open],[data-open-view]').forEach(button=>button.addEventListener('click',()=>{
+ openView(button.dataset.open||button.dataset.openView,{resetScroll:true});
+}));
 
 document.querySelectorAll('[data-plan-filter]').forEach(button=>button.addEventListener('click',()=>{
  planFilter=button.dataset.planFilter;
