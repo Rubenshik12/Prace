@@ -1,7 +1,7 @@
 
 export function template(){
  return `<div class="shell">
- <header class="hero"><div class="heroRow"><div><div class="greeting" id="greeting"></div><h1>Моя робота</h1><p>Час • зарплата • плани</p><div class="appVersion">v11.6 Calendar Polish</div></div><div class="heroButtons"><button class="iconButton" id="themeButton">◐</button><button class="iconButton" data-open="settingsView">⚙︎</button></div></div></header>
+ <header class="hero"><div class="heroRow"><div><div class="greeting" id="greeting"></div><h1>Моя робота</h1><p>Час • зарплата • плани</p><div class="appVersion">v11.7 Calendar Stable</div></div><div class="heroButtons"><button class="iconButton" id="themeButton">◐</button><button class="iconButton" data-open="settingsView">⚙︎</button></div></div></header>
  <main>
   <section class="view active" id="homeView">
   <section class="card dayHero" id="dayHero">
@@ -121,14 +121,7 @@ export function template(){
   <button class="calendarMonthTitle" id="calendarMonthButton"><span class="label">Місяць</span><strong id="calendarMonthLabel"></strong></button>
   <button class="calendarArrow" id="calendarNextMonth">›</button>
  </div>
- <div class="calendarLegend">
-      <span><i class="legendDot workedDot"></i>Зміна</span>
-      <span><i class="legendDot planDot"></i>Плани</span>
-      <span><i class="legendDot doneDot"></i>Завдання виконані</span>
-      <span><i class="legendDot bestDot"></i>Найкращий день</span>
-      <span><i class="legendDot noteDot"></i>Нотатка</span>
-     </div>
-     <div class="card calendar"><div class="calendarHead"><div>Пн</div><div>Вт</div><div>Ср</div><div>Чт</div><div>Пт</div><div>Сб</div><div>Нд</div></div><div class="calendarGrid" id="calendarGrid"></div></div></section>
+ <div class="card calendar"><div class="calendarHead"><div>Пн</div><div>Вт</div><div>Ср</div><div>Чт</div><div>Пт</div><div>Сб</div><div>Нд</div></div><div class="calendarGrid" id="calendarGrid"></div></div></section>
   <section class="view" id="statsView">
  <div class="statsHeader">
   <div>

@@ -1,8 +1,8 @@
 
-import {state} from './state.js?v=v11-6-calendar-polish-20260803-7';
-import {fmt} from './format.js?v=v11-6-calendar-polish-20260803-7';
-import {minutes,pay,summary,daySummary} from './payroll.js?v=v11-6-calendar-polish-20260803-7';
-import {template} from './ui.js?v=v11-6-calendar-polish-20260803-7';
+import {state} from './state.js?v=v11-7-calendar-stable-20260803-8';
+import {fmt} from './format.js?v=v11-7-calendar-stable-20260803-8';
+import {minutes,pay,summary,daySummary} from './payroll.js?v=v11-7-calendar-stable-20260803-8';
+import {template} from './ui.js?v=v11-7-calendar-stable-20260803-8';
 
 state.shifts=Array.isArray(state.shifts)?state.shifts:[];
 state.plans=Array.isArray(state.plans)?state.plans:[];
@@ -300,27 +300,28 @@ function renderCalendar(items){
   const isBest=bestPay>0&&info.pay===bestPay;
   const day=document.createElement('button');
   day.className='day smartDay';
-  day.innerHTML=`<span class="dayBestStar" aria-hidden="true"></span><span class="dayNumber">${i}</span><span class="dayIndicators"></span>`;
-  const indicators=day.querySelector('.dayIndicators');
-  const addIndicator=type=>{
-   const dot=document.createElement('i');
-   dot.className=`dayIndicator ${type}`;
-   indicators.appendChild(dot);
-  };
+  day.innerHTML=`<span class="dayBestStar" aria-hidden="true"></span><span class="dayNumber">${i}</span><span class="dayStatusDots" aria-hidden="true"></span>`;
+  const dots=day.querySelector('.dayStatusDots');
+  const statuses=[];
   if(info.items.length){
-   addIndicator('shift');
+   statuses.push('shift');
    day.classList.add('workedDay');
   }
-  if(plans.length)addIndicator('plan');
+  if(plans.length)statuses.push('plan');
   if(hasAllTasks){
-   addIndicator('complete');
+   statuses.push('complete');
    day.classList.add('completeDay');
   }
+  if(state.dayNotes?.[dateKey])statuses.push('note');
+  statuses.slice(0,3).forEach(type=>{
+   const dot=document.createElement('span');
+   dot.className=`calendarStatusDot calendarStatusDot--${type}`;
+   dots.appendChild(dot);
+  });
   if(isBest){
    day.classList.add('bestDay');
    day.querySelector('.dayBestStar').textContent='★';
   }
-  if(state.dayNotes?.[dateKey])addIndicator('note');
   if(today.getFullYear()===y&&today.getMonth()===m-1&&today.getDate()===i)day.classList.add('today');
   let longPressed=false;
   const startPress=()=>{
