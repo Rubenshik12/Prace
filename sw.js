@@ -1,17 +1,17 @@
-const CACHE='moya-robota-v11-3-shift-details-20260803-4';
+const CACHE='moya-robota-v11-4-navigation-fix-20260803-5';
 const ASSETS=[
  './',
  './index.html',
- './styles.css?v=v11-3-shift-details-20260803-4',
- './manifest.webmanifest?v=v11-3-shift-details-20260803-4',
+ './styles.css?v=v11-4-navigation-fix-20260803-5',
+ './manifest.webmanifest?v=v11-4-navigation-fix-20260803-5',
  './icon-192.png',
  './icon-512.png',
- './src/app.js?v=v11-3-shift-details-20260803-4',
- './src/state.js?v=v11-3-shift-details-20260803-4',
- './src/storage.js?v=v11-3-shift-details-20260803-4',
- './src/payroll.js?v=v11-3-shift-details-20260803-4',
- './src/format.js?v=v11-3-shift-details-20260803-4',
- './src/ui.js?v=v11-3-shift-details-20260803-4'
+ './src/app.js?v=v11-4-navigation-fix-20260803-5',
+ './src/state.js?v=v11-4-navigation-fix-20260803-5',
+ './src/storage.js?v=v11-4-navigation-fix-20260803-5',
+ './src/payroll.js?v=v11-4-navigation-fix-20260803-5',
+ './src/format.js?v=v11-4-navigation-fix-20260803-5',
+ './src/ui.js?v=v11-4-navigation-fix-20260803-5'
 ];
 self.addEventListener('install',event=>{
  self.skipWaiting();
