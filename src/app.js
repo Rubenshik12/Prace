@@ -1,8 +1,8 @@
 
-import {state} from './state.js?v=v11-3-shift-details-20260803-4';
-import {fmt} from './format.js?v=v11-3-shift-details-20260803-4';
-import {minutes,pay,summary,daySummary} from './payroll.js?v=v11-3-shift-details-20260803-4';
-import {template} from './ui.js?v=v11-3-shift-details-20260803-4';
+import {state} from './state.js?v=v11-4-navigation-fix-20260803-5';
+import {fmt} from './format.js?v=v11-4-navigation-fix-20260803-5';
+import {minutes,pay,summary,daySummary} from './payroll.js?v=v11-4-navigation-fix-20260803-5';
+import {template} from './ui.js?v=v11-4-navigation-fix-20260803-5';
 
 state.shifts=Array.isArray(state.shifts)?state.shifts:[];
 state.plans=Array.isArray(state.plans)?state.plans:[];
@@ -15,7 +15,7 @@ if(state.active&&!state.active.sessionId){
 }
 document.getElementById('app').innerHTML=template();
 const $=id=>document.getElementById(id);
-let timerId=null,editingId=null,editingPlanId=null,planFilter='today',planCategory='all',selectedDay=null,selectedShiftId=null,previousViewId='homeView';
+let timerId=null,editingId=null,editingPlanId=null,planFilter='today',planCategory='all',selectedDay=null,selectedShiftId=null,previousViewId='homeView',previousScrollY=0;
 const monthNames=['Січень','Лютий','Березень','Квітень','Травень','Червень','Липень','Серпень','Вересень','Жовтень','Листопад','Грудень'];
 
 function applyTheme(){document.documentElement.dataset.theme=state.theme;$('settingsTheme').value=state.theme}
@@ -302,7 +302,13 @@ function openMonth(){const [y,m]=state.month.split('-').map(Number);$('monthSele
 
 function showView(id){
  previousViewId=document.querySelector('.view.active')?.id||'homeView';
+ previousScrollY=window.scrollY||document.documentElement.scrollTop||0;
  openView(id);
+ requestAnimationFrame(()=>{
+  window.scrollTo({top:0,left:0,behavior:'instant'});
+  document.documentElement.scrollTop=0;
+  document.body.scrollTop=0;
+ });
 }
 function selectedShift(){
  return state.shifts.find(shift=>shift.id===selectedShiftId)||null;
@@ -345,6 +351,11 @@ function openShiftDetails(id){
  }
  $('shiftDetailsNote').textContent=shift.note?.trim()||'Нотатки немає';
  showView('shiftDetailsView');
+ requestAnimationFrame(()=>{
+  window.scrollTo({top:0,left:0,behavior:'instant'});
+  document.documentElement.scrollTop=0;
+  document.body.scrollTop=0;
+ });
 }
 function editSelectedShift(){
  const shift=selectedShift();
@@ -625,7 +636,15 @@ function openDay(dateKey){
 const bind=(id,event,handler)=>{const node=$(id);if(node)node.addEventListener(event,handler)};
 bind('quickWorkTaskForm','submit',event=>{event.preventDefault();addQuickWorkTask()});
 
-bind('shiftDetailsBack','click',()=>openView(previousViewId==='shiftDetailsView'?'homeView':previousViewId));
+bind('shiftDetailsBack','click',()=>{
+ const target=previousViewId==='shiftDetailsView'?'homeView':previousViewId;
+ openView(target);
+ requestAnimationFrame(()=>{
+  window.scrollTo({top:previousScrollY,left:0,behavior:'instant'});
+  document.documentElement.scrollTop=previousScrollY;
+  document.body.scrollTop=previousScrollY;
+ });
+});
 bind('shiftDetailsEdit','click',editSelectedShift);
 bind('shiftDetailsEditBottom','click',editSelectedShift);
 bind('shiftDetailsDuplicate','click',duplicateSelectedShift);
