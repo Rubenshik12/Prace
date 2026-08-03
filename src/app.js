@@ -1,9 +1,9 @@
 
-import {storage} from './storage.js?v=v13-core-profiles-20260803-14';
-import {state} from './state.js?v=v13-core-profiles-20260803-14';
-import {fmt} from './format.js?v=v13-core-profiles-20260803-14';
-import {minutes,pay,summary,daySummary} from './payroll.js?v=v13-core-profiles-20260803-14';
-import {template} from './ui.js?v=v13-core-profiles-20260803-14';
+import {storage} from './storage.js?v=v13-1-ui-redesign-20260803-15';
+import {state} from './state.js?v=v13-1-ui-redesign-20260803-15';
+import {fmt} from './format.js?v=v13-1-ui-redesign-20260803-15';
+import {minutes,pay,summary,daySummary} from './payroll.js?v=v13-1-ui-redesign-20260803-15';
+import {template} from './ui.js?v=v13-1-ui-redesign-20260803-15';
 
 state.shifts=Array.isArray(state.shifts)?state.shifts:[];
 state.plans=Array.isArray(state.plans)?state.plans:[];
@@ -35,6 +35,9 @@ function render(){
  $('currentProfileAvatar').textContent=(profile.name||'М').trim().charAt(0).toUpperCase();
  $('currentProfileName').textContent=profile.name;
  $('currentProfileMeta').textContent=[profile.job,`${state.rate} ${profile.currency||'Kč'}/год`].filter(Boolean).join(' · ');
+ $('profilePageAvatar').textContent=(profile.name||'М').trim().charAt(0).toUpperCase();
+ $('profilePageName').textContent=profile.name;
+ $('profilePageMeta').textContent=[profile.job,`${state.rate} ${profile.currency||'Kč'}/год`].filter(Boolean).join(' · ');
  $('calendarMonthLabel').textContent=fmt.month(state.month);
  $('homeMonthLabel').textContent=fmt.month(state.month);
  $('homeRateValue').textContent=`${state.rate} ${profile.currency||'Kč'}`;
@@ -837,6 +840,9 @@ const bind=(id,event,handler)=>{const node=$(id);if(node)node.addEventListener(e
 bind('quickWorkTaskForm','submit',event=>{event.preventDefault();addQuickWorkTask()});
 
 
+bind('profilePageEdit','click',()=>openProfileEditor(storage.activeProfileId()));
+bind('languageRow','click',()=>toast('Додаткові мови з’являться в одному з наступних оновлень'));
+bind('aboutAppRow','click',()=>alert('Моя робота\nВерсія: v13.1 UI Redesign'));
 bind('profileHeaderButton','click',openProfiles);
 bind('openProfilesButton','click',openProfiles);
 bind('closeProfilesButton','click',()=>$('profilesDialog').close());

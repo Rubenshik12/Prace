@@ -1,7 +1,7 @@
 
 export function template(){
  return `<div class="shell">
- <header class="hero"><div class="heroRow"><div><div class="greeting" id="greeting"></div><h1>Моя робота</h1><p>Час • зарплата • плани</p><div class="appVersion">v13.0 Core Profiles</div></div><div class="heroButtons">
+ <header class="hero"><div class="heroRow"><div><div class="greeting" id="greeting"></div><h1>Моя робота</h1><p>Час • зарплата • плани</p><div class="appVersion">v13.1 UI Redesign</div></div><div class="heroButtons">
       <button class="profileHeaderButton" id="profileHeaderButton" aria-label="Профілі"><span id="profileHeaderInitial">М</span></button>
       <button class="iconButton" id="themeButton">◐</button>
       <button class="iconButton" data-open="settingsView">⚙︎</button>
@@ -334,7 +334,12 @@ export function template(){
       </div>
      </section>
 
-     <section class="view" id="settingsView">
+     <section class="view profileView" id="settingsView">
+ <div class="profilePageHero card">
+  <div class="profilePageAvatar" id="profilePageAvatar">М</div>
+  <div class="profilePageIdentity"><div class="eyebrow">Особистий простір</div><h2 id="profilePageName">Мій профіль</h2><p id="profilePageMeta">180 Kč/год</p></div>
+  <button class="profilePageEdit" id="profilePageEdit">Редагувати</button>
+ </div>
  <div class="sectionTitle"><h2>Профіль</h2></div>
  <div class="card currentProfileCard">
   <button class="currentProfileMain" id="openProfilesButton">
@@ -362,6 +367,11 @@ export function template(){
   <div class="setting"><div><b>Дві виплати</b><div class="hint">1–15 та 16–кінець</div></div><button class="switch" id="paySplitSwitch"></button></div>
  </div>
 
+ <div class="sectionTitle"><h2>Застосунок</h2></div>
+ <div class="card profileMenuCard">
+  <button class="profileMenuRow" id="languageRow"><span class="profileMenuIcon">🌐</span><span><b>Мова</b><small>Українська</small></span><span class="profileMenuChevron">›</span></button>
+  <button class="profileMenuRow" id="aboutAppRow"><span class="profileMenuIcon">ℹ</span><span><b>Про застосунок</b><small>Моя робота · v13.1</small></span><span class="profileMenuChevron">›</span></button>
+ </div>
  <div class="sectionTitle"><h2>Безпека даних</h2></div>
  <div class="card backupCard">
   <div class="backupStatus"><div><b>Резервна копія</b><div class="hint" id="lastBackupText">Копію ще не створювали</div></div><span class="backupBadge">JSON</span></div>
@@ -387,12 +397,12 @@ export function template(){
    <span class="navLabel">Статистика</span>
   </button>
   <button class="nav" data-view="plansView" aria-label="Плани">
-   <span class="navIcon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4.5 7.5 2 2 3.5-4M11 7.5h8M4.5 14.5l2 2 3.5-4M11 14.5h8"/></svg></span>
+   <span class="navIcon prepIcon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 17.5h16"/><path d="M5.5 14.5h11.5"/><path d="M6 6.5c3.7 0 7.4 2.4 10.8 6.1"/><path d="M17.2 12.6 20 9.8"/><path d="M8 14.5v3"/><path d="M12 14.5v3"/></svg></span>
    <span class="navLabel">Плани</span>
   </button>
-  <button class="nav" data-view="settingsView" aria-label="Налаштування">
-   <span class="navIcon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7Z"/><path d="M19.4 13.5a7.8 7.8 0 0 0 .1-1.5 7.8 7.8 0 0 0-.1-1.5l2-1.6-2-3.4-2.5 1a8.5 8.5 0 0 0-2.6-1.5L14 2.3h-4L9.7 5a8.5 8.5 0 0 0-2.6 1.5l-2.5-1-2 3.4 2 1.6A7.8 7.8 0 0 0 4.5 12c0 .5 0 1 .1 1.5l-2 1.6 2 3.4 2.5-1a8.5 8.5 0 0 0 2.6 1.5l.3 2.7h4l.3-2.7a8.5 8.5 0 0 0 2.6-1.5l2.5 1 2-3.4z"/></svg></span>
-   <span class="navLabel">Налаштування</span>
+  <button class="nav" data-view="settingsView" aria-label="Профіль">
+   <span class="navIcon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M4.8 20c.7-4.1 3.1-6.3 7.2-6.3s6.5 2.2 7.2 6.3"/></svg></span>
+   <span class="navLabel">Профіль</span>
   </button>
  </nav>
  <dialog id="monthDialog"><div class="modal"><h3>Вибрати місяць</h3><label>Місяць</label><select id="monthSelect"></select><label>Рік</label><select id="yearSelect"></select><div class="modalActions"><button id="cancelMonth">Скасувати</button><button class="save" id="saveMonth">Готово</button></div></div></dialog>
