@@ -1,4 +1,4 @@
-import {storage} from './storage.js?v=v16-app-shell-rebuild-20260803-29';
+import {storage} from './storage.js?v=v16-1-bottom-content-spacing-20260803-30';
 
 export const state={
  month:new Date().toISOString().slice(0,7),
