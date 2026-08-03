@@ -1,19 +1,19 @@
-const CACHE='moya-robota-v17-0-chart-labels-planner-20260804-05';
+const CACHE='moya-robota-v17-1-smart-calendar-20260804-06';
 const ASSETS=[
  './',
  './index.html',
- './styles.css?v=v17-0-chart-labels-planner-20260804-05',
- './manifest.webmanifest?v=v17-0-chart-labels-planner-20260804-05',
+ './styles.css?v=v17-1-smart-calendar-20260804-06',
+ './manifest.webmanifest?v=v17-1-smart-calendar-20260804-06',
  './icon-192.png',
  './icon-512.png',
  './widget-state-schema.json',
- './src/app.js?v=v17-0-chart-labels-planner-20260804-05',
- './src/state.js?v=v17-0-chart-labels-planner-20260804-05',
- './src/storage.js?v=v17-0-chart-labels-planner-20260804-05',
- './src/payroll.js?v=v17-0-chart-labels-planner-20260804-05',
- './src/format.js?v=v17-0-chart-labels-planner-20260804-05',
- './src/ui.js?v=v17-0-chart-labels-planner-20260804-05',
- './src/widget-state.js?v=v17-0-chart-labels-planner-20260804-05'
+ './src/app.js?v=v17-1-smart-calendar-20260804-06',
+ './src/state.js?v=v17-1-smart-calendar-20260804-06',
+ './src/storage.js?v=v17-1-smart-calendar-20260804-06',
+ './src/payroll.js?v=v17-1-smart-calendar-20260804-06',
+ './src/format.js?v=v17-1-smart-calendar-20260804-06',
+ './src/ui.js?v=v17-1-smart-calendar-20260804-06',
+ './src/widget-state.js?v=v17-1-smart-calendar-20260804-06'
 ];
 
 self.addEventListener('install',event=>{

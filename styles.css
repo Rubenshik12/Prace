@@ -2336,3 +2336,130 @@ main,
 .planEmptyIcon{width:52px;height:52px;border-radius:17px;display:grid;place-items:center;background:var(--blueSoft);color:var(--blue);font-size:24px;font-weight:900;}
 .planEmpty span{font-size:12px;max-width:240px;line-height:1.45;}
 .planEmpty button{margin-top:6px;min-height:42px;padding:0 16px;border:0;border-radius:13px;background:var(--blue);color:#fff;font-weight:850;}
+
+/* v17.1 — smart calendar */
+.calendarLegend{
+ display:flex;
+ gap:7px;
+ overflow-x:auto;
+ padding:0 1px 10px;
+ scrollbar-width:none;
+}
+.calendarLegend::-webkit-scrollbar{display:none}
+.calendarLegend span{
+ flex:0 0 auto;
+ display:flex;
+ align-items:center;
+ gap:6px;
+ min-height:30px;
+ padding:0 9px;
+ border:1px solid var(--line);
+ border-radius:999px;
+ background:var(--surface);
+ color:var(--muted);
+ font-size:9px;
+ font-weight:850;
+}
+.legendStar{
+ color:#F6B73C;
+ font-size:11px;
+ font-style:normal;
+}
+
+.calendarHint{
+ padding:9px 4px 2px;
+ color:var(--muted);
+ font-size:9px;
+ text-align:center;
+}
+
+.day.smartDay{
+ position:relative!important;
+ min-height:57px!important;
+ padding:7px 3px 8px!important;
+ justify-content:flex-start!important;
+ overflow:hidden;
+ transition:transform .15s ease,background .15s ease,border-color .15s ease;
+}
+.day.smartDay:active{
+ transform:scale(.94);
+}
+.day.smartDay.weekendDay:not(.today):not(.workedDay){
+ background:color-mix(in srgb,var(--blue) 5%,var(--surface2))!important;
+}
+.day.smartDay.workedDay{
+ background:color-mix(in srgb,var(--green) 9%,var(--surface2))!important;
+}
+.day.smartDay.today{
+ box-shadow:inset 0 0 0 2px var(--blue)!important;
+}
+.day.smartDay.bestDay{
+ box-shadow:inset 0 0 0 1.5px #F6B73C!important;
+ outline:0!important;
+}
+.dayNumber{
+ font-size:13px!important;
+ font-weight:900!important;
+ line-height:16px!important;
+}
+.dayPay{
+ display:block;
+ min-height:11px;
+ max-width:100%;
+ margin-top:4px;
+ overflow:hidden;
+ text-overflow:ellipsis;
+ color:var(--green);
+ font-size:7px;
+ line-height:10px;
+ font-weight:900;
+ white-space:nowrap;
+}
+.dayBestStar{
+ position:absolute!important;
+ top:3px!important;
+ right:4px!important;
+ color:#F6B73C!important;
+ font-size:8px!important;
+}
+.dayStatusDots{
+ position:absolute!important;
+ left:50%!important;
+ bottom:5px!important;
+ transform:translateX(-50%)!important;
+ display:flex!important;
+ justify-content:center!important;
+ gap:2px!important;
+ width:auto!important;
+ height:4px!important;
+}
+.calendarStatusDot{
+ width:3.5px!important;
+ min-width:3.5px!important;
+ height:3.5px!important;
+ min-height:3.5px!important;
+}
+
+#calendarCard{
+ overflow:hidden;
+}
+#calendarCard.slideNext .calendarGrid{
+ animation:calendarSlideNext .24s ease both;
+}
+#calendarCard.slidePrev .calendarGrid{
+ animation:calendarSlidePrev .24s ease both;
+}
+@keyframes calendarSlideNext{
+ from{opacity:.25;transform:translateX(18px)}
+ to{opacity:1;transform:translateX(0)}
+}
+@keyframes calendarSlidePrev{
+ from{opacity:.25;transform:translateX(-18px)}
+ to{opacity:1;transform:translateX(0)}
+}
+
+@media(max-width:390px){
+ .day.smartDay{min-height:53px!important}
+ .dayNumber{font-size:12px!important}
+ .dayPay{font-size:6.5px}
+}
