@@ -2317,3 +2317,22 @@ main,
 .chartEmptyState span{
  font-size:9px;
 }
+
+/* v17.0 — chart labels and planner polish */
+.barChart{padding-bottom:16px!important;}
+.barItem{grid-template-rows:22px minmax(0,1fr) 28px!important;}
+.barLabel{display:flex!important;align-items:center;justify-content:center;min-height:28px!important;line-height:1!important;padding-top:6px!important;overflow:visible!important;transform:none!important;}
+.barItem.hideDayLabel .barLabel{opacity:0;}
+.barChart.singleDay .barLabel{opacity:1!important;font-size:11px!important;}
+.barChart::before{bottom:38px!important;}
+
+.planGroupHeading{padding:14px 0 7px;color:var(--muted);font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.08em;border-bottom:1px solid var(--line);}
+.planGroupHeading:first-child{padding-top:4px;}
+.planGroupHeading.overdue{color:var(--red);}
+.premiumPlan.overdue{background:color-mix(in srgb,var(--red) 5%,transparent);}
+.planMetaTag.repeat{color:var(--blue);background:var(--blueSoft);}
+.planMetaTag.overdue{color:var(--red);background:color-mix(in srgb,var(--red) 11%,transparent);}
+.planEmpty{display:grid;justify-items:center;gap:8px;padding:34px 16px!important;}
+.planEmptyIcon{width:52px;height:52px;border-radius:17px;display:grid;place-items:center;background:var(--blueSoft);color:var(--blue);font-size:24px;font-weight:900;}
+.planEmpty span{font-size:12px;max-width:240px;line-height:1.45;}
+.planEmpty button{margin-top:6px;min-height:42px;padding:0 16px;border:0;border-radius:13px;background:var(--blue);color:#fff;font-weight:850;}

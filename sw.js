@@ -1,19 +1,19 @@
-const CACHE='moya-robota-v16-9-statistics-chart-fix-20260804-04';
+const CACHE='moya-robota-v17-0-chart-labels-planner-20260804-05';
 const ASSETS=[
  './',
  './index.html',
- './styles.css?v=v16-9-statistics-chart-fix-20260804-04',
- './manifest.webmanifest?v=v16-9-statistics-chart-fix-20260804-04',
+ './styles.css?v=v17-0-chart-labels-planner-20260804-05',
+ './manifest.webmanifest?v=v17-0-chart-labels-planner-20260804-05',
  './icon-192.png',
  './icon-512.png',
  './widget-state-schema.json',
- './src/app.js?v=v16-9-statistics-chart-fix-20260804-04',
- './src/state.js?v=v16-9-statistics-chart-fix-20260804-04',
- './src/storage.js?v=v16-9-statistics-chart-fix-20260804-04',
- './src/payroll.js?v=v16-9-statistics-chart-fix-20260804-04',
- './src/format.js?v=v16-9-statistics-chart-fix-20260804-04',
- './src/ui.js?v=v16-9-statistics-chart-fix-20260804-04',
- './src/widget-state.js?v=v16-9-statistics-chart-fix-20260804-04'
+ './src/app.js?v=v17-0-chart-labels-planner-20260804-05',
+ './src/state.js?v=v17-0-chart-labels-planner-20260804-05',
+ './src/storage.js?v=v17-0-chart-labels-planner-20260804-05',
+ './src/payroll.js?v=v17-0-chart-labels-planner-20260804-05',
+ './src/format.js?v=v17-0-chart-labels-planner-20260804-05',
+ './src/ui.js?v=v17-0-chart-labels-planner-20260804-05',
+ './src/widget-state.js?v=v17-0-chart-labels-planner-20260804-05'
 ];
 
 self.addEventListener('install',event=>{
