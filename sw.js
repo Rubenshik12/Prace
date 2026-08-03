@@ -1,17 +1,17 @@
-const CACHE='moya-robota-v12-3-ui-polish-20260803-12';
+const CACHE='moya-robota-v12-4-bottom-nav-stable-20260803-13';
 const ASSETS=[
  './',
  './index.html',
- './styles.css?v=v12-3-ui-polish-20260803-12',
- './manifest.webmanifest?v=v12-3-ui-polish-20260803-12',
+ './styles.css?v=v12-4-bottom-nav-stable-20260803-13',
+ './manifest.webmanifest?v=v12-4-bottom-nav-stable-20260803-13',
  './icon-192.png',
  './icon-512.png',
- './src/app.js?v=v12-3-ui-polish-20260803-12',
- './src/state.js?v=v12-3-ui-polish-20260803-12',
- './src/storage.js?v=v12-3-ui-polish-20260803-12',
- './src/payroll.js?v=v12-3-ui-polish-20260803-12',
- './src/format.js?v=v12-3-ui-polish-20260803-12',
- './src/ui.js?v=v12-3-ui-polish-20260803-12'
+ './src/app.js?v=v12-4-bottom-nav-stable-20260803-13',
+ './src/state.js?v=v12-4-bottom-nav-stable-20260803-13',
+ './src/storage.js?v=v12-4-bottom-nav-stable-20260803-13',
+ './src/payroll.js?v=v12-4-bottom-nav-stable-20260803-13',
+ './src/format.js?v=v12-4-bottom-nav-stable-20260803-13',
+ './src/ui.js?v=v12-4-bottom-nav-stable-20260803-13'
 ];
 self.addEventListener('install',event=>{
  self.skipWaiting();
