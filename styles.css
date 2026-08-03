@@ -2147,3 +2147,22 @@ main,
 #plansView.active{
  display:block!important;
 }
+
+/* v16.8 — real scrollable ending, not rubber-band overscroll */
+.shell>main{
+ scroll-padding-bottom:0!important;
+}
+
+.shell>main>.view{
+ padding-bottom:0!important;
+}
+
+.mainScrollEnd{
+ display:block!important;
+ width:100%;
+ height:96px;
+ min-height:96px;
+ flex:0 0 96px;
+ pointer-events:none;
+ visibility:hidden;
+}

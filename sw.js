@@ -1,19 +1,19 @@
-const CACHE='moya-robota-v16-7-scroll-plans-fix-20260804-02';
+const CACHE='moya-robota-v16-8-real-scroll-end-fix-20260804-03';
 const ASSETS=[
  './',
  './index.html',
- './styles.css?v=v16-7-scroll-plans-fix-20260804-02',
- './manifest.webmanifest?v=v16-7-scroll-plans-fix-20260804-02',
+ './styles.css?v=v16-8-real-scroll-end-fix-20260804-03',
+ './manifest.webmanifest?v=v16-8-real-scroll-end-fix-20260804-03',
  './icon-192.png',
  './icon-512.png',
  './widget-state-schema.json',
- './src/app.js?v=v16-7-scroll-plans-fix-20260804-02',
- './src/state.js?v=v16-7-scroll-plans-fix-20260804-02',
- './src/storage.js?v=v16-7-scroll-plans-fix-20260804-02',
- './src/payroll.js?v=v16-7-scroll-plans-fix-20260804-02',
- './src/format.js?v=v16-7-scroll-plans-fix-20260804-02',
- './src/ui.js?v=v16-7-scroll-plans-fix-20260804-02',
- './src/widget-state.js?v=v16-7-scroll-plans-fix-20260804-02'
+ './src/app.js?v=v16-8-real-scroll-end-fix-20260804-03',
+ './src/state.js?v=v16-8-real-scroll-end-fix-20260804-03',
+ './src/storage.js?v=v16-8-real-scroll-end-fix-20260804-03',
+ './src/payroll.js?v=v16-8-real-scroll-end-fix-20260804-03',
+ './src/format.js?v=v16-8-real-scroll-end-fix-20260804-03',
+ './src/ui.js?v=v16-8-real-scroll-end-fix-20260804-03',
+ './src/widget-state.js?v=v16-8-real-scroll-end-fix-20260804-03'
 ];
 
 self.addEventListener('install',event=>{
